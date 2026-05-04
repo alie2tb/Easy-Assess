@@ -1,2 +1,2 @@
-# Easy-Classroom-Management
-Managing Classroom Records better
+# Easy-Assess
+Managing Assessment Records better
