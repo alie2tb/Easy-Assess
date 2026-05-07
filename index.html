@@ -17,12 +17,28 @@
      .header h1 { font-size: 3rem; margin-bottom: 8px; letter-spacing: 2px; }
      .header p { color: #95D5B2; font-size: 1.1rem; }
      .class-switcher {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
+            display: block;
             margin-bottom: 24px;
-            flex-wrap: wrap;
+            width: 100%;
         }
+     .class-spinner {
+            width: 100%;
+            padding: 14px 44px 14px 18px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1B4332;
+            background: #95D5B2;
+            border: 2px solid #95D5B2;
+            border-radius: 10px;
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 20 20'><path fill='%231B4332' d='M5 8l5 5 5-5z'/></svg>");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+     .class-spinner:focus { outline: none; border-color: #1B4332; }
      .class-btn {
             background: rgba(255,255,255,0.2);
             color: #FFF8E7;
@@ -224,13 +240,101 @@
      .btn-print-all:hover { background: #155A75; }
      .btn-clear-all { background: #F44336; color: white; }
      .btn-clear-all:hover { background: #D32F2F; }
+     /* Floating Action Button */
+     .fab {
+         position: fixed;
+         right: 24px;
+         bottom: 24px;
+         width: 60px;
+         height: 60px;
+         border-radius: 50%;
+         background: linear-gradient(135deg, #1A6B8A, #95D5B2);
+         color: white;
+         border: none;
+         font-size: 2rem;
+         font-weight: 300;
+         line-height: 1;
+         cursor: pointer;
+         box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+         z-index: 90;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         transition: transform 0.2s, box-shadow 0.2s;
+     }
+     .fab:hover { transform: scale(1.08); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+     .fab:active { transform: scale(0.95); }
+     /* Modal */
+     .modal-overlay {
+         display: none;
+         position: fixed;
+         inset: 0;
+         background: rgba(0,0,0,0.55);
+         z-index: 100;
+         align-items: flex-start;
+         justify-content: center;
+         padding: 20px;
+         overflow-y: auto;
+     }
+     .modal-overlay.open { display: flex; }
+     .modal-content {
+         background: white;
+         border-radius: 14px;
+         padding: 24px;
+         width: 100%;
+         max-width: 720px;
+         margin: 40px auto;
+         position: relative;
+         box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+     }
+     .modal-close {
+         position: absolute;
+         top: 12px;
+         right: 12px;
+         width: 36px;
+         height: 36px;
+         border-radius: 50%;
+         border: none;
+         background: #f0f0f0;
+         font-size: 1.2rem;
+         cursor: pointer;
+     }
+     .modal-close:hover { background: #e0e0e0; }
         @media (max-width: 768px) {
-         .form-grid { grid-template-columns: 1fr; }
-         .class-switcher { gap: 8px; }
-         .class-btn { padding: 8px 16px; font-size: 0.85rem; }
-         .report-meta { grid-template-columns: 1fr; gap: 10px; }
-         .report-actions { flex-direction: column; }
-            th, td { padding: 10px 8px; font-size: 0.85rem; }
+            body { padding: 10px; }
+            .container { max-width: 100%; }
+            .header h1 { font-size: 1.8rem; letter-spacing: 1px; }
+            .header p { font-size: 0.9rem; }
+            .card { padding: 14px; border-radius: 10px; margin-bottom: 16px; }
+            .card h2 { font-size: 1.15rem; margin-bottom: 14px; }
+            .form-grid { grid-template-columns: 1fr; gap: 12px; }
+            .class-switcher { gap: 6px; }
+            .class-btn { padding: 8px 12px; font-size: 0.8rem; flex: 1 1 calc(50% - 6px); }
+            .class-info { font-size: 0.8rem; padding: 10px; }
+            input, select { padding: 10px; font-size: 16px; } /* 16px prevents iOS zoom */
+            label { font-size: 0.85rem; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 8px; }
+            .stat-card { padding: 12px !important; }
+            .stat-value { font-size: 1.3rem !important; }
+            .stat-label { font-size: 0.75rem !important; }
+            .table-toolbar { gap: 8px; }
+            .search-bar { min-width: 100%; flex: 1 1 100%; }
+            .toolbar-btn { flex: 1 1 calc(50% - 4px); padding: 10px 8px; font-size: 0.8rem; }
+            table { font-size: 0.8rem; }
+            th, td { padding: 8px 6px; font-size: 0.8rem; }
+            .grade-badge { padding: 3px 8px; font-size: 0.75rem; }
+            .report-content { padding: 14px; }
+            .report-header h3 { font-size: 1.2rem; }
+            .report-meta { grid-template-columns: 1fr; gap: 8px; }
+            .report-table th, .report-table td { padding: 6px 4px; font-size: 0.75rem; }
+            .report-actions { flex-direction: column; gap: 8px; }
+            .action-btn { width: 100%; padding: 12px; font-size: 0.9rem; }
+            .submit-btn, button[type="submit"] { width: 100%; }
+        }
+        @media (max-width: 480px) {
+            .header h1 { font-size: 1.5rem; }
+            .class-btn { flex: 1 1 100%; }
+            th:nth-child(3), td:nth-child(3) { display: none; } /* hide SEX column on tiny screens */
         }
         @media print {
             body { background: white; padding: 0; }
@@ -239,46 +343,34 @@
            .report-actions { display: none; }
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>EASY ASSESS</h1>
-            <p>DEVELOPED BY JUMA ALI</p>
         </div>
 
         <div class="class-switcher">
-            <button class="class-btn active" onclick="switchClass(1)">Standard 1</button>
-            <button class="class-btn" onclick="switchClass(2)">Standard 2</button>
-            <button class="class-btn" onclick="switchClass(3)">Standard 3</button>
-            <button class="class-btn" onclick="switchClass(4)">Standard 4</button>
-            <button class="class-btn senior" onclick="switchClass(5)">SENIOR CLASSES</button>
+            <select id="classSpinner" class="class-spinner" onchange="switchClass(parseInt(this.value))">
+                <option value="1" selected>Standard 1</option>
+                <option value="2">Standard 2</option>
+                <option value="3">Standard 3</option>
+                <option value="4">Standard 4</option>
+                <option value="5">SENIOR CLASSES</option>
+            </select>
         </div>
 
-        <div class="card">
-            <h2 id="formTitle">Add Learner - Standard 1</h2>
-            <div class="class-info" id="classInfo">5 Subjects: English, Chichewa, Maths, Religious Ed, Expressive Arts | Max: 397</div>
-            <form id="learnerForm">
-                <div class="form-grid" id="formGrid"></div>
-                <button type="submit" class="btn" id="submitBtn">Add Learner to Records</button>
-            </form>
-        </div>
-
-        <div class="card">
-            <h2>Statistics - <span id="statsClass">Standard 1</span></h2>
-            <div class="stats">
-                <div class="stat-card">
-                    <div class="stat-value" id="totalLearners">0</div>
-                    <div class="stat-label">Total Learners</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="avgScore">0%</div>
-                    <div class="stat-label">Average Score</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-value" id="highestScore">0</div>
-                    <div class="stat-label">Highest Total</div>
-                </div>
+        <div class="modal-overlay" id="formModal" onclick="if(event.target===this)closeFormModal()">
+            <div class="modal-content card" style="margin-bottom:0;">
+                <button type="button" class="modal-close" onclick="closeFormModal()" aria-label="Close">✕</button>
+                <h2 id="formTitle">Add Learner - Standard 1</h2>
+                <div class="class-info" id="classInfo">5 Subjects: English, Chichewa, Maths, Religious Ed, Expressive Arts | Max: 397</div>
+                <form id="learnerForm">
+                    <div class="form-grid" id="formGrid"></div>
+                    <button type="submit" class="btn" id="submitBtn">Add Learner to Records</button>
+                </form>
             </div>
         </div>
 
@@ -289,7 +381,7 @@
                     <input type="text" id="searchInput" placeholder="Search learner by name..." oninput="filterTable()">
                 </div>
                 <button class="toolbar-btn btn-export-all" onclick="exportAllToCSV()">⬇ Export CSV</button>
-                <button class="toolbar-btn btn-print-all" onclick="printAllRecords()">🖨 Print All</button>
+                <button class="toolbar-btn btn-print-all" onclick="exportAllToPDF()">⬇ Export to PDF</button>
                 <button class="toolbar-btn btn-clear-all" onclick="clearAllRecords()">🗑 Clear All</button>
             </div>
             <div style="overflow-x: auto;">
@@ -360,12 +452,11 @@
         function switchClass(cls) {
             currentClass = cls;
             editingId = null;
-            document.querySelectorAll('.class-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
+            const spinner = document.getElementById('classSpinner');
+            if (spinner && parseInt(spinner.value) !== cls) spinner.value = String(cls);
 
             const config = classConfig[cls];
             document.getElementById('formTitle').textContent = `Add Learner - ${config.name}`;
-            document.getElementById('statsClass').textContent = config.name;
             document.getElementById('recordsClass').textContent = config.name;
             document.getElementById('classInfo').textContent =
                 `${config.subjects.length} Subjects: ${config.labels.join(', ')} | Max: ${config.maxTotal}`;
@@ -448,7 +539,7 @@
             renderTable();
             updateStats();
             this.reset();
-            document.getElementById('name').focus();
+            closeFormModal();
         });
 
         function getSubjectGrade(score, max) {
@@ -540,6 +631,7 @@
                                     <div class="meta-label">Position</div>
                                     <div class="meta-value">${idx + 1} of ${currentLearners.length}</div>
                                 </div>
+                            </div>
                             <table class="report-table">
                                 <thead>
                                     <tr>
@@ -601,8 +693,7 @@
             });
 
             document.getElementById('submitBtn').textContent = 'Update Learner Record';
-            document.getElementById('name').focus();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            openFormModal();
         }
 
         function deleteLearner(id) {
@@ -645,7 +736,7 @@
                     <div class="header">
                         <h1>SCHOOL REPORT</h1>
                         <p>${config.name}</p>
-                        <p>EASY ASSESS - DEVELOPED BY JUMA ALI</p>
+                        <p>EASY ASSESS</p>
                     </div>
                     <div class="meta">
                         <div>
@@ -702,21 +793,7 @@
             setTimeout(() => printWindow.print(), 250);
         }
 
-        function updateStats() {
-            const currentLearners = learners[currentClass];
-            const config = classConfig[currentClass];
-            document.getElementById('totalLearners').textContent = currentLearners.length;
-
-            if (currentLearners.length > 0) {
-                const avg = currentLearners.reduce((sum, l) => sum + l.total, 0) / currentLearners.length;
-                const max = Math.max(...currentLearners.map(l => l.total));
-                document.getElementById('avgScore').textContent = (avg / config.maxTotal * 100).toFixed(1) + '%';
-                document.getElementById('highestScore').textContent = max;
-            } else {
-                document.getElementById('avgScore').textContent = '0%';
-                document.getElementById('highestScore').textContent = '0';
-            }
-        }
+        function updateStats() { /* statistics display removed */ }
 
         function filterTable() {
             const query = document.getElementById('searchInput').value.toLowerCase();
@@ -752,40 +829,35 @@
             a.click();
         }
 
-        function printAllRecords() {
+        function exportAllToPDF() {
             const currentLearners = learners[currentClass];
             const config = classConfig[currentClass];
-            if (currentLearners.length === 0) { alert('No records to print.'); return; }
+            if (currentLearners.length === 0) { alert('No records to export.'); return; }
 
-            const rows = currentLearners.map((l, i) => `
-                <tr>
-                    <td>${i+1}</td>
-                    <td>${l.name}</td>
-                    <td>${l.sex}</td>
-                    <td>${l.total}/${config.maxTotal}</td>
-                    <td>${l.grade}</td>
-                </tr>`).join('');
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
 
-            const printWindow = window.open('', '_blank');
-            printWindow.document.write(`
-                <html><head><title>${config.name} Records</title>
-                <style>
-                    body { font-family: Arial, sans-serif; padding: 30px; }
-                    h2 { color: #1B4332; }
-                    table { width: 100%; border-collapse: collapse; margin-top: 16px; }
-                    th { background: #1B4332; color: white; padding: 10px; text-align: left; }
-                    td { padding: 10px; border-bottom: 1px solid #ddd; }
-                </style></head>
-                <body>
-                    <h2>Learner Records - ${config.name}</h2>
-                    <p>Total Learners: ${currentLearners.length} | Date: ${new Date().toLocaleDateString()}</p>
-                    <table>
-                        <thead><tr><th>POS</th><th>NAME</th><th>SEX</th><th>TOTAL</th><th>LEVEL</th></tr></thead>
-                        <tbody>${rows}</tbody>
-                    </table>
-                </body></html>`);
-            printWindow.document.close();
-            setTimeout(() => printWindow.print(), 250);
+            doc.setFontSize(16);
+            doc.setTextColor(27, 67, 50);
+            doc.text(`Learner Records - ${config.name}`, 14, 18);
+            doc.setFontSize(10);
+            doc.setTextColor(80);
+            doc.text(`Total Learners: ${currentLearners.length}  |  Date: ${new Date().toLocaleDateString()}`, 14, 26);
+
+            const body = currentLearners.map((l, i) => [
+                i + 1, l.name, l.sex, `${l.total}/${config.maxTotal}`, l.grade
+            ]);
+
+            doc.autoTable({
+                head: [['POS', 'NAME', 'SEX', 'TOTAL', 'LEVEL']],
+                body,
+                startY: 32,
+                styles: { fontSize: 10, cellPadding: 4 },
+                headStyles: { fillColor: [27, 67, 50], textColor: 255 },
+                alternateRowStyles: { fillColor: [255, 248, 231] }
+            });
+
+            doc.save(`${config.name.replace(/\s+/g,'_')}_Records_${new Date().toISOString().slice(0,10)}.pdf`);
         }
 
         function clearAllRecords() {
@@ -798,7 +870,24 @@
             }
         }
 
+        function openFormModal() {
+            document.getElementById('formModal').classList.add('open');
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => { const n = document.getElementById('name'); if (n) n.focus(); }, 100);
+        }
+        function closeFormModal() {
+            document.getElementById('formModal').classList.remove('open');
+            document.body.style.overflow = '';
+            editingId = null;
+            document.getElementById('learnerForm').reset();
+            document.getElementById('submitBtn').textContent = 'Add Learner to Records';
+        }
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeFormModal();
+        });
+
         renderForm();
     </script>
+    <button class="fab" id="addLearnerFab" onclick="openFormModal()" aria-label="Add learner" title="Add learner">+</button>
 </body>
 </html>
