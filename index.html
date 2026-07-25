@@ -695,23 +695,53 @@ function buildClassGrid(){
 }
 
 function switchPage(page){
-  const pages={classes:"pageClasses",add:"pageAdd",list:"pageList",notes:"pageNotes",settings:"pageSettings"};
-  const navs={classes:"navClasses",notes:"navNotes",settings:"navSettings"};
-  Object.keys(pages).forEach(k=>{
-    document.getElementById(pages[k]).classList.toggle("active",k===page);
+  // All pages
+  const allPages = ["pageClasses","pageAdd","pageList","pageNotes","pageSettings"];
+  allPages.forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.classList.remove("active");
   });
-  // Highlight bottom nav (only 3 nav items)
-  Object.keys(navs).forEach(k=>{
-    document.getElementById(navs[k]).classList.toggle("active",k===page);
+
+  // Map page key to element id
+  const pageMap = {
+    classes:  "pageClasses",
+    add:      "pageAdd",
+    list:     "pageList",
+    notes:    "pageNotes",
+    settings: "pageSettings"
+  };
+  const target = document.getElementById(pageMap[page]);
+  if(target) target.classList.add("active");
+
+  // Bottom nav highlight — only 3 nav items (classes, notes, settings)
+  ["navClasses","navNotes","navSettings"].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.classList.remove("active");
   });
-  // Back button: show on add and list pages
-  document.getElementById("backBtn").style.display=(page==="add"||page==="list")?"inline-block":"none";
-  // Top title
-  const titles={classes:"Easy Assess 33",add:`Std ${_currentClass} — Add Student`,list:`Std ${_currentClass} — Students`,notes:"Notes",settings:"Settings"};
-  document.getElementById("topTitle").textContent=titles[page]||"Easy Assess 33";
-  if(page==="classes") buildClassGrid();
+  if(page==="classes"){ const n=document.getElementById("navClasses"); if(n) n.classList.add("active"); }
+  if(page==="notes"){   const n=document.getElementById("navNotes");   if(n) n.classList.add("active"); }
+  if(page==="settings"){const n=document.getElementById("navSettings");if(n) n.classList.add("active"); }
+
+  // Back button: show on add and list sub-pages
+  const backBtn = document.getElementById("backBtn");
+  if(backBtn) backBtn.style.display = (page==="add"||page==="list") ? "inline-block" : "none";
+
+  // Top bar title
+  const titles = {
+    classes:  "Easy Assess 33",
+    add:      `Standard ${_currentClass} — Add Student`,
+    list:     `Standard ${_currentClass} — Students`,
+    notes:    "Notes",
+    settings: "Settings"
+  };
+  const titleEl = document.getElementById("topTitle");
+  if(titleEl) titleEl.textContent = titles[page] || "Easy Assess 33";
+
+  // Page-specific actions
+  if(page==="classes")  buildClassGrid();
   if(page==="settings") buildSettingsPageRows();
-  if(page==="notes") loadNotes();
+  if(page==="notes")    loadNotes();
+  if(page==="list")     render(); // always re-render list when switching to it
 }
 
 function goBack(){
@@ -725,8 +755,10 @@ window.switchPage=switchPage;window.goBack=goBack;
 function updateBadge(){
   const count = getList(_currentClass).length;
   const badge = document.getElementById("studentBadge");
-  badge.textContent = count;
-  badge.style.display = count > 0 ? "inline-block" : "none";
+  if(badge){
+    badge.textContent = count;
+    badge.style.display = count > 0 ? "inline-block" : "none";
+  }
 }
 
 // ── Overflow menu ─────────────────────────────────────────────────────────
@@ -819,28 +851,111 @@ function render(){
 }
 
 // ── Manual form ───────────────────────────────────────────────────────────
-const form=document.getElementById("studentForm");
-const editId=document.getElementById("editId");
-const submitBtn=document.getElementById("submitBtn");
-const cancelBtn=document.getElementById("cancelBtn");
-const formTitle=document.getElementById("formTitle");
+let form, editId, submitBtn, cancelBtn, formTitle;
 
-form.addEventListener("submit",e=>{
-  e.preventDefault();
-  const cls=currentClass(), subs=getSubjects(cls);
-  const data={name:document.getElementById("name").value.trim(),sex:document.getElementById("sex").value};
-  subs.forEach(sub=>{data[sub.key]=Number(document.getElementById(sub.key).value);});
-  const list=getList(cls);
-  if(editId.value){
-    const idx=list.findIndex(s=>s.id===editId.value);
-    if(idx!==-1){data.id=editId.value;list[idx]=data;}
-    saveList(cls,list);resetForm();
-  } else {
-    data.id=Date.now().toString();list.push(data);saveList(cls,list);
+document.addEventListener("DOMContentLoaded", ()=>{
+  form       = document.getElementById("studentForm");
+  editId     = document.getElementById("editId");
+  submitBtn  = document.getElementById("submitBtn");
+  cancelBtn  = document.getElementById("cancelBtn");
+  formTitle  = document.getElementById("formTitle");
+
+  if(form){
+    form.addEventListener("submit",e=>{
+      e.preventDefault();
+      const cls=currentClass(), subs=getSubjects(cls);
+      const data={name:document.getElementById("name").value.trim(),sex:document.getElementById("sex").value};
+      if(!data.name){alert("Please enter a student name.");return;}
+      if(!data.sex){alert("Please select sex.");return;}
+      subs.forEach(sub=>{data[sub.key]=Number(document.getElementById(sub.key).value)||0;});
+      const list=getList(cls);
+      if(editId && editId.value){
+        const idx=list.findIndex(s=>s.id===editId.value);
+        if(idx!==-1){data.id=editId.value;list[idx]=data;}
+        saveList(cls,list);
+        resetForm();
+      } else {
+        data.id=Date.now().toString();
+        list.push(data);
+        saveList(cls,list);
+        resetForm();
+      }
+      render();
+      buildClassGrid();
+      switchPage('list'); // go to RecyclerView after saving
+    });
   }
-  render();form.reset();buildSubjectFields();
-  buildClassGrid();
-  switchPage('list');
+
+  if(cancelBtn) cancelBtn.addEventListener("click", resetForm);
+
+  const deleteAllBtn = document.getElementById("deleteAllBtn");
+  if(deleteAllBtn) deleteAllBtn.addEventListener("click",()=>{
+    closeMenu();
+    const cls=currentClass();
+    if(getList(cls).length===0){alert("No students to delete.");return;}
+    if(!confirm(`Delete ALL students in Standard ${cls}?`)) return;
+    saveList(cls,[]);resetForm();render();buildClassGrid();
+  });
+
+  const searchEl = document.getElementById("search");
+  if(searchEl) searchEl.addEventListener("input", render);
+
+  const exportPdfBtn = document.getElementById("exportPdfBtn");
+  if(exportPdfBtn) exportPdfBtn.addEventListener("click",()=>{
+    closeMenu();
+    const cls=currentClass(),list=getList(cls);
+    if(list.length===0){alert("No students to export.");return;}
+    document.getElementById("pdfClass").value=`Standard ${cls}`;
+    document.getElementById("pdfModal").classList.add("open");
+    document.getElementById("pdfSchool").focus();
+  });
+
+  const exportXlsBtn = document.getElementById("exportXlsBtn");
+  if(exportXlsBtn) exportXlsBtn.addEventListener("click",()=>{
+    closeMenu();
+    const cls=currentClass(),subs=getSubjects(cls),list=getList(cls);
+    if(list.length===0){alert("No students to export.");return;}
+    const header=["#","Name","Sex",...subs.map(s=>s.label),"Total"];
+    const rows=list.sort((a,b)=>calcTotal(b,subs)-calcTotal(a,subs))
+      .map((s,i)=>[i+1,s.name,s.sex==="Male"?"M":"F",...subs.map(sub=>s[sub.key]||0),calcTotal(s,subs)]);
+    const wsData=[header,...rows];
+    const ws=XLSX.utils.aoa_to_sheet(wsData);
+    ws["!cols"]=[{wch:4},{wch:22},{wch:5},...subs.map(()=>({wch:14})),{wch:8}];
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,ws,`Standard ${cls}`);
+    XLSX.writeFile(wb,`standard-${cls}-scores.xlsx`);
+  });
+
+  const summaryBtn = document.getElementById("summaryBtn");
+  if(summaryBtn) summaryBtn.addEventListener("click",()=>{ closeMenu(); openSummary(); });
+
+  const filterBtn = document.getElementById("filterBtn");
+  if(filterBtn) filterBtn.addEventListener("click",()=>{ closeMenu(); openFilter(); });
+
+  const schoolReportsBtn = document.getElementById("schoolReportsBtn");
+  if(schoolReportsBtn) schoolReportsBtn.addEventListener("click",()=>{
+    closeMenu();
+    const cls=currentClass(),subs=getSubjects(cls);
+    const list=getList(cls).sort((a,b)=>calcTotal(b,subs)-calcTotal(a,subs));
+    if(list.length===0){alert("No students to generate reports for.");return;}
+    const school=prompt("Enter School Name (optional):","") || "";
+    if(school===null) return;
+    generateSchoolReportsPdf(cls,subs,list,school);
+  });
+
+  // Notes auto-save
+  const notesArea = document.getElementById("notesArea");
+  if(notesArea){
+    notesArea.addEventListener("input",()=>{
+      if(!_currentNoteKey) return;
+      clearTimeout(_noteSaveTimer);
+      _noteSaveTimer=setTimeout(()=>{
+        localStorage.setItem(_currentNoteKey,notesArea.value);
+        const saved=document.getElementById("notesSaved");
+        if(saved){saved.textContent="✅ Saved";setTimeout(()=>{saved.textContent="";},2000);}
+      },600);
+    });
+  }
 });
 
 function editStudent(id){
@@ -848,13 +963,14 @@ function editStudent(id){
   const s=getList(cls).find(s=>s.id===id);
   if(!s) return;
   setMode("manual");
+  switchPage('add');
   document.getElementById("name").value=s.name;
   document.getElementById("sex").value=s.sex;
   subs.forEach(sub=>{const el=document.getElementById(sub.key);if(el)el.value=s[sub.key]||0;});
-  editId.value=id;
-  formTitle.textContent="Edit student";
-  submitBtn.textContent="Update student";
-  cancelBtn.style.display="inline-block";
+  if(editId) editId.value=id;
+  if(formTitle) formTitle.textContent="Edit student";
+  if(submitBtn) submitBtn.textContent="Update student";
+  if(cancelBtn) cancelBtn.style.display="inline-block";
   window.scrollTo({top:0,behavior:"smooth"});
 }
 
@@ -863,31 +979,22 @@ function deleteStudent(id){
   const cls=currentClass();
   saveList(cls,getList(cls).filter(s=>s.id!==id));
   render();buildClassGrid();
-  if(editId.value===id) resetForm();
+  if(editId && editId.value===id) resetForm();
 }
 
 function resetForm(){
-  form.reset();editId.value="";
-  formTitle.textContent="Add student";submitBtn.textContent="Add student";
-  cancelBtn.style.display="none";buildSubjectFields();
+  if(form) form.reset();
+  if(editId) editId.value="";
+  if(formTitle) formTitle.textContent="Add student";
+  if(submitBtn) submitBtn.textContent="Add student";
+  if(cancelBtn) cancelBtn.style.display="none";
+  buildSubjectFields();
 }
-
-cancelBtn.addEventListener("click",resetForm);
-
-document.getElementById("deleteAllBtn").addEventListener("click",()=>{
-  closeMenu();
-  const cls=currentClass();
-  if(getList(cls).length===0){alert("No students to delete.");return;}
-  if(!confirm(`Delete ALL students in Standard ${cls}?`)) return;
-  saveList(cls,[]);resetForm();render();buildClassGrid();
-});
 
 function updateExcelBtn(){
   const xlsBtn = document.getElementById("exportXlsBtn");
   if(xlsBtn) xlsBtn.style.display = currentClass()>=3 ? "block" : "none";
 }
-
-document.getElementById("search").addEventListener("input",render);
 
 // ── Report ────────────────────────────────────────────────────────────────
 let activeReportId = null;
@@ -973,16 +1080,6 @@ function printReport(){
 document.getElementById("reportModal").addEventListener("click",function(e){if(e.target===this)closeReport();});
 
 // ── Export PDF ────────────────────────────────────────────────────────────
-document.getElementById("exportPdfBtn").addEventListener("click",()=>{
-  closeMenu();
-  const cls=currentClass(),list=getList(cls);
-  if(list.length===0){alert("No students to export.");return;}
-  // Pre-fill class field with current class name
-  document.getElementById("pdfClass").value=`Standard ${cls}`;
-  document.getElementById("pdfModal").classList.add("open");
-  document.getElementById("pdfSchool").focus();
-});
-
 function closePdfModal(){
   document.getElementById("pdfModal").classList.remove("open");
 }
@@ -1048,38 +1145,26 @@ document.getElementById("pdfModal").addEventListener("click",function(e){
 });
 window.closePdfModal=closePdfModal;window.generatePdf=generatePdf;
 
-// ── Export Excel ──────────────────────────────────────────────────────────
-document.getElementById("exportXlsBtn").addEventListener("click",()=>{
-  closeMenu();
-  const cls=currentClass(),subs=getSubjects(cls),list=getList(cls);
-  if(list.length===0){alert("No students to export.");return;}
-  const header=["#","Name","Sex",...subs.map(s=>s.label),"Total"];
-  const rows=list.sort((a,b)=>calcTotal(b,subs)-calcTotal(a,subs))
-    .map((s,i)=>[i+1,s.name,s.sex==="Male"?"M":"F",...subs.map(sub=>s[sub.key]||0),calcTotal(s,subs)]);
-  const wsData=[header,...rows];
-  const ws=XLSX.utils.aoa_to_sheet(wsData);
-  ws["!cols"]=[{wch:4},{wch:22},{wch:5},...subs.map(()=>({wch:14})),{wch:8}];
-  const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,`Standard ${cls}`);
-  XLSX.writeFile(wb,`standard-${cls}-scores.xlsx`);
-});
-
 // ── SCAN FEATURE ──────────────────────────────────────────────────────────
 let scannedImageBase64 = null;
 
-document.getElementById("scanFileInput").addEventListener("change", async function(){
-  const file = this.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = async function(e){
-    const dataUrl = e.target.result;
-    scannedImageBase64 = dataUrl.split(",")[1];
-    const preview = document.getElementById("scanPreview");
-    preview.src = dataUrl;
-    preview.style.display = "block";
-    await extractFromImage(scannedImageBase64);
-  };
-  reader.readAsDataURL(file);
+window.addEventListener("load", ()=>{
+  const scanInput = document.getElementById("scanFileInput");
+  if(scanInput){
+    scanInput.addEventListener("change", async function(){
+      const file = this.files[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = async function(e){
+        const dataUrl = e.target.result;
+        scannedImageBase64 = dataUrl.split(",")[1];
+        const preview = document.getElementById("scanPreview");
+        if(preview){ preview.src = dataUrl; preview.style.display = "block"; }
+        await extractFromImage(scannedImageBase64);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
 });
 
 async function extractFromImage(base64){
@@ -1282,19 +1367,8 @@ document.getElementById("settingsModal").addEventListener("click",function(e){
 });
 window.openSettings=openSettings;window.closeSettings=closeSettings;window.setTotal=setTotal;
 
-// ── School Reports (all students stitched into one PDF) ───────────────────
-document.getElementById("summaryBtn").addEventListener("click",()=>{ closeMenu(); openSummary(); });
-document.getElementById("filterBtn").addEventListener("click",()=>{ closeMenu(); openFilter(); });
-document.getElementById("schoolReportsBtn").addEventListener("click",()=>{
-  closeMenu();
-  const cls  = currentClass();
-  const subs = getSubjects(cls);
-  const list = getList(cls).sort((a,b)=>calcTotal(b,subs)-calcTotal(a,subs));
-  if(list.length===0){alert("No students to generate reports for.");return;}
-
-  const school = prompt("Enter School Name (optional):","") || "";
-  if(school===null) return; // cancelled
-
+// ── School Reports PDF ────────────────────────────────────────────────────
+function generateSchoolReportsPdf(cls, subs, list, school){
   const {jsPDF} = window.jspdf;
   const doc = new jsPDF();
   const maxTotal = getMaxTotal(subs);
@@ -1304,18 +1378,12 @@ document.getElementById("schoolReportsBtn").addEventListener("click",()=>{
   list.forEach((s, idx)=>{
     const total = calcTotal(s,subs);
     const {level,remark} = getLevelAndRemark(total,maxTotal);
-
-    // calculate position
     let pos=1;
     for(let i=0;i<idx;i++){
       if(calcTotal(list[i],subs)>total) pos=i+2;
     }
-
     if(idx>0) doc.addPage();
-
     let y=14;
-
-    // ── Header ──
     doc.setFillColor(15,110,86);
     doc.rect(0,0,pageW,22,"F");
     doc.setFontSize(14);doc.setFont(undefined,"bold");doc.setTextColor(255,255,255);
@@ -1325,70 +1393,43 @@ document.getElementById("schoolReportsBtn").addEventListener("click",()=>{
     doc.text(`Standard ${cls} — Academic Report`,pageW/2,school?21:16,{align:"center"});
     doc.setTextColor(0,0,0);
     y=28;
-
-    // ── Student info grid ──
     const infoItems=[
-      ["Name", s.name],
-      ["Sex",  s.sex==="Male"?"M":"F"],
-      ["Position", `${pos} of ${list.length}`],
-      ["Date", new Date().toLocaleDateString()],
-      ["Total Score", `${total} / ${maxTotal}`],
-      ["Level", String(level)],
-      ["Remarks", remark],
+      ["Name",s.name],["Sex",s.sex==="Male"?"M":"F"],
+      ["Position",`${pos} of ${list.length}`],["Date",new Date().toLocaleDateString()],
+      ["Total Score",`${total} / ${maxTotal}`],["Level",String(level)],["Remarks",remark],
     ];
-    const colW=pageW/2-14;
     infoItems.forEach((item,i)=>{
       const col=i%2===0?14:pageW/2+1;
-      const row=Math.floor(i/2);
-      const ry=y+row*9;
+      const ry=y+Math.floor(i/2)*9;
       doc.setFontSize(7.5);doc.setFont(undefined,"normal");doc.setTextColor(120,120,120);
       doc.text(item[0]+":",col,ry);
       doc.setFont(undefined,"bold");doc.setTextColor(0,0,0);
       doc.text(String(item[1]),col+22,ry);
     });
-    y += Math.ceil(infoItems.length/2)*9+4;
-
-    // Divider
-    doc.setDrawColor(200,200,200);
-    doc.line(14,y,pageW-14,y);
-    y+=5;
-
-    // ── Subject table ──
+    y+=Math.ceil(infoItems.length/2)*9+4;
+    doc.setDrawColor(200,200,200);doc.line(14,y,pageW-14,y);y+=5;
     const tableHead=[["Subject","Score","Grade"]];
     const tableBody=subs.map(sub=>{
       const score=s[sub.key]||0;
-      const g=getGradeScaled(score,sub.max);
-      return [sub.label, score, `Grade ${g}`];
+      return [sub.label,score,`Grade ${getGradeScaled(score,sub.max)}`];
     });
-    tableBody.push(["Total", total, ""]);
-
+    tableBody.push(["Total",total,""]);
     doc.autoTable({
-      head: tableHead,
-      body: tableBody,
-      startY: y,
+      head:tableHead,body:tableBody,startY:y,
       headStyles:{fillColor:[29,158,117],textColor:255,fontStyle:"bold",fontSize:8},
       bodyStyles:{fontSize:8,cellPadding:3},
       alternateRowStyles:{fillColor:[240,250,246]},
-      didParseCell: function(data){
-        // Bold the total row
-        if(data.row.index===tableBody.length-1){
-          data.cell.styles.fontStyle="bold";
-          data.cell.styles.fillColor=[224,244,238];
-        }
-      },
+      didParseCell:function(data){if(data.row.index===tableBody.length-1){data.cell.styles.fontStyle="bold";data.cell.styles.fillColor=[224,244,238];}},
       margin:{left:14,right:14},
     });
-
-    // ── Footer ──
     const footY=pageH-10;
     doc.setFontSize(7);doc.setTextColor(150,150,150);
     doc.text(`Developed by Juma Ali  |  +265 995 818 600  |  Page ${idx+1} of ${list.length}`,pageW/2,footY,{align:"center"});
     doc.setTextColor(0,0,0);
   });
-
   const fname=(school?school.replace(/\s+/g,"-")+"-":"")+"std"+cls+"-all-reports.pdf";
   doc.save(fname);
-});
+}
 
 // ── Share App ─────────────────────────────────────────────────────────────
 let qrGenerated = false;
@@ -1663,31 +1704,36 @@ updateExcelBtn();
 updateBadge();
 
 if("serviceWorker" in navigator){
-  window.addEventListener("load", async ()=>{
-    try {
-      const reg = await navigator.serviceWorker.register("./service-worker.js", {scope: "./"});
+  // Skip SW registration on Claude preview domain
+  const isPreview = window.location.hostname.includes("claudeusercontent.com");
+  if(!isPreview){
+    window.addEventListener("load", async ()=>{
+      try {
+        const reg = await navigator.serviceWorker.register("./service-worker.js", {scope: "./"});
 
-      const showUpdateToast = ()=>{
-        const toast = document.getElementById("updateToast");
-        toast.classList.add("show");
-        navigator.serviceWorker.addEventListener("controllerchange", ()=>{
-          toast.querySelector("span:last-of-type").textContent = "New features ready! Reloading...";
-          setTimeout(()=>{ window.location.reload(); }, 1500);
+        const showUpdateToast = ()=>{
+          const toast = document.getElementById("updateToast");
+          if(toast) toast.classList.add("show");
+          navigator.serviceWorker.addEventListener("controllerchange", ()=>{
+            const msg = toast ? toast.querySelector("span:last-of-type") : null;
+            if(msg) msg.textContent = "New features ready! Reloading...";
+            setTimeout(()=>{ window.location.reload(); }, 1500);
+          });
+        };
+
+        reg.addEventListener("updatefound", ()=>{
+          const newSW = reg.installing;
+          newSW.addEventListener("statechange", ()=>{
+            if(newSW.state === "installed" && navigator.serviceWorker.controller){
+              showUpdateToast();
+              newSW.postMessage({type:"SKIP_WAITING"});
+            }
+          });
         });
-      };
 
-      reg.addEventListener("updatefound", ()=>{
-        const newSW = reg.installing;
-        newSW.addEventListener("statechange", ()=>{
-          if(newSW.state === "installed" && navigator.serviceWorker.controller){
-            showUpdateToast();
-            newSW.postMessage({type:"SKIP_WAITING"});
-          }
-        });
-      });
-
-    } catch(e){ console.warn("SW registration failed:", e); }
-  });
+      } catch(e){ console.log("SW not available in this environment."); }
+    });
+  }
 }
 </script>
 <!-- Update toast -->
