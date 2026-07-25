@@ -1666,27 +1666,20 @@ updateBadge();
 if("serviceWorker" in navigator){
   window.addEventListener("load", async ()=>{
     try {
-      const reg = await navigator.serviceWorker.register("service-worker.js");
+      const reg = await navigator.serviceWorker.register("./service-worker.js", {scope: "./"});
 
-      // Detect a newly installing SW (fresh install or update)
       const showUpdateToast = ()=>{
         const toast = document.getElementById("updateToast");
         toast.classList.add("show");
-        // Once the new SW takes over, reload to apply changes
         navigator.serviceWorker.addEventListener("controllerchange", ()=>{
           toast.querySelector("span:last-of-type").textContent = "New features ready! Reloading...";
           setTimeout(()=>{ window.location.reload(); }, 1500);
         });
       };
 
-      if(reg.installing){
-        // Brand-new install — no toast needed (first load)
-      }
-
       reg.addEventListener("updatefound", ()=>{
         const newSW = reg.installing;
         newSW.addEventListener("statechange", ()=>{
-          // Only toast if there is already a controlling SW (i.e. this is an update, not first install)
           if(newSW.state === "installed" && navigator.serviceWorker.controller){
             showUpdateToast();
             newSW.postMessage({type:"SKIP_WAITING"});
@@ -1694,7 +1687,7 @@ if("serviceWorker" in navigator){
         });
       });
 
-    } catch(e){}
+    } catch(e){ console.warn("SW registration failed:", e); }
   });
 }
 </script>
