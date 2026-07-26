@@ -198,6 +198,23 @@
   .news-footer{display:flex;align-items:center;justify-content:space-between;}
   .news-date{font-size:0.75rem;color:var(--muted);}
   .news-read{font-size:0.82rem;font-weight:600;color:var(--primary);cursor:pointer;}
+  /* resources */
+  .res-tabs-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:1rem;}
+  .res-tabs{display:flex;gap:8px;padding-bottom:4px;white-space:nowrap;}
+  .res-tab{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;border:1.5px solid var(--border);background:#fff;font-size:0.8rem;font-weight:500;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all 0.15s;}
+  .res-tab.active{background:var(--grey-700,#3A3A38);color:#fff;border-color:var(--grey-700,#3A3A38);}
+  .res-tab.active .res-check{display:inline;}
+  .res-check{display:none;font-size:0.8rem;}
+  .res-card{background:#fff;border-radius:14px;padding:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:12px;box-shadow:0 1px 5px rgba(0,0,0,0.06);border:1px solid var(--border);}
+  .res-icon{width:56px;height:56px;border-radius:12px;background:#E8F5EE;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;}
+  .res-icon span{font-size:1.3rem;line-height:1;}
+  .res-icon .res-ext{font-size:0.6rem;font-weight:800;color:var(--primary-dark);letter-spacing:0.04em;margin-top:2px;}
+  .res-body{flex:1;min-width:0;}
+  .res-cat{font-size:0.7rem;font-weight:600;padding:2px 8px;border-radius:999px;background:#E1F5EE;color:var(--primary-dark);display:inline-block;margin-bottom:4px;}
+  .res-title{font-size:0.9rem;font-weight:700;color:var(--text);line-height:1.3;margin:0 0 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+  .res-meta{font-size:0.75rem;color:var(--muted);}
+  .res-dl{width:42px;height:42px;border-radius:50%;background:var(--primary-dark);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;color:#fff;font-size:1.1rem;transition:background 0.2s;}
+  .res-dl:hover{background:var(--primary);}
   /* floating add button */
   #fabAddStudent{position:fixed;bottom:78px;right:16px;z-index:400;background:var(--primary);color:#fff;border:none;border-radius:999px;padding:12px 20px;display:none;align-items:center;gap:8px;cursor:pointer;box-shadow:0 4px 16px rgba(29,158,117,0.4);font-family:inherit;transition:background 0.2s,transform 0.15s;}
   #fabAddStudent:hover{background:var(--primary-dark);transform:scale(1.04);}
@@ -419,15 +436,17 @@
 
 <!-- PAGE 5: RESOURCES -->
 <div class="page" id="pageResources">
-  <div class="card">
-    <p class="form-title">📚 Resources</p>
-    <p style="font-size:0.85rem;color:var(--muted);line-height:1.7;margin:0 0 1.5rem;">Teaching materials, curriculum guides and assessment tools.</p>
-    <div style="text-align:center;padding:2rem 0;">
-      <div style="font-size:3.5rem;margin-bottom:1rem;">🚧</div>
-      <p style="font-size:0.95rem;font-weight:600;color:var(--text);margin:0 0 0.4rem;">Coming Soon</p>
-      <p style="font-size:0.82rem;color:var(--muted);margin:0;">Resources library is under development.<br>Check back in a future update.</p>
-    </div>
+  <!-- Search bar -->
+  <div class="forum-search-wrap">
+    <span class="forum-search-icon">🔍</span>
+    <input type="text" id="resSearch" class="forum-search" placeholder="Search resources..." oninput="filterResources()">
   </div>
+  <!-- Category tabs (horizontal scroll) -->
+  <div class="res-tabs-wrap">
+    <div class="res-tabs" id="resTabs"></div>
+  </div>
+  <!-- Resource list -->
+  <div id="resourcesList"></div>
 </div>
 
 <!-- PAGE 6: NEWS -->
@@ -829,8 +848,9 @@ function switchPage(page){
   if(page==="classes")   buildClassGrid();
   if(page==="settings")  buildSettingsPageRows();
   if(page==="list")      render();
-  if(page==="forum")   { renderForum(); }
-  if(page==="news")    { renderNews(); sendAnnouncementNotifications(); }
+  if(page==="forum")     { renderForum(); }
+  if(page==="resources") { initResources(); }
+  if(page==="news")      { renderNews(); sendAnnouncementNotifications(); }
 }
 
 function goBack(){
@@ -1997,6 +2017,93 @@ function renderNews(){
       </div>`).join("");
   }
 }
+
+// ── Resources ─────────────────────────────────────────────────────────────
+const RES_CATEGORIES = ["All","Notes","Syllabuses","Teachers Guides","Learners Books","Past Papers","Schemes of Work"];
+
+const RESOURCES_DATA = [
+  {id:"r1", cat:"Notes",          ext:"PDF",  icon:"📄", title:"Standard 4 Mathematics — Fractions & Decimals Notes",          level:"Standard 4",  size:"1.2 MB",  url:"#"},
+  {id:"r2", cat:"Notes",          ext:"PDF",  icon:"📄", title:"English Language — Comprehension Passages for Standards 5–8",   level:"Standard 5–8", size:"2.8 MB", url:"#"},
+  {id:"r3", cat:"Teachers Guides",ext:"DOCX", icon:"📝", title:"Basic Science — Human Body Systems Lesson Plan",                level:"Standard 6",  size:"540 KB",  url:"#"},
+  {id:"r4", cat:"Learners Books", ext:"PPT",  icon:"📊", title:"Social Studies — Geography of Malawi Slideshow",               level:"Standard 7",  size:"3.5 MB",  url:"#"},
+  {id:"r5", cat:"Syllabuses",     ext:"PDF",  icon:"📄", title:"Primary School Mathematics Syllabus 2024",                     level:"All Standards",size:"890 KB",  url:"#"},
+  {id:"r6", cat:"Syllabuses",     ext:"PDF",  icon:"📄", title:"Chichewa Language Syllabus — Updated Edition",                 level:"All Standards",size:"760 KB",  url:"#"},
+  {id:"r7", cat:"Past Papers",    ext:"PDF",  icon:"📄", title:"Standard 8 PSLCE Past Papers 2023",                           level:"Standard 8",  size:"1.8 MB",  url:"#"},
+  {id:"r8", cat:"Past Papers",    ext:"PDF",  icon:"📄", title:"Standard 4 End of Year Examinations 2023",                    level:"Standard 4",  size:"1.1 MB",  url:"#"},
+  {id:"r9", cat:"Schemes of Work",ext:"DOCX", icon:"📝", title:"Standard 3 Term 1 Scheme of Work — All Subjects",             level:"Standard 3",  size:"320 KB",  url:"#"},
+  {id:"r10",cat:"Schemes of Work",ext:"DOCX", icon:"📝", title:"Standard 6 Term 2 Scheme of Work",                            level:"Standard 6",  size:"295 KB",  url:"#"},
+  {id:"r11",cat:"Teachers Guides",ext:"PDF",  icon:"📄", title:"Primary School Teacher's Guide — Classroom Management",       level:"All Standards",size:"2.1 MB",  url:"#"},
+  {id:"r12",cat:"Learners Books", ext:"PDF",  icon:"📄", title:"Standard 5 Science Learner's Book",                           level:"Standard 5",  size:"4.2 MB",  url:"#"},
+];
+
+const EXT_ICONS = { PDF:"📄", DOCX:"📝", PPT:"📊", XLS:"📊", DOC:"📝" };
+const EXT_COLORS= { PDF:"#E8F5EE", DOCX:"#EAF0FB", PPT:"#FEF3E8", XLS:"#E8F5EE" };
+
+let _resCat    = "All";
+let _resSearch = "";
+
+function initResources(){
+  const tabs = document.getElementById("resTabs");
+  if(!tabs) return;
+  tabs.innerHTML = RES_CATEGORIES.map(c=>`
+    <button class="res-tab ${c==="All"?"active":""}" onclick="setResCat('${c}')">
+      <span class="res-check">✓</span>${c}
+    </button>`).join("");
+  renderResources();
+}
+
+function setResCat(cat){
+  _resCat = cat;
+  document.querySelectorAll(".res-tab").forEach(b=>{
+    b.classList.toggle("active", b.textContent.trim().replace("✓","").trim()===cat);
+  });
+  renderResources();
+}
+
+function filterResources(){
+  _resSearch = (document.getElementById("resSearch")||{}).value||"";
+  renderResources();
+}
+
+function renderResources(){
+  const container = document.getElementById("resourcesList");
+  if(!container) return;
+  const q = _resSearch.toLowerCase();
+  let items = RESOURCES_DATA;
+  if(_resCat !== "All") items = items.filter(r=>r.cat===_resCat);
+  if(q) items = items.filter(r=>(r.title+r.cat+r.level).toLowerCase().includes(q));
+
+  if(items.length===0){
+    container.innerHTML=`<div style="text-align:center;padding:3rem;color:var(--muted);font-size:0.9rem;">No resources found.</div>`;
+    return;
+  }
+
+  container.innerHTML = items.map(r=>{
+    const bg = EXT_COLORS[r.ext] || "#E8F5EE";
+    return `
+    <div class="res-card">
+      <div class="res-icon" style="background:${bg}">
+        <span>${EXT_ICONS[r.ext]||"📄"}</span>
+        <span class="res-ext">${r.ext}</span>
+      </div>
+      <div class="res-body">
+        <span class="res-cat">${r.cat}</span>
+        <div class="res-title">${r.title}</div>
+        <div class="res-meta">${r.level} &nbsp;▪&nbsp; ${r.size}</div>
+      </div>
+      <button class="res-dl" onclick="downloadResource('${r.id}')" title="Download">⬇</button>
+    </div>`;
+  }).join("");
+}
+
+function downloadResource(id){
+  const r = RESOURCES_DATA.find(x=>x.id===id);
+  if(!r) return;
+  // In production these would be real URLs; for now show a message
+  alert(`📥 "${r.title}"\n\nDownload link will be available once real files are hosted. File size: ${r.size}`);
+}
+
+window.setResCat=setResCat;window.filterResources=filterResources;window.downloadResource=downloadResource;
 
 // ── Push Notifications ────────────────────────────────────────────────────
 const NOTIF_KEY = "ea33_notified_announcements";
