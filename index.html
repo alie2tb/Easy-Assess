@@ -159,6 +159,40 @@
   .notes-item-arrow{color:var(--muted);font-size:0.9rem;}
   .notes-list-wrap{background:#fff;border-radius:12px;border:1px solid var(--border);overflow:hidden;margin-bottom:1rem;}
   .notes-std-header{padding:8px 16px;background:var(--grey-100,#f5f6f8);font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid var(--border);}
+  /* forum & news */
+  .forum-search-wrap{display:flex;align-items:center;gap:10px;background:#f0f0ee;border-radius:999px;padding:10px 16px;margin:0.8rem 0 1rem;}
+  .forum-search-icon{font-size:1rem;color:var(--muted);}
+  .forum-search{background:none;border:none;outline:none;font-size:0.95rem;color:var(--text);width:100%;}
+  .forum-tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:1rem;}
+  .forum-tab{flex:1;background:none;border:none;padding:10px 4px;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;letter-spacing:0.04em;}
+  .forum-tab.active{color:var(--primary-dark);border-bottom-color:var(--primary);}
+  .forum-card{background:#fff;border-radius:14px;padding:1rem;margin-bottom:1rem;box-shadow:0 1px 6px rgba(0,0,0,0.07);border:1px solid var(--border);}
+  .forum-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.7rem;}
+  .forum-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;color:#fff;flex-shrink:0;}
+  .forum-author-wrap{display:flex;align-items:center;gap:10px;}
+  .forum-author{font-size:0.9rem;font-weight:600;color:var(--text);}
+  .forum-time{font-size:0.75rem;color:var(--muted);}
+  .forum-category{font-size:0.72rem;font-weight:600;padding:3px 10px;border-radius:999px;background:#E1F5EE;color:var(--primary-dark);}
+  .forum-title{font-size:0.98rem;font-weight:700;color:var(--text);margin:0 0 0.4rem;line-height:1.35;}
+  .forum-excerpt{font-size:0.82rem;color:var(--muted);line-height:1.5;margin:0 0 0.8rem;}
+  .forum-footer{display:flex;align-items:center;justify-content:space-between;padding-top:0.6rem;border-top:1px solid var(--border);}
+  .forum-stats{display:flex;gap:14px;font-size:0.8rem;color:var(--muted);}
+  .forum-view{font-size:0.82rem;font-weight:600;color:var(--primary);text-decoration:none;cursor:pointer;}
+  #fabNewPost{position:fixed;bottom:78px;right:16px;z-index:400;background:var(--primary);color:#fff;border:none;border-radius:999px;padding:12px 20px;display:none;align-items:center;gap:8px;cursor:pointer;box-shadow:0 4px 16px rgba(29,158,117,0.4);font-family:inherit;transition:background 0.2s;}
+  #fabNewPost:hover{background:var(--primary-dark);}
+  /* news */
+  .news-card{background:#fff;border-radius:14px;overflow:hidden;margin-bottom:1rem;box-shadow:0 1px 6px rgba(0,0,0,0.07);border:1px solid var(--border);}
+  .news-img{width:100%;height:160px;background:var(--primary-dark);display:flex;align-items:flex-end;padding:0.6rem;position:relative;}
+  .news-tag{font-size:0.72rem;font-weight:700;background:rgba(0,0,0,0.55);color:#fff;padding:3px 10px;border-radius:6px;}
+  .news-body{padding:1rem;}
+  .news-title{font-size:0.98rem;font-weight:700;color:var(--text);line-height:1.35;margin:0 0 0.5rem;}
+  .news-excerpt{font-size:0.82rem;color:var(--muted);line-height:1.5;margin:0 0 0.8rem;}
+  .news-footer{display:flex;align-items:center;justify-content:space-between;}
+  .news-date{font-size:0.75rem;color:var(--muted);}
+  .news-read{font-size:0.82rem;font-weight:600;color:var(--primary);cursor:pointer;}
+  /* floating add button */
+  #fabAddStudent{position:fixed;bottom:78px;right:16px;z-index:400;background:var(--primary);color:#fff;border:none;border-radius:999px;padding:12px 20px;display:none;align-items:center;gap:8px;cursor:pointer;box-shadow:0 4px 16px rgba(29,158,117,0.4);font-family:inherit;transition:background 0.2s,transform 0.15s;}
+  #fabAddStudent:hover{background:var(--primary-dark);transform:scale(1.04);}
   /* update toast */
   #updateToast{position:fixed;bottom:78px;left:50%;transform:translateX(-50%) translateY(20px);z-index:9000;background:#0F6E56;color:#fff;border-radius:12px;padding:12px 18px;font-size:0.88rem;font-weight:500;display:flex;align-items:center;gap:12px;box-shadow:0 6px 24px rgba(0,0,0,0.18);opacity:0;transition:opacity 0.4s ease,transform 0.4s ease;pointer-events:none;max-width:90vw;}
   #updateToast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;}
@@ -216,21 +250,6 @@
 <!-- PAGE 2: ADD STUDENT -->
 <div class="page" id="pageAdd">
 
-<!-- Settings modal -->
-<div id="settingsModal">
-  <div id="settingsBox">
-    <h3>⚙️ Subject Totals — Standard 1 to 3</h3>
-    <p class="sub-note">Set each subject maximum to 50 or 100. Cannot be changed while student data exists for that class.</p>
-    <div id="settingsRows"></div>
-    <div id="lockedNotice" class="locked-notice" style="display:none;">
-      ⚠️ Some classes have student data. Delete all students in that class first before changing its subject totals.
-    </div>
-    <div style="display:flex;justify-content:flex-end;margin-top:1.2rem;">
-      <button class="btn-secondary" style="padding:8px 20px;font-size:0.9rem;" onclick="closeSettings()">Close</button>
-    </div>
-  </div>
-</div>
-
 <!-- Input mode tabs -->
 <div class="mode-tabs">
   <button class="mode-tab active" id="tabManual" onclick="setMode('manual')">&#9998; Manual entry</button>
@@ -258,7 +277,7 @@
     </div>
     <div class="grid" id="subjectFields" style="margin-top:8px;"></div>
     <div class="actions">
-      <button type="submit" class="btn-primary" id="submitBtn">Add student</button>
+      <button type="submit" class="btn-primary" id="submitBtn" onclick="handleSave(event)">Save</button>
       <button type="button" class="btn-secondary" id="cancelBtn" style="display:none;">Cancel</button>
     </div>
   </form>
@@ -333,35 +352,85 @@
       </thead>
       <tbody id="studentTable"></tbody>
     </table>
-    <div class="empty" id="emptyMsg">No students added yet.</div>
+    <div class="empty" id="emptyMsg">NO DATA</div>
   </div>
 </div><!-- end students list card -->
 
+<!-- Floating Add Student button -->
+<button id="fabAddStudent" onclick="switchPage('add')" title="Add Student">
+  <span style="font-size:1.5rem;line-height:1;">+</span>
+  <span style="font-size:0.8rem;font-weight:600;">Add Student</span>
+</button>
+
 </div><!-- end pageList -->
 
-<!-- PAGE 4: NOTES -->
-<div class="page" id="pageNotes">
-
-  <!-- Notes subject list view -->
-  <div id="notesListView">
-    <div id="notesSubjectList"></div>
+<!-- PAGE 4: FORUM -->
+<div class="page" id="pageForum">
+  <!-- Search bar -->
+  <div class="forum-search-wrap">
+    <span class="forum-search-icon">🔍</span>
+    <input type="text" id="forumSearch" class="forum-search" placeholder="Search discussions..." oninput="filterForum()">
   </div>
+  <!-- Tabs -->
+  <div class="forum-tabs">
+    <button class="forum-tab active" id="ftLatest"  onclick="setForumTab('latest')">LATEST</button>
+    <button class="forum-tab"        id="ftPopular" onclick="setForumTab('popular')">POPULAR</button>
+    <button class="forum-tab"        id="ftMine"    onclick="setForumTab('mine')">MY POSTS</button>
+  </div>
+  <!-- Post list -->
+  <div id="forumList"></div>
+  <!-- FAB new post -->
+  <button id="fabNewPost" onclick="openNewPost()" title="New Post">
+    <span style="font-size:1.4rem;line-height:1;">✏️</span>
+    <span style="font-size:0.8rem;font-weight:600;">New Post</span>
+  </button>
+</div>
 
-  <!-- Notes editor view (hidden until a subject is tapped) -->
-  <div id="notesEditorView" style="display:none;">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:0.8rem;">
-      <button class="gear-btn" onclick="closeNoteEditor()" style="font-size:1.1rem;">&#8592;</button>
-      <p id="noteEditorTitle" style="margin:0;font-weight:600;font-size:1rem;"></p>
-    </div>
-    <div class="card" style="padding:0.8rem;">
-      <textarea id="notesArea" style="width:100%;min-height:340px;padding:10px;border:1px solid var(--border);border-radius:8px;font-size:0.95rem;font-family:inherit;resize:vertical;line-height:1.6;background:#fafafa;" placeholder="Write your notes here..."></textarea>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:0.5rem;">
-        <span style="font-size:0.75rem;color:var(--primary);" id="notesSaved"></span>
-        <button class="btn-danger btn-small" onclick="clearCurrentNote()">Clear</button>
-      </div>
+<!-- New post modal -->
+<div id="newPostModal" style="display:none;position:fixed;inset:0;z-index:8900;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;padding:1rem;">
+  <div style="background:#fff;border-radius:14px;width:100%;max-width:440px;padding:1.5rem;max-height:90vh;overflow-y:auto;">
+    <h3 style="margin:0 0 1rem;font-size:1rem;font-weight:600;">New Discussion Post</h3>
+    <label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">Your Name</label>
+    <input type="text" id="postAuthor" placeholder="e.g. Chisomo Banda" style="width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;margin-bottom:0.8rem;">
+    <label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">Category</label>
+    <select id="postCategory" style="width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;margin-bottom:0.8rem;">
+      <option>Mathematics</option><option>English</option><option>Chichewa</option>
+      <option>Science</option><option>Social Studies</option><option>Classroom Mgmt</option>
+      <option>Assessment</option><option>General</option>
+    </select>
+    <label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">Title</label>
+    <input type="text" id="postTitle" placeholder="Discussion title..." style="width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;margin-bottom:0.8rem;">
+    <label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">Body</label>
+    <textarea id="postBody" placeholder="Describe your question or topic..." style="width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;min-height:100px;font-family:inherit;margin-bottom:1rem;resize:vertical;"></textarea>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button class="btn-secondary" style="padding:9px 18px;" onclick="closeNewPost()">Cancel</button>
+      <button class="btn-primary"   style="padding:9px 18px;" onclick="submitPost()">Post</button>
     </div>
   </div>
+</div>
 
+<!-- PAGE 5: RESOURCES -->
+<div class="page" id="pageResources">
+  <div class="card">
+    <p class="form-title">📚 Resources</p>
+    <p style="font-size:0.85rem;color:var(--muted);line-height:1.7;margin:0 0 1.5rem;">Teaching materials, curriculum guides and assessment tools.</p>
+    <div style="text-align:center;padding:2rem 0;">
+      <div style="font-size:3.5rem;margin-bottom:1rem;">🚧</div>
+      <p style="font-size:0.95rem;font-weight:600;color:var(--text);margin:0 0 0.4rem;">Coming Soon</p>
+      <p style="font-size:0.82rem;color:var(--muted);margin:0;">Resources library is under development.<br>Check back in a future update.</p>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 6: NEWS -->
+<div class="page" id="pageNews">
+  <!-- Search bar -->
+  <div class="forum-search-wrap">
+    <span class="forum-search-icon">🔍</span>
+    <input type="text" id="newsSearch" class="forum-search" placeholder="Search news..." oninput="filterNews()">
+  </div>
+  <!-- News list -->
+  <div id="newsList"></div>
 </div>
 
 <!-- PAGE 5: SETTINGS -->
@@ -387,6 +456,21 @@
       📞 +265 995 818 600<br><br>
       A Progressive Web App for primary school teachers in Malawi. Works offline. Installable on any device.
     </p>
+  </div>
+</div>
+
+<!-- Settings modal -->
+<div id="settingsModal">
+  <div id="settingsBox">
+    <h3>⚙️ Subject Totals — Standard 1 to 3</h3>
+    <p class="sub-note">Set each subject maximum to 50 or 100. Cannot be changed while student data exists for that class.</p>
+    <div id="settingsRows"></div>
+    <div id="lockedNotice" class="locked-notice" style="display:none;">
+      ⚠️ Some classes have student data. Delete all students in that class first before changing its subject totals.
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:1.2rem;">
+      <button class="btn-secondary" style="padding:8px 20px;font-size:0.9rem;" onclick="closeSettings()">Close</button>
+    </div>
   </div>
 </div>
 
@@ -656,7 +740,7 @@ function buildClassGrid(){
       render();
       updateExcelBtn();
       updateBadge();
-      switchPage(getList(cls).length > 0 ? "list" : "add");
+      switchPage("list");
     });
     grid.appendChild(card);
   });
@@ -688,65 +772,59 @@ function buildClassGrid(){
       render();
       updateExcelBtn();
       updateBadge();
-      switchPage(getList(cls).length > 0 ? "list" : "add");
+      switchPage("list");
     });
     btnWrap.appendChild(b);
   });
 }
 
 function switchPage(page){
-  // All pages
-  const allPages = ["pageClasses","pageAdd","pageList","pageNotes","pageSettings"];
-  allPages.forEach(id=>{
-    const el = document.getElementById(id);
-    if(el) el.classList.remove("active");
-  });
+  const allPages = ["pageClasses","pageAdd","pageList","pageForum","pageResources","pageNews","pageSettings"];
+  allPages.forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove("active"); });
 
-  // Map page key to element id
   const pageMap = {
-    classes:  "pageClasses",
-    add:      "pageAdd",
-    list:     "pageList",
-    notes:    "pageNotes",
-    settings: "pageSettings"
+    classes:"pageClasses", add:"pageAdd", list:"pageList",
+    forum:"pageForum", resources:"pageResources", news:"pageNews", settings:"pageSettings"
   };
   const target = document.getElementById(pageMap[page]);
   if(target) target.classList.add("active");
 
-  // Bottom nav highlight — only 3 nav items (classes, notes, settings)
-  ["navClasses","navNotes","navSettings"].forEach(id=>{
-    const el = document.getElementById(id);
-    if(el) el.classList.remove("active");
+  const navMap = {
+    classes:"navClasses", forum:"navForum", resources:"navResources",
+    news:"navNews", settings:"navSettings"
+  };
+  ["navClasses","navForum","navResources","navNews","navSettings"].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.classList.remove("active");
   });
-  if(page==="classes"){ const n=document.getElementById("navClasses"); if(n) n.classList.add("active"); }
-  if(page==="notes"){   const n=document.getElementById("navNotes");   if(n) n.classList.add("active"); }
-  if(page==="settings"){const n=document.getElementById("navSettings");if(n) n.classList.add("active"); }
+  const activeNav = navMap[page];
+  if(activeNav){ const el=document.getElementById(activeNav); if(el) el.classList.add("active"); }
 
-  // Back button: show on add and list sub-pages
   const backBtn = document.getElementById("backBtn");
-  if(backBtn) backBtn.style.display = (page==="add"||page==="list") ? "inline-block" : "none";
+  if(backBtn) backBtn.style.display=(page==="add"||page==="list")?"inline-block":"none";
 
-  // Top bar title
   const titles = {
-    classes:  "Easy Assess 33",
-    add:      `Standard ${_currentClass} — Add Student`,
-    list:     `Standard ${_currentClass} — Students`,
-    notes:    "Notes",
-    settings: "Settings"
+    classes:"Easy Assess 33", add:`Standard ${_currentClass} — Add Student`,
+    list:`Standard ${_currentClass} — Students`,
+    forum:"Forum", resources:"Resources", news:"News", settings:"Settings"
   };
   const titleEl = document.getElementById("topTitle");
-  if(titleEl) titleEl.textContent = titles[page] || "Easy Assess 33";
+  if(titleEl) titleEl.textContent = titles[page]||"Easy Assess 33";
 
-  // Page-specific actions
-  if(page==="classes")  buildClassGrid();
-  if(page==="settings") buildSettingsPageRows();
-  if(page==="notes")    loadNotes();
-  if(page==="list")     render(); // always re-render list when switching to it
+  const fab = document.getElementById("fabAddStudent");
+  if(fab) fab.style.display = page==="list" ? "flex" : "none";
+  const fabPost = document.getElementById("fabNewPost");
+  if(fabPost) fabPost.style.display = page==="forum" ? "flex" : "none";
+
+  if(page==="classes")   buildClassGrid();
+  if(page==="settings")  buildSettingsPageRows();
+  if(page==="list")      render();
+  if(page==="forum")   { renderForum(); }
+  if(page==="news")    { renderNews(); }
 }
 
 function goBack(){
-  const addActive  = document.getElementById("pageAdd").classList.contains("active");
   const listActive = document.getElementById("pageList").classList.contains("active");
+  const addActive  = document.getElementById("pageAdd").classList.contains("active");
   if(listActive) switchPage("add");
   else if(addActive) switchPage("classes");
 }
@@ -849,6 +927,47 @@ function render(){
     tbody.appendChild(tr);
   });
 }
+
+// ── Handle Save (global, called directly from button onclick) ─────────────
+function handleSave(e){
+  if(e) e.preventDefault();
+  const cls  = currentClass();
+  const subs = getSubjects(cls);
+  const nameEl = document.getElementById("name");
+  const sexEl  = document.getElementById("sex");
+  if(!nameEl || !nameEl.value.trim()){ alert("Please enter a student name."); return; }
+  if(!sexEl  || !sexEl.value)        { alert("Please select sex.");           return; }
+  const data = { name: nameEl.value.trim(), sex: sexEl.value };
+  subs.forEach(sub=>{
+    const el = document.getElementById(sub.key);
+    data[sub.key] = el ? Number(el.value)||0 : 0;
+  });
+  const list   = getList(cls);
+  const eId    = document.getElementById("editId");
+  if(eId && eId.value){
+    const idx = list.findIndex(s=>s.id===eId.value);
+    if(idx!==-1){ data.id=eId.value; list[idx]=data; }
+    saveList(cls, list);
+  } else {
+    data.id = Date.now().toString();
+    list.push(data);
+    saveList(cls, list);
+  }
+  // Reset form fields manually
+  if(nameEl) nameEl.value="";
+  if(sexEl)  sexEl.value="";
+  subs.forEach(sub=>{ const el=document.getElementById(sub.key); if(el) el.value=""; });
+  if(eId) eId.value="";
+  const ft = document.getElementById("formTitle"); if(ft) ft.textContent="Add student";
+  const sb = document.getElementById("submitBtn"); if(sb) sb.textContent="Save";
+  const cb = document.getElementById("cancelBtn"); if(cb) cb.style.display="none";
+  buildSubjectFields();
+  render();
+  buildClassGrid();
+  updateBadge();
+  switchPage('list');
+}
+window.handleSave = handleSave;
 
 // ── Manual form ───────────────────────────────────────────────────────────
 let form, editId, submitBtn, cancelBtn, formTitle;
@@ -969,7 +1088,7 @@ function editStudent(id){
   subs.forEach(sub=>{const el=document.getElementById(sub.key);if(el)el.value=s[sub.key]||0;});
   if(editId) editId.value=id;
   if(formTitle) formTitle.textContent="Edit student";
-  if(submitBtn) submitBtn.textContent="Update student";
+  if(submitBtn) submitBtn.textContent="Update";
   if(cancelBtn) cancelBtn.style.display="inline-block";
   window.scrollTo({top:0,behavior:"smooth"});
 }
@@ -986,7 +1105,7 @@ function resetForm(){
   if(form) form.reset();
   if(editId) editId.value="";
   if(formTitle) formTitle.textContent="Add student";
-  if(submitBtn) submitBtn.textContent="Add student";
+  if(submitBtn) submitBtn.textContent="Save";
   if(cancelBtn) cancelBtn.style.display="none";
   buildSubjectFields();
 }
@@ -1696,6 +1815,170 @@ function buildSettingsPageRows(){
   document.getElementById("lockedNoticePage").style.display=anyLocked?"block":"none";
 }
 
+// ── Forum ─────────────────────────────────────────────────────────────────
+const FORUM_KEY = "ea33_forum_posts";
+const AVATAR_COLORS = ["#1D9E75","#D85A30","#0C447C","#BA7517","#72243E","#085041","#633806"];
+
+function getForumPosts(){ return JSON.parse(localStorage.getItem(FORUM_KEY)||"[]"); }
+function saveForumPosts(posts){ localStorage.setItem(FORUM_KEY, JSON.stringify(posts)); }
+
+function avatarColor(name){
+  let h=0; for(let c of name) h+=c.charCodeAt(0);
+  return AVATAR_COLORS[h % AVATAR_COLORS.length];
+}
+function initials(name){
+  const parts=name.trim().split(" ");
+  return (parts[0][0]+(parts[1]?parts[1][0]:"")).toUpperCase();
+}
+function timeAgo(ts){
+  const d=Math.floor((Date.now()-ts)/60000);
+  if(d<1) return "Just now";
+  if(d<60) return d+" min ago";
+  if(d<1440) return Math.floor(d/60)+" hr"+(Math.floor(d/60)>1?"s":"")+" ago";
+  return Math.floor(d/1440)+" day"+(Math.floor(d/1440)>1?"s":"")+" ago";
+}
+
+let _forumTab = "latest";
+let _forumSearch = "";
+
+function setForumTab(tab){
+  _forumTab = tab;
+  ["ftLatest","ftPopular","ftMine"].forEach(id=>{
+    const el=document.getElementById(id); if(el) el.classList.remove("active");
+  });
+  const map={latest:"ftLatest",popular:"ftPopular",mine:"ftMine"};
+  const el=document.getElementById(map[tab]); if(el) el.classList.add("active");
+  renderForum();
+}
+
+function filterForum(){
+  _forumSearch = (document.getElementById("forumSearch")||{}).value||"";
+  renderForum();
+}
+
+function renderForum(){
+  const container = document.getElementById("forumList");
+  if(!container) return;
+  let posts = getForumPosts();
+  const q = _forumSearch.toLowerCase();
+  if(q) posts = posts.filter(p=>(p.title+p.body+p.author).toLowerCase().includes(q));
+  if(_forumTab==="popular") posts = [...posts].sort((a,b)=>(b.likes||0)-(a.likes||0));
+  else if(_forumTab==="mine") posts = posts.filter(p=>p.isOwn);
+  else posts = [...posts].sort((a,b)=>b.ts-a.ts);
+
+  if(posts.length===0){
+    container.innerHTML=`<div style="text-align:center;padding:3rem 1rem;color:var(--muted);font-size:0.9rem;">${_forumTab==="mine"?"You haven't posted yet.":"No discussions found."}</div>`;
+    return;
+  }
+  container.innerHTML = posts.map(p=>`
+    <div class="forum-card">
+      <div class="forum-card-header">
+        <div class="forum-author-wrap">
+          <div class="forum-avatar" style="background:${avatarColor(p.author)}">${initials(p.author)}</div>
+          <div>
+            <div class="forum-author">${escapeHtml(p.author)}</div>
+            <div class="forum-time">${timeAgo(p.ts)}</div>
+          </div>
+        </div>
+        <span class="forum-category">${escapeHtml(p.category)}</span>
+      </div>
+      <div class="forum-title">${escapeHtml(p.title)}</div>
+      <div class="forum-excerpt">${escapeHtml(p.body.length>120?p.body.slice(0,120)+"...":p.body)}</div>
+      <div class="forum-footer">
+        <div class="forum-stats">
+          <span>👍 ${p.likes||0}</span>
+          <span>↩ ${p.replies||0} repl${p.replies===1?"y":"ies"}</span>
+        </div>
+        <span class="forum-view" onclick="likePost('${p.id}')">Like &nbsp;·&nbsp; View →</span>
+      </div>
+    </div>`).join("");
+}
+
+function likePost(id){
+  const posts=getForumPosts();
+  const p=posts.find(x=>x.id===id);
+  if(p){ p.likes=(p.likes||0)+1; saveForumPosts(posts); renderForum(); }
+}
+
+function openNewPost(){
+  document.getElementById("newPostModal").style.display="flex";
+}
+function closeNewPost(){
+  document.getElementById("newPostModal").style.display="none";
+}
+function submitPost(){
+  const author   = (document.getElementById("postAuthor").value||"").trim();
+  const category = document.getElementById("postCategory").value;
+  const title    = (document.getElementById("postTitle").value||"").trim();
+  const body     = (document.getElementById("postBody").value||"").trim();
+  if(!author){alert("Please enter your name.");return;}
+  if(!title) {alert("Please enter a title.");return;}
+  if(!body)  {alert("Please write something.");return;}
+  const posts=getForumPosts();
+  posts.unshift({id:Date.now().toString(),author,category,title,body,ts:Date.now(),likes:0,replies:0,isOwn:true});
+  saveForumPosts(posts);
+  document.getElementById("postAuthor").value="";
+  document.getElementById("postTitle").value="";
+  document.getElementById("postBody").value="";
+  closeNewPost();
+  setForumTab("latest");
+  renderForum();
+}
+window.setForumTab=setForumTab;window.filterForum=filterForum;
+window.openNewPost=openNewPost;window.closeNewPost=closeNewPost;window.submitPost=submitPost;
+window.likePost=likePost;
+
+// Seed sample posts if empty
+(function seedForum(){
+  if(getForumPosts().length>0) return;
+  const samples=[
+    {id:"s1",author:"Chisomo Banda",category:"Mathematics",title:"How do I teach fractions to Standard 4 pupils effectively?",body:"I have been struggling to make fractions engaging. Any activities or visual aids that have worked for you?",ts:Date.now()-7200000,likes:14,replies:7,isOwn:false},
+    {id:"s2",author:"Yankho Mwale",category:"Classroom Mgmt",title:"Best practices for managing a large class of 60+ students",body:"Our school has very large classes. I would like to hear strategies that other teachers use to keep learners engaged.",ts:Date.now()-18000000,likes:22,replies:12,isOwn:false},
+    {id:"s3",author:"Agnes Phiri",category:"Assessment",title:"How often should we give continuous assessment tests?",body:"I am trying to plan my assessment schedule for the term. What frequency works best for Standard 3?",ts:Date.now()-86400000,likes:9,replies:4,isOwn:false},
+  ];
+  saveForumPosts(samples);
+})();
+
+// ── News ──────────────────────────────────────────────────────────────────
+const NEWS_DATA = [
+  {id:"n1",tag:"Policy",title:"Ministry of Education Launches New Curriculum Framework for 2025",excerpt:"The Malawi Ministry of Education has unveiled a revised national curriculum designed to improve learning outcomes across all primary and secondary schools.",date:"Apr 18, 2025",url:"#"},
+  {id:"n2",tag:"Assessment",title:"National Primary School Assessment Results Released",excerpt:"The results of the 2024 national primary school assessments have been published, showing improvements in literacy across the southern region.",date:"Mar 5, 2025",url:"#"},
+  {id:"n3",tag:"Training",title:"Government to Train 5,000 Primary Teachers in New Methods",excerpt:"A new professional development programme targeting primary school teachers in rural Malawi will be rolled out starting this term.",date:"Feb 20, 2025",url:"#"},
+  {id:"n4",tag:"Technology",title:"Digital Tools in Malawi Classrooms — A Growing Trend",excerpt:"Schools across Malawi are increasingly adopting mobile-first tools to assist with record keeping and student assessment.",date:"Jan 14, 2025",url:"#"},
+];
+let _newsSearch="";
+
+function filterNews(){
+  _newsSearch=(document.getElementById("newsSearch")||{}).value||"";
+  renderNews();
+}
+
+function renderNews(){
+  const container=document.getElementById("newsList");
+  if(!container) return;
+  const q=_newsSearch.toLowerCase();
+  const items=q?NEWS_DATA.filter(n=>(n.title+n.excerpt+n.tag).toLowerCase().includes(q)):NEWS_DATA;
+  if(items.length===0){
+    container.innerHTML=`<div style="text-align:center;padding:3rem;color:var(--muted);">No news found.</div>`;
+    return;
+  }
+  container.innerHTML=items.map(n=>`
+    <div class="news-card">
+      <div class="news-img">
+        <span class="news-tag">${n.tag}</span>
+      </div>
+      <div class="news-body">
+        <div class="news-title">${n.title}</div>
+        <div class="news-excerpt">${n.excerpt}</div>
+        <div class="news-footer">
+          <span class="news-date">📅 ${n.date}</span>
+          <span class="news-read">Read More →</span>
+        </div>
+      </div>
+    </div>`).join("");
+}
+window.filterNews=filterNews;
+
 // ── Init ──────────────────────────────────────────────────────────────────
 buildSubjectFields();
 buildClassGrid();
@@ -1751,9 +2034,21 @@ if("serviceWorker" in navigator){
     </button>
   </div>
   <div class="nav-item-wrap">
-    <button class="nav-item" id="navNotes" onclick="switchPage('notes')">
-      <span class="nav-icon">📝</span>
-      <span>Notes</span>
+    <button class="nav-item" id="navForum" onclick="switchPage('forum')">
+      <span class="nav-icon">💬</span>
+      <span>Forum</span>
+    </button>
+  </div>
+  <div class="nav-item-wrap">
+    <button class="nav-item" id="navResources" onclick="switchPage('resources')">
+      <span class="nav-icon">📚</span>
+      <span>Resources</span>
+    </button>
+  </div>
+  <div class="nav-item-wrap">
+    <button class="nav-item" id="navNews" onclick="switchPage('news')">
+      <span class="nav-icon">📰</span>
+      <span>News</span>
     </button>
   </div>
   <div class="nav-item-wrap">
