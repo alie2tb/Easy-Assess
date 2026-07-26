@@ -181,11 +181,19 @@
   #fabNewPost{position:fixed;bottom:78px;right:16px;z-index:400;background:var(--primary);color:#fff;border:none;border-radius:999px;padding:12px 20px;display:none;align-items:center;gap:8px;cursor:pointer;box-shadow:0 4px 16px rgba(29,158,117,0.4);font-family:inherit;transition:background 0.2s;}
   #fabNewPost:hover{background:var(--primary-dark);}
   /* news */
+  .news-section-title{font-size:1.1rem;font-weight:700;color:var(--text);margin:0 0 0.8rem;}
+  .news-see-all{font-size:0.88rem;font-weight:600;color:var(--primary);cursor:pointer;}
+  .announcement-card{background:#fff;border-radius:12px;padding:1rem 1rem 1rem 0;margin-bottom:0.8rem;display:flex;align-items:flex-start;gap:0;box-shadow:0 1px 4px rgba(0,0,0,0.06);border:1px solid var(--border);overflow:hidden;}
+  .announcement-bar{width:4px;min-height:100%;background:#BA7517;border-radius:0;flex-shrink:0;align-self:stretch;margin-right:12px;}
+  .announcement-body{flex:1;}
+  .announcement-title{font-size:0.92rem;font-weight:700;color:var(--text);line-height:1.35;margin:0 0 0.3rem;}
+  .announcement-date{font-size:0.78rem;color:var(--muted);}
+  .announcement-arrow{color:var(--muted);font-size:1rem;margin-left:8px;align-self:center;}
   .news-card{background:#fff;border-radius:14px;overflow:hidden;margin-bottom:1rem;box-shadow:0 1px 6px rgba(0,0,0,0.07);border:1px solid var(--border);}
-  .news-img{width:100%;height:160px;background:var(--primary-dark);display:flex;align-items:flex-end;padding:0.6rem;position:relative;}
-  .news-tag{font-size:0.72rem;font-weight:700;background:rgba(0,0,0,0.55);color:#fff;padding:3px 10px;border-radius:6px;}
+  .news-img{width:100%;height:180px;background:var(--primary-dark);display:flex;align-items:flex-end;padding:0.7rem;position:relative;}
+  .news-tag{font-size:0.72rem;font-weight:700;background:rgba(0,0,0,0.55);color:#fff;padding:4px 12px;border-radius:8px;}
   .news-body{padding:1rem;}
-  .news-title{font-size:0.98rem;font-weight:700;color:var(--text);line-height:1.35;margin:0 0 0.5rem;}
+  .news-title{font-size:1rem;font-weight:700;color:var(--text);line-height:1.35;margin:0 0 0.5rem;}
   .news-excerpt{font-size:0.82rem;color:var(--muted);line-height:1.5;margin:0 0 0.8rem;}
   .news-footer{display:flex;align-items:center;justify-content:space-between;}
   .news-date{font-size:0.75rem;color:var(--muted);}
@@ -424,12 +432,15 @@
 
 <!-- PAGE 6: NEWS -->
 <div class="page" id="pageNews">
-  <!-- Search bar -->
-  <div class="forum-search-wrap">
-    <span class="forum-search-icon">🔍</span>
-    <input type="text" id="newsSearch" class="forum-search" placeholder="Search news..." oninput="filterNews()">
+  <!-- Announcements section -->
+  <div class="news-section-title">Announcements</div>
+  <div id="announcementsList"></div>
+
+  <!-- Latest News section -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin:1.2rem 0 0.8rem;">
+    <div class="news-section-title" style="margin:0;">Latest News</div>
+    <span class="news-see-all" onclick="switchPage('news')">See All</span>
   </div>
-  <!-- News list -->
   <div id="newsList"></div>
 </div>
 
@@ -819,7 +830,7 @@ function switchPage(page){
   if(page==="settings")  buildSettingsPageRows();
   if(page==="list")      render();
   if(page==="forum")   { renderForum(); }
-  if(page==="news")    { renderNews(); }
+  if(page==="news")    { renderNews(); sendAnnouncementNotifications(); }
 }
 
 function goBack(){
@@ -1940,44 +1951,127 @@ window.likePost=likePost;
 })();
 
 // ── News ──────────────────────────────────────────────────────────────────
-const NEWS_DATA = [
-  {id:"n1",tag:"Policy",title:"Ministry of Education Launches New Curriculum Framework for 2025",excerpt:"The Malawi Ministry of Education has unveiled a revised national curriculum designed to improve learning outcomes across all primary and secondary schools.",date:"Apr 18, 2025",url:"#"},
-  {id:"n2",tag:"Assessment",title:"National Primary School Assessment Results Released",excerpt:"The results of the 2024 national primary school assessments have been published, showing improvements in literacy across the southern region.",date:"Mar 5, 2025",url:"#"},
-  {id:"n3",tag:"Training",title:"Government to Train 5,000 Primary Teachers in New Methods",excerpt:"A new professional development programme targeting primary school teachers in rural Malawi will be rolled out starting this term.",date:"Feb 20, 2025",url:"#"},
-  {id:"n4",tag:"Technology",title:"Digital Tools in Malawi Classrooms — A Growing Trend",excerpt:"Schools across Malawi are increasingly adopting mobile-first tools to assist with record keeping and student assessment.",date:"Jan 14, 2025",url:"#"},
+const ANNOUNCEMENTS_DATA = [
+  {id:"a1",title:"MSCE 2025 Registration Deadline — April 30th",date:"Apr 20, 2025"},
+  {id:"a2",title:"Teachers' In-Service Training: May 12–16, Lilongwe",date:"Apr 18, 2025"},
+  {id:"a3",title:"New CPD Module Available: Inclusive Education",date:"Apr 15, 2025"},
 ];
-let _newsSearch="";
 
-function filterNews(){
-  _newsSearch=(document.getElementById("newsSearch")||{}).value||"";
-  renderNews();
-}
+const NEWS_DATA = [
+  {id:"n1",tag:"Policy",title:"Ministry of Education Launches New Curriculum Framework for 2025",excerpt:"The Malawi Ministry of Education has unveiled a revised national curriculum designed to improve learning outcomes across all primary and secondary schools.",date:"Apr 18, 2025"},
+  {id:"n2",tag:"Assessment",title:"National Primary School Assessment Results Released",excerpt:"The results of the 2024 national primary school assessments have been published, showing improvements in literacy across the southern region.",date:"Mar 5, 2025"},
+  {id:"n3",tag:"Training",title:"Government to Train 5,000 Primary Teachers in New Methods",excerpt:"A new professional development programme targeting primary school teachers in rural Malawi will be rolled out starting this term.",date:"Feb 20, 2025"},
+  {id:"n4",tag:"Technology",title:"Digital Tools in Malawi Classrooms — A Growing Trend",excerpt:"Schools across Malawi are increasingly adopting mobile-first tools to assist with record keeping and student assessment.",date:"Jan 14, 2025"},
+];
 
 function renderNews(){
-  const container=document.getElementById("newsList");
-  if(!container) return;
-  const q=_newsSearch.toLowerCase();
-  const items=q?NEWS_DATA.filter(n=>(n.title+n.excerpt+n.tag).toLowerCase().includes(q)):NEWS_DATA;
-  if(items.length===0){
-    container.innerHTML=`<div style="text-align:center;padding:3rem;color:var(--muted);">No news found.</div>`;
-    return;
-  }
-  container.innerHTML=items.map(n=>`
-    <div class="news-card">
-      <div class="news-img">
-        <span class="news-tag">${n.tag}</span>
-      </div>
-      <div class="news-body">
-        <div class="news-title">${n.title}</div>
-        <div class="news-excerpt">${n.excerpt}</div>
-        <div class="news-footer">
-          <span class="news-date">📅 ${n.date}</span>
-          <span class="news-read">Read More →</span>
+  // Announcements
+  const aContainer = document.getElementById("announcementsList");
+  if(aContainer){
+    aContainer.innerHTML = ANNOUNCEMENTS_DATA.map(a=>`
+      <div class="announcement-card">
+        <div class="announcement-bar"></div>
+        <div class="announcement-body">
+          <div class="announcement-title">${a.title}</div>
+          <div class="announcement-date">${a.date}</div>
         </div>
-      </div>
-    </div>`).join("");
+        <span class="announcement-arrow">›</span>
+      </div>`).join("");
+  }
+  // Latest News cards
+  const nContainer = document.getElementById("newsList");
+  if(nContainer){
+    nContainer.innerHTML = NEWS_DATA.map(n=>`
+      <div class="news-card">
+        <div class="news-img">
+          <span class="news-tag">${n.tag}</span>
+        </div>
+        <div class="news-body">
+          <div class="news-title">${n.title}</div>
+          <div class="news-excerpt">${n.excerpt}</div>
+          <div class="news-footer">
+            <span class="news-date">📅 ${n.date}</span>
+            <span class="news-read">Read More →</span>
+          </div>
+        </div>
+      </div>`).join("");
+  }
 }
-window.filterNews=filterNews;
+
+// ── Push Notifications ────────────────────────────────────────────────────
+const NOTIF_KEY = "ea33_notified_announcements";
+
+async function requestNotificationPermission(){
+  if(!("Notification" in window)) return false;
+  if(Notification.permission === "granted") return true;
+  if(Notification.permission === "denied")  return false;
+  const result = await Notification.requestPermission();
+  return result === "granted";
+}
+
+async function sendAnnouncementNotifications(){
+  if(!("serviceWorker" in navigator)) return;
+  const reg = await navigator.serviceWorker.ready.catch(()=>null);
+  if(!reg) return;
+  const granted = await requestNotificationPermission();
+  if(!granted) return;
+
+  // Track which announcements we've already notified about
+  const notified = JSON.parse(localStorage.getItem(NOTIF_KEY)||"[]");
+  const fresh    = ANNOUNCEMENTS_DATA.filter(a => !notified.includes(a.id));
+  if(fresh.length === 0) return;
+
+  // Fire one notification per new announcement (batched with a small delay)
+  fresh.forEach((a, i) => {
+    setTimeout(() => {
+      reg.active && reg.active.postMessage({
+        type:  "SHOW_NOTIFICATION",
+        title: "📢 Easy Assess 33 — Announcement",
+        body:   a.title,
+        tag:   "ann-" + a.id,
+      });
+    }, i * 1200);
+  });
+
+  // Mark them all as notified
+  const updated = [...new Set([...notified, ...fresh.map(a=>a.id)])];
+  localStorage.setItem(NOTIF_KEY, JSON.stringify(updated));
+}
+
+// Show a notification banner inside the app to request permission
+function showNotifBanner(){
+  if(!("Notification" in window)) return;
+  if(Notification.permission !== "default") return;
+  const banner = document.getElementById("notifBanner");
+  if(banner) banner.style.display = "flex";
+}
+
+function dismissNotifBanner(){
+  const banner = document.getElementById("notifBanner");
+  if(banner) banner.style.display = "none";
+  localStorage.setItem("ea33_notif_dismissed","1");
+}
+
+async function enableNotifications(){
+  dismissNotifBanner();
+  const granted = await requestNotificationPermission();
+  if(granted){
+    sendAnnouncementNotifications();
+    // Show a thank-you notification immediately
+    const reg = await navigator.serviceWorker.ready.catch(()=>null);
+    if(reg && reg.active){
+      reg.active.postMessage({
+        type:"SHOW_NOTIFICATION",
+        title:"Easy Assess 33 — Notifications On ✅",
+        body:"You'll now receive announcement notifications.",
+        tag:"ea33-welcome",
+      });
+    }
+  }
+}
+
+window.dismissNotifBanner = dismissNotifBanner;
+window.enableNotifications = enableNotifications;
 
 // ── Init ──────────────────────────────────────────────────────────────────
 buildSubjectFields();
@@ -1985,6 +2079,10 @@ buildClassGrid();
 render();
 updateExcelBtn();
 updateBadge();
+
+// Notifications — show banner if not yet dismissed, send new announcements if already permitted
+if(!localStorage.getItem("ea33_notif_dismissed")) showNotifBanner();
+if(Notification.permission === "granted") sendAnnouncementNotifications();
 
 if("serviceWorker" in navigator){
   // Skip SW registration on Claude preview domain
@@ -2019,6 +2117,16 @@ if("serviceWorker" in navigator){
   }
 }
 </script>
+<!-- Notification permission banner -->
+<div id="notifBanner" style="display:none;position:fixed;bottom:70px;left:0;right:0;z-index:500;background:#0F6E56;color:#fff;padding:12px 16px;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:0 -2px 12px rgba(0,0,0,0.15);">
+  <span style="font-size:1.2rem;">🔔</span>
+  <span style="flex:1;font-size:0.85rem;font-weight:500;">Get notified about new announcements</span>
+  <div style="display:flex;gap:8px;">
+    <button onclick="dismissNotifBanner()" style="background:rgba(255,255,255,0.2);border:none;border-radius:6px;color:#fff;padding:6px 12px;font-size:0.8rem;cursor:pointer;">Not now</button>
+    <button onclick="enableNotifications()" style="background:#fff;border:none;border-radius:6px;color:#0F6E56;padding:6px 12px;font-size:0.8rem;font-weight:700;cursor:pointer;">Enable</button>
+  </div>
+</div>
+
 <!-- Update toast -->
 <div id="updateToast">
   <span class="spinner"></span>
