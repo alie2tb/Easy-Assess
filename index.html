@@ -219,11 +219,26 @@
   #fabAddStudent{position:fixed;bottom:78px;right:16px;z-index:400;background:var(--primary);color:#fff;border:none;border-radius:999px;padding:12px 20px;display:none;align-items:center;gap:8px;cursor:pointer;box-shadow:0 4px 16px rgba(29,158,117,0.4);font-family:inherit;transition:background 0.2s,transform 0.15s;}
   #fabAddStudent:hover{background:var(--primary-dark);transform:scale(1.04);}
   /* update toast */
-  #updateToast{position:fixed;bottom:78px;left:50%;transform:translateX(-50%) translateY(20px);z-index:9000;background:#0F6E56;color:#fff;border-radius:12px;padding:12px 18px;font-size:0.88rem;font-weight:500;display:flex;align-items:center;gap:12px;box-shadow:0 6px 24px rgba(0,0,0,0.18);opacity:0;transition:opacity 0.4s ease,transform 0.4s ease;pointer-events:none;max-width:90vw;}
-  #updateToast.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;}
-  #updateToast .spinner{width:14px;height:14px;border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0;}
-  #updateToast button{background:rgba(255,255,255,0.2);border:none;border-radius:6px;color:#fff;font-size:0.8rem;font-weight:600;padding:4px 10px;cursor:pointer;white-space:nowrap;}
-  #updateToast button:hover{background:rgba(255,255,255,0.35);}
+  /* update dialog */
+  #updateDialog{position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;padding:1.5rem;}
+  #updateDialog.show{display:flex;}
+  #updateDialogBox{background:#fff;border-radius:16px;width:100%;max-width:340px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+  #updateDialogHeader{background:var(--primary-dark);padding:1.5rem;text-align:center;}
+  #updateDialogHeader .upd-icon{font-size:2.5rem;display:block;margin-bottom:0.5rem;}
+  #updateDialogHeader h3{color:#fff;margin:0;font-size:1.1rem;font-weight:700;}
+  #updateDialogHeader p{color:rgba(255,255,255,0.8);margin:0.3rem 0 0;font-size:0.82rem;}
+  #updateDialogBody{padding:1.2rem 1.5rem;}
+  #updateDialogBody p{font-size:0.88rem;color:var(--muted);line-height:1.6;margin:0 0 1rem;}
+  .upd-features{list-style:none;padding:0;margin:0 0 1.2rem;}
+  .upd-features li{font-size:0.85rem;color:var(--text);padding:5px 0;display:flex;gap:8px;align-items:flex-start;}
+  .upd-features li::before{content:'✓';color:var(--primary);font-weight:700;flex-shrink:0;}
+  #updateDialogFooter{display:flex;border-top:1px solid var(--border);}
+  .upd-btn{flex:1;padding:14px;border:none;font-size:0.9rem;font-weight:600;cursor:pointer;transition:background 0.15s;}
+  .upd-btn.later{background:#fff;color:var(--muted);}
+  .upd-btn.later:hover{background:var(--grey-100,#f5f6f8);}
+  .upd-btn.update{background:var(--primary);color:#fff;}
+  .upd-btn.update:hover{background:var(--primary-dark);}
+  .upd-btn-divider{width:1px;background:var(--border);}
   /* overflow menu */
   .menu-item{display:block;width:100%;text-align:left;padding:11px 16px;font-size:0.88rem;font-weight:500;background:none;border:none;cursor:pointer;color:var(--text);transition:background 0.15s;}
   .menu-item:hover{background:var(--grey-100,#f5f6f8);}
@@ -2199,32 +2214,44 @@ updateBadge();
 if(!localStorage.getItem("ea33_notif_dismissed")) showNotifBanner();
 if(Notification.permission === "granted") sendAnnouncementNotifications();
 
+let _pendingNewSW = null;
+
+function showUpdateDialog(){
+  document.getElementById("updateDialog").classList.add("show");
+}
+function dismissUpdate(){
+  document.getElementById("updateDialog").classList.remove("show");
+}
+function applyUpdate(){
+  document.getElementById("updateDialog").classList.remove("show");
+  if(_pendingNewSW){
+    _pendingNewSW.postMessage({type:"SKIP_WAITING"});
+  }
+}
+window.dismissUpdate = dismissUpdate;
+window.applyUpdate   = applyUpdate;
+
 if("serviceWorker" in navigator){
-  // Skip SW registration on Claude preview domain
   const isPreview = window.location.hostname.includes("claudeusercontent.com");
   if(!isPreview){
     window.addEventListener("load", async ()=>{
       try {
         const reg = await navigator.serviceWorker.register("./service-worker.js", {scope: "./"});
 
-        const showUpdateToast = ()=>{
-          const toast = document.getElementById("updateToast");
-          if(toast) toast.classList.add("show");
-          navigator.serviceWorker.addEventListener("controllerchange", ()=>{
-            const msg = toast ? toast.querySelector("span:last-of-type") : null;
-            if(msg) msg.textContent = "New features ready! Reloading...";
-            setTimeout(()=>{ window.location.reload(); }, 1500);
-          });
-        };
-
         reg.addEventListener("updatefound", ()=>{
           const newSW = reg.installing;
           newSW.addEventListener("statechange", ()=>{
             if(newSW.state === "installed" && navigator.serviceWorker.controller){
-              showUpdateToast();
-              newSW.postMessage({type:"SKIP_WAITING"});
+              // New version ready — show update dialog
+              _pendingNewSW = newSW;
+              showUpdateDialog();
             }
           });
+        });
+
+        // When SW takes control, reload to apply update
+        navigator.serviceWorker.addEventListener("controllerchange", ()=>{
+          window.location.reload();
         });
 
       } catch(e){ console.log("SW not available in this environment."); }
@@ -2242,10 +2269,28 @@ if("serviceWorker" in navigator){
   </div>
 </div>
 
-<!-- Update toast -->
-<div id="updateToast">
-  <span class="spinner"></span>
-  <span>Applying new features, please wait...</span>
+<!-- Update dialog (Al Jazeera style) -->
+<div id="updateDialog">
+  <div id="updateDialogBox">
+    <div id="updateDialogHeader">
+      <span class="upd-icon">🚀</span>
+      <h3>Update Available</h3>
+      <p>A new version of Easy Assess is ready</p>
+    </div>
+    <div id="updateDialogBody">
+      <p>New features and improvements are available. Update now to get the best experience.</p>
+      <ul class="upd-features">
+        <li>Latest assessment tools and bug fixes</li>
+        <li>Improved performance and stability</li>
+        <li>New features added by the developer</li>
+      </ul>
+    </div>
+    <div id="updateDialogFooter">
+      <button class="upd-btn later" onclick="dismissUpdate()">Later</button>
+      <div class="upd-btn-divider"></div>
+      <button class="upd-btn update" onclick="applyUpdate()">Update Now</button>
+    </div>
+  </div>
 </div>
 
 <!-- Bottom Navigation -->
