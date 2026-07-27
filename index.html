@@ -443,7 +443,15 @@
   </div>
   <!-- Category tabs (horizontal scroll) -->
   <div class="res-tabs-wrap">
-    <div class="res-tabs" id="resTabs"></div>
+    <div class="res-tabs" id="resTabs">
+      <button class="res-tab active"  onclick="setResCat('All')">✓ All</button>
+      <button class="res-tab" onclick="setResCat('Notes')">Notes</button>
+      <button class="res-tab" onclick="setResCat('Syllabuses')">Syllabuses</button>
+      <button class="res-tab" onclick="setResCat('Teachers Guides')">Teachers Guides</button>
+      <button class="res-tab" onclick="setResCat('Learners Books')">Learners Books</button>
+      <button class="res-tab" onclick="setResCat('Past Papers')">Past Papers</button>
+      <button class="res-tab" onclick="setResCat('Schemes of Work')">Schemes of Work</button>
+    </div>
   </div>
   <!-- Resource list -->
   <div id="resourcesList"></div>
