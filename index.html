@@ -147,10 +147,6 @@
   .toggle-btn{padding:6px 18px;font-size:0.85rem;font-weight:500;border:none;background:#fff;cursor:pointer;color:var(--muted);transition:background 0.15s,color 0.15s;}
   .toggle-btn.active{background:var(--primary);color:#fff;}
   .toggle-btn:disabled{opacity:0.45;cursor:not-allowed;}
-  .pass-pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:0.75rem;font-weight:700;letter-spacing:0.04em;}
-  .pass-pill.pass{background:#E1F5EE;color:#085041;}
-  .pass-pill.fail{background:#fdf0ec;color:var(--danger);}
-  .pass-input{width:88px;padding:6px 8px;border:1.5px solid var(--border);border-radius:8px;font-size:0.9rem;text-align:center;}
   .locked-notice{font-size:0.78rem;color:var(--danger);margin:0.8rem 0 0;padding:8px 12px;background:#fdf0ec;border-radius:8px;border:1px solid #f5cec4;}
   /* notes list */
   .notes-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#fff;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.15s;}
@@ -256,7 +252,6 @@
   .class-card .cls-name{font-weight:700;font-size:1rem;color:var(--text);margin-bottom:0.2rem;}
   .class-card .cls-count{font-size:0.75rem;color:var(--muted);}
   .class-card .cls-badge{position:absolute;top:10px;right:10px;background:var(--primary);color:#fff;font-size:0.65rem;font-weight:700;border-radius:999px;padding:2px 7px;}
-  .senior-card{grid-column:1/-1;}
   /* pdf dialog */
   #pdfModal{display:none;position:fixed;inset:0;z-index:8890;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;padding:1rem;}
   #pdfModal.open{display:flex;}
@@ -501,11 +496,6 @@
     </div>
   </div>
   <div class="card" style="margin-top:0.5rem;">
-    <p class="form-title">✅ Passing Total — Standard 1 to 8</p>
-    <p style="font-size:0.8rem;color:var(--muted);margin:0 0 1rem;">Set the minimum total marks a learner must reach to PASS. Learners with a total equal to or above this figure show PASS in the student list.</p>
-    <div id="passRowsPage"></div>
-  </div>
-  <div class="card" style="margin-top:0.5rem;">
     <p class="form-title">🔗 Share App</p>
     <p style="font-size:0.82rem;color:var(--muted);margin:0 0 0.8rem;">Share Easy Assess 33 with colleagues so they can install it on their devices.</p>
     <button class="btn-primary" style="width:100%;" onclick="shareApp()">Share Easy Assess 33</button>
@@ -658,27 +648,6 @@ let subjectTotals = JSON.parse(localStorage.getItem(TOTALS_KEY)||"{}");
   });
 });
 function saveTotals(){localStorage.setItem(TOTALS_KEY,JSON.stringify(subjectTotals));}
-
-// ── Passing total settings (per class) ────────────────────────────────────
-const PASS_KEY = "ea33_pass_marks";
-let passMarks = JSON.parse(localStorage.getItem(PASS_KEY)||"{}");
-function savePassMarks(){localStorage.setItem(PASS_KEY,JSON.stringify(passMarks));}
-// Default passing total = 50% of the class maximum
-function defaultPassMark(cls){
-  return Math.round(getMaxTotal(getSubjects(cls))*0.5);
-}
-function getPassMark(cls){
-  const v = Number(passMarks[cls]);
-  return (passMarks[cls]==null || isNaN(v)) ? defaultPassMark(cls) : v;
-}
-function setPassMark(cls, val){
-  passMarks[cls] = val;
-  savePassMarks();
-  if(currentClass()===cls) render();
-}
-function getPassStatus(total, cls){
-  return total >= getPassMark(cls) ? "PASS" : "FAIL";
-}
 
 // ── Subject definitions ───────────────────────────────────────────────────
 const BASE_SUBJECTS = {
@@ -956,14 +925,20 @@ function render(){
     bar.style.display="none";
   }
   updateBadge();
+
+  // Pre-compute positions using DENSE RANKING — ties share same position, no numbers skipped
+  const uniqueTotals = [...new Set(list.map(s => calcTotal(s, subs)))].sort((a,b)=>b-a);
+  list.forEach(s => {
+    const total = calcTotal(s, subs);
+    s._pos   = uniqueTotals.indexOf(total) + 1;
+    s._total = total;
+  });
+
   list.forEach((s, idx)=>{
-    const total=calcTotal(s,subs);
-    const maxTotal=getMaxTotal(subs);
+    const total    = s._total;
+    const maxTotal = getMaxTotal(subs);
     const {level,remark}=getLevelAndRemark(total,maxTotal);
-    // Position: same total = same position; next distinct total = previous position + 1
-    const pos = idx===0 ? 1 : (calcTotal(list[idx-1],subs)===total
-      ? list[idx-1]._pos : list[idx-1]._pos+1);
-    s._pos=pos;
+    const pos = s._pos;
     const tr=document.createElement("tr");
     tr.style.cursor="pointer";
     tr.title="Click to view report";
@@ -973,7 +948,7 @@ function render(){
       <td><span class="pill ${s.sex==="Male"?"male":"female"}">${s.sex==="Male"?"M":"F"}</span></td>
       <td class="total">${total}</td>
       <td style="font-weight:600;color:var(--primary-dark);">${level}</td>
-      <td><span class="pass-pill ${getPassStatus(total,cls)==="PASS"?"pass":"fail"}">${getPassStatus(total,cls)}</span></td>`;
+      <td style="font-size:0.82rem;color:var(--muted);">${remark}</td>`;
     tr.addEventListener("click", ()=>showReport(s.id));
     tbody.appendChild(tr);
   });
@@ -1178,11 +1153,9 @@ function showReport(id){
   const total=calcTotal(s,subs),maxTotal=getMaxTotal(subs);
   const {level,remark}=getLevelAndRemark(total,maxTotal);
 
-  // Calculate position (ties share same position; dense ranking)
-  const higherTotals = new Set(
-    allList.filter(st=>calcTotal(st,subs)>total).map(st=>calcTotal(st,subs))
-  );
-  const pos = higherTotals.size + 1;
+  // Dense ranking — ties share position, no numbers skipped
+  const uniqueTotals = [...new Set(allList.map(x=>calcTotal(x,subs)))].sort((a,b)=>b-a);
+  const pos = uniqueTotals.indexOf(total) + 1;
 
   document.getElementById("rClass").textContent=`Standard ${cls} — Academic Report`;
   document.getElementById("rName").textContent=s.name;
@@ -1547,10 +1520,8 @@ function generateSchoolReportsPdf(cls, subs, list, school){
   list.forEach((s, idx)=>{
     const total = calcTotal(s,subs);
     const {level,remark} = getLevelAndRemark(total,maxTotal);
-    const higherTotals = new Set(
-      list.filter(st=>calcTotal(st,subs)>total).map(st=>calcTotal(st,subs))
-    );
-    const pos = higherTotals.size + 1;
+    const uniqueTotals = [...new Set(list.map(x=>calcTotal(x,subs)))].sort((a,b)=>b-a);
+    const pos = uniqueTotals.indexOf(total) + 1;
     if(idx>0) doc.addPage();
     let y=14;
     doc.setFillColor(15,110,86);
@@ -1863,35 +1834,7 @@ function buildSettingsPageRows(){
     });
   });
   document.getElementById("lockedNoticePage").style.display=anyLocked?"block":"none";
-  buildPassRows();
 }
-
-function buildPassRows(){
-  const container=document.getElementById("passRowsPage");
-  if(!container) return;
-  container.innerHTML="";
-  [1,2,3,4,5,6,7,8].forEach(cls=>{
-    const maxTotal=getMaxTotal(getSubjects(cls));
-    const row=document.createElement("div");
-    row.className="set-row";
-    row.innerHTML=`
-      <span class="set-label">Standard ${cls}<br><span style="font-size:0.72rem;color:var(--muted);font-weight:400;">out of ${maxTotal}</span></span>
-      <input class="pass-input" type="number" min="0" max="${maxTotal}" value="${getPassMark(cls)}"
-             oninput="onPassInput(${cls}, this)">`;
-    container.appendChild(row);
-  });
-}
-
-function onPassInput(cls, input){
-  const maxTotal=getMaxTotal(getSubjects(cls));
-  let v=Number(input.value);
-  if(input.value==="" || isNaN(v)) return;
-  if(v<0) v=0;
-  if(v>maxTotal) v=maxTotal;
-  input.value=v;
-  setPassMark(cls, v);
-}
-window.onPassInput=onPassInput;
 
 // ── Forum ─────────────────────────────────────────────────────────────────
 const FORUM_KEY = "ea33_forum_posts";
