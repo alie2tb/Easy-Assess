@@ -1,9 +1,11 @@
-const CACHE_NAME = "score-manager-v19";
+const CACHE_NAME = "score-manager-v21";
 
 const STATIC_ASSETS = [
   "./",
   "./index.html",
   "./manifest.json",
+  "./announcements.json",
+  "./latestNews.json",
   "./icon-192.png",
   "./icon-512.png"
 ];
@@ -41,6 +43,25 @@ self.addEventListener("fetch", event => {
   const url = new URL(event.request.url);
   if(event.request.method !== "GET") return;
   if(url.hostname === "api.anthropic.com") return;
+
+  // Network-first for JSON data files so news/announcements are always fresh
+  const isJson = url.pathname.endsWith(".json") &&
+    (url.pathname.includes("announcements") || url.pathname.includes("latestNews"));
+
+  if(isJson){
+    event.respondWith(
+      fetch(event.request).then(response => {
+        if(response && response.status === 200){
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+        }
+        return response;
+      }).catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // Cache-first for everything else
   event.respondWith(
     caches.match(event.request).then(cached => {
       if(cached) return cached;
