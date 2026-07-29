@@ -287,6 +287,26 @@
   .upd-btn.update{background:var(--primary);color:#fff;}
   .upd-btn.update:hover{background:var(--primary-dark);}
   .upd-btn-divider{width:1px;background:var(--border);}
+  /* profile */
+  .profile-hero{background:var(--primary-dark);padding:2rem 1rem 1.5rem;text-align:center;margin:-1rem -0rem 0;border-radius:0;}
+  .profile-avatar-wrap{margin-bottom:1rem;}
+  .profile-avatar{width:90px;height:90px;border-radius:50%;background:var(--primary);border:3px solid #BA7517;display:inline-flex;align-items:center;justify-content:center;font-size:2.8rem;color:#fff;overflow:hidden;}
+  .profile-name{color:#fff;font-size:1.4rem;font-weight:700;margin:0 0 0.3rem;}
+  .profile-role{color:rgba(255,255,255,0.75);font-size:0.85rem;margin:0 0 0.8rem;}
+  .profile-district{background:#BA7517;color:#fff;border-radius:999px;padding:5px 18px;font-size:0.82rem;font-weight:600;display:inline-block;}
+  .profile-stats{display:flex;border-bottom:1px solid var(--border);background:var(--card);}
+  .profile-stat{flex:1;text-align:center;padding:1rem 0;border-right:1px solid var(--border);}
+  .profile-stat:last-child{border-right:none;}
+  .profile-stat strong{display:block;font-size:1.3rem;font-weight:700;color:var(--text);}
+  .profile-stat span{font-size:0.75rem;color:var(--muted);}
+  .profile-section-header{padding:10px 16px;font-size:0.72rem;font-weight:700;letter-spacing:0.1em;color:var(--muted);background:var(--grey-100);}
+  .profile-menu-group{background:var(--card);margin-bottom:0;}
+  .profile-menu-item{display:flex;align-items:center;gap:14px;padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.15s;}
+  .profile-menu-item:last-child{border-bottom:none;}
+  .profile-menu-item:hover{background:var(--grey-100);}
+  .pmi-icon{font-size:1.2rem;width:24px;text-align:center;}
+  .pmi-label{flex:1;font-size:0.95rem;color:var(--text);}
+  .pmi-arrow{color:var(--muted);font-size:1rem;}
   .pass-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
   .pass-row:last-child{border-bottom:none;}
   .pass-label{font-size:0.95rem;font-weight:600;color:var(--text);}
@@ -540,6 +560,108 @@
 </div>
 
 <!-- PAGE 5: SETTINGS -->
+<!-- PAGE 7: PROFILE -->
+<div class="page" id="pageProfile">
+  <!-- Hero banner -->
+  <div class="profile-hero">
+    <div class="profile-avatar-wrap">
+      <div class="profile-avatar" id="profileAvatarDisplay">👤</div>
+    </div>
+    <h2 class="profile-name" id="profileNameDisplay">Teacher Name</h2>
+    <p class="profile-role" id="profileRoleDisplay">Primary School Teacher · Lilongwe</p>
+    <span class="profile-district" id="profileDistrictDisplay">Lilongwe District</span>
+  </div>
+
+  <!-- Stats row -->
+  <div class="profile-stats">
+    <div class="profile-stat">
+      <strong id="profilePosts">0</strong>
+      <span>Posts</span>
+    </div>
+    <div class="profile-stat">
+      <strong>0</strong>
+      <span>Resources</span>
+    </div>
+    <div class="profile-stat">
+      <strong id="profileLikes">0</strong>
+      <span>Likes</span>
+    </div>
+  </div>
+
+  <!-- Account section -->
+  <div class="profile-section-header">ACCOUNT</div>
+  <div class="profile-menu-group">
+    <div class="profile-menu-item" onclick="openEditProfile()">
+      <span class="pmi-icon">✏️</span>
+      <span class="pmi-label">Edit Profile</span>
+      <span class="pmi-arrow">›</span>
+    </div>
+    <div class="profile-menu-item" onclick="enableNotifications()">
+      <span class="pmi-icon">🔔</span>
+      <span class="pmi-label">Notifications</span>
+      <span class="pmi-arrow">›</span>
+    </div>
+    <div class="profile-menu-item" onclick="switchPage('settings')">
+      <span class="pmi-icon">⚙️</span>
+      <span class="pmi-label">Settings</span>
+      <span class="pmi-arrow">›</span>
+    </div>
+  </div>
+
+  <!-- About section -->
+  <div class="profile-section-header">ABOUT</div>
+  <div class="profile-menu-group">
+    <div class="profile-menu-item" onclick="window.open('https://wa.me/265995818600','_blank')">
+      <span class="pmi-icon">💬</span>
+      <span class="pmi-label">Contact Us</span>
+      <span class="pmi-arrow">›</span>
+    </div>
+    <div class="profile-menu-item" onclick="window.open('https://facebook.com','_blank')">
+      <span class="pmi-icon">📘</span>
+      <span class="pmi-label">Facebook Page</span>
+      <span class="pmi-arrow">›</span>
+    </div>
+    <div class="profile-menu-item">
+      <span class="pmi-icon">ℹ️</span>
+      <span class="pmi-label">About App</span>
+      <span class="pmi-arrow" style="font-size:0.8rem;color:var(--muted);">Version 1.0.0</span>
+    </div>
+  </div>
+
+  <!-- Sign out -->
+  <div class="profile-menu-group" style="margin-top:0.5rem;">
+    <div class="profile-menu-item" onclick="clearAllData()" style="color:var(--danger);">
+      <span class="pmi-icon">↪️</span>
+      <span class="pmi-label" style="color:var(--danger);">Sign Out</span>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div style="text-align:center;padding:1.5rem 1rem;font-size:0.78rem;color:var(--muted);line-height:1.8;">
+    Easy Assess · Developed by Juma Ali<br>Malawi 🇲🇼
+  </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div id="editProfileModal" style="display:none;position:fixed;inset:0;z-index:8893;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;padding:1rem;">
+  <div style="background:var(--card);border-radius:14px;width:100%;max-width:400px;padding:1.5rem;max-height:90vh;overflow-y:auto;">
+    <h3 style="margin:0 0 1rem;font-size:1rem;font-weight:600;color:var(--text);">Edit Profile</h3>
+    <label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">Full Name</label>
+    <input type="text" id="epName" placeholder="e.g. Chisomo Banda" style="width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;margin-bottom:0.8rem;background:var(--card);color:var(--text);">
+    <label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">Role</label>
+    <input type="text" id="epRole" placeholder="e.g. Primary School Teacher" style="width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;margin-bottom:0.8rem;background:var(--card);color:var(--text);">
+    <label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">Location</label>
+    <input type="text" id="epLocation" placeholder="e.g. Lilongwe" style="width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;margin-bottom:0.8rem;background:var(--card);color:var(--text);">
+    <label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">District</label>
+    <input type="text" id="epDistrict" placeholder="e.g. Lilongwe District" style="width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;margin-bottom:1rem;background:var(--card);color:var(--text);">
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button class="btn-secondary" style="padding:9px 18px;" onclick="closeEditProfile()">Cancel</button>
+      <button class="btn-primary"   style="padding:9px 18px;" onclick="saveProfile()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 8: SETTINGS (opened from Profile) -->
 <div class="page" id="pageSettings">
 
   <div class="card">
@@ -920,59 +1042,62 @@ function buildClassGrid(){
 }
 
 function switchPage(page){
-  const allPages = ["pageClasses","pageAdd","pageList","pageForum","pageResources","pageNews","pageSettings"];
+  const allPages = ["pageClasses","pageAdd","pageList","pageForum","pageResources","pageNews","pageProfile","pageSettings"];
   allPages.forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove("active"); });
 
   const pageMap = {
     classes:"pageClasses", add:"pageAdd", list:"pageList",
-    forum:"pageForum", resources:"pageResources", news:"pageNews", settings:"pageSettings"
+    forum:"pageForum", resources:"pageResources", news:"pageNews",
+    profile:"pageProfile", settings:"pageSettings"
   };
   const target = document.getElementById(pageMap[page]);
   if(target) target.classList.add("active");
 
-  const navMap = {
-    classes:"navClasses", forum:"navForum", resources:"navResources",
-    news:"navNews", settings:"navSettings"
-  };
-  ["navClasses","navForum","navResources","navNews","navSettings"].forEach(id=>{
+  const navMap = {classes:"navClasses", forum:"navForum", resources:"navResources", news:"navNews", profile:"navProfile"};
+  ["navClasses","navForum","navResources","navNews","navProfile"].forEach(id=>{
     const el=document.getElementById(id); if(el) el.classList.remove("active");
   });
-  const activeNav = navMap[page];
+  // Settings is a sub-page of Profile — keep Profile nav active
+  const activeNav = navMap[page==="settings"?"profile":page];
   if(activeNav){ const el=document.getElementById(activeNav); if(el) el.classList.add("active"); }
 
   const backBtn = document.getElementById("backBtn");
-  if(backBtn) backBtn.style.display=(page==="add"||page==="list")?"inline-block":"none";
+  if(backBtn) backBtn.style.display=(page==="add"||page==="list"||page==="settings")?"inline-block":"none";
 
   const titles = {
-    classes:"Easy Assess 33", add:`Standard ${_currentClass} — Add Student`,
+    classes:"Easy Assess", add:`Standard ${_currentClass} — Add Student`,
     list:`Standard ${_currentClass} — Students`,
-    forum:"Forum", resources:"Resources", news:"News", settings:"Settings"
+    forum:"Forum", resources:"Resources", news:"News",
+    profile:"My Profile", settings:"Settings"
   };
   const titleEl = document.getElementById("topTitle");
-  if(titleEl) titleEl.textContent = titles[page]||"Easy Assess 33";
+  if(titleEl) titleEl.textContent = titles[page]||"Easy Assess";
 
   const fab = document.getElementById("fabAddStudent");
   if(fab) fab.style.display = page==="list" ? "flex" : "none";
   const fabPost = document.getElementById("fabNewPost");
   if(fabPost) fabPost.style.display = page==="forum" ? "flex" : "none";
 
-  if(page==="classes")   buildClassGrid();
+  if(page==="classes")  buildClassGrid();
   if(page==="settings"){
     buildSettingsPageRows();
     const toggle = document.getElementById("darkModeToggle");
     if(toggle) toggle.checked = document.documentElement.classList.contains("dark");
   }
+  if(page==="profile")   buildProfilePage();
   if(page==="list")      render();
-  if(page==="forum")     { renderForum(); }
-  if(page==="resources") { initResources(); }
+  if(page==="forum")     renderForum();
+  if(page==="resources") initResources();
   if(page==="news")      { renderNews(); sendAnnouncementNotifications(); }
 }
 
 function goBack(){
-  const listActive = document.getElementById("pageList").classList.contains("active");
-  const addActive  = document.getElementById("pageAdd").classList.contains("active");
-  if(listActive) switchPage("add");
-  else if(addActive) switchPage("classes");
+  const settingsActive = document.getElementById("pageSettings").classList.contains("active");
+  const listActive     = document.getElementById("pageList").classList.contains("active");
+  const addActive      = document.getElementById("pageAdd").classList.contains("active");
+  if(settingsActive) switchPage("profile");
+  else if(listActive) switchPage("add");
+  else if(addActive)  switchPage("classes");
 }
 window.switchPage=switchPage;window.goBack=goBack;
 
@@ -2336,6 +2461,64 @@ async function enableNotifications(){
 window.dismissNotifBanner = dismissNotifBanner;
 window.enableNotifications = enableNotifications;
 
+// ── Profile ───────────────────────────────────────────────────────────────
+const PROFILE_KEY = "ea33_profile";
+const DEFAULT_PROFILE = {name:"Teacher Name",role:"Primary School Teacher",location:"Lilongwe",district:"Lilongwe District"};
+
+function getProfile(){ return JSON.parse(localStorage.getItem(PROFILE_KEY)||JSON.stringify(DEFAULT_PROFILE)); }
+function saveProfileData(p){ localStorage.setItem(PROFILE_KEY, JSON.stringify(p)); }
+
+function buildProfilePage(){
+  const p = getProfile();
+  const nameEl = document.getElementById("profileNameDisplay");
+  const roleEl = document.getElementById("profileRoleDisplay");
+  const distEl = document.getElementById("profileDistrictDisplay");
+  const avEl   = document.getElementById("profileAvatarDisplay");
+  if(nameEl) nameEl.textContent = p.name || "Teacher Name";
+  if(roleEl) roleEl.textContent = (p.role||"Primary School Teacher") + " · " + (p.location||"Lilongwe");
+  if(distEl) distEl.textContent = p.district || "Lilongwe District";
+  if(avEl)   avEl.textContent   = p.name ? p.name.trim().split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase() : "👤";
+
+  // Posts and likes from forum
+  const posts = (JSON.parse(localStorage.getItem("ea33_forum_posts")||"[]")).filter(x=>x.isOwn);
+  const likes = posts.reduce((t,x)=>t+(x.likes||0),0);
+  const postsEl = document.getElementById("profilePosts");
+  const likesEl = document.getElementById("profileLikes");
+  if(postsEl) postsEl.textContent = posts.length;
+  if(likesEl) likesEl.textContent = likes;
+}
+
+function openEditProfile(){
+  const p = getProfile();
+  document.getElementById("epName").value     = p.name||"";
+  document.getElementById("epRole").value     = p.role||"";
+  document.getElementById("epLocation").value = p.location||"";
+  document.getElementById("epDistrict").value = p.district||"";
+  document.getElementById("editProfileModal").style.display = "flex";
+}
+function closeEditProfile(){
+  document.getElementById("editProfileModal").style.display = "none";
+}
+function saveProfile(){
+  const p = {
+    name:     document.getElementById("epName").value.trim(),
+    role:     document.getElementById("epRole").value.trim(),
+    location: document.getElementById("epLocation").value.trim(),
+    district: document.getElementById("epDistrict").value.trim(),
+  };
+  if(!p.name){ alert("Please enter your name."); return; }
+  saveProfileData(p);
+  closeEditProfile();
+  buildProfilePage();
+}
+function clearAllData(){
+  if(!confirm("Sign out? This will clear your profile only. Student data is kept.")) return;
+  localStorage.removeItem(PROFILE_KEY);
+  buildProfilePage();
+}
+window.openEditProfile=openEditProfile;window.closeEditProfile=closeEditProfile;
+window.saveProfile=saveProfile;window.clearAllData=clearAllData;
+
 // ── Theme (Light / Dark) ──────────────────────────────────────────────────
 const THEME_KEY = "ea33_theme";
 
@@ -2479,9 +2662,9 @@ if("serviceWorker" in navigator){
     </button>
   </div>
   <div class="nav-item-wrap">
-    <button class="nav-item" id="navSettings" onclick="switchPage('settings')">
-      <span class="nav-icon">⚙️</span>
-      <span>Settings</span>
+    <button class="nav-item" id="navProfile" onclick="switchPage('profile')">
+      <span class="nav-icon">👤</span>
+      <span>Profile</span>
     </button>
   </div>
 </nav>
