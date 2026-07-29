@@ -10,8 +10,56 @@
   :root{
     --bg:#f5f6f8;--card:#ffffff;--primary:#1D9E75;--primary-dark:#0F6E56;
     --danger:#D85A30;--warn:#BA7517;--text:#2C2C2A;--muted:#5F5E5A;--border:rgba(0,0,0,0.1);
+    --grey-100:#f5f6f8;--grey-700:#3A3A38;
   }
-  *{box-sizing:border-box;}
+  html.dark{
+    --bg:#121212;--card:#1E1E1E;--primary:#1D9E75;--primary-dark:#25C490;
+    --danger:#E8724A;--warn:#D4952A;--text:#E8E8E6;--muted:#8A8A88;--border:rgba(255,255,255,0.1);
+    --grey-100:#1E1E1E;--grey-700:#CCCCCA;
+  }
+  *{box-sizing:border-box;transition:background-color 0.2s,color 0.2s,border-color 0.2s;}
+  /* dark overrides for hardcoded whites */
+  html.dark .top-bar{background:var(--card);}
+  html.dark .card{background:var(--card);}
+  html.dark input,html.dark select,html.dark textarea{background:var(--card);color:var(--text);border-color:var(--border);}
+  html.dark .forum-card,html.dark .news-card,html.dark .res-card,html.dark .announcement-card{background:var(--card);}
+  html.dark .class-card{background:var(--card);}
+  html.dark .bottom-nav{background:var(--card);border-color:var(--border);}
+  html.dark .nav-item{color:var(--muted);}
+  html.dark .nav-item.active{color:var(--primary);}
+  html.dark #updateDialogBox{background:var(--card);}
+  html.dark #updateDialogFooter{border-color:var(--border);}
+  html.dark .upd-btn.later{background:var(--card);color:var(--muted);}
+  html.dark #notifBanner{background:#0F6E56;}
+  html.dark .mode-tab{background:var(--card);color:var(--muted);}
+  html.dark .mode-tab.active{background:var(--primary);color:#fff;}
+  html.dark .res-tab{background:#2A2A2A;color:var(--muted);border-color:var(--border);}
+  html.dark .forum-tab{color:var(--muted);}
+  html.dark .forum-search-wrap{background:#2A2A2A;}
+  html.dark .notes-item{background:var(--card);}
+  html.dark .notes-list-wrap{background:var(--card);}
+  html.dark .notes-std-header{background:#2A2A2A;}
+  html.dark #reportBox,html.dark #pdfBox,html.dark #shareBox,html.dark #settingsBox,html.dark #newPostModal>div,html.dark #settingsModal>div{background:var(--card);color:var(--text);}
+  html.dark .menu-item{background:none;color:var(--text);}
+  html.dark .menu-item:hover{background:#2A2A2A;}
+  html.dark #overflowMenu{background:var(--card);border-color:var(--border);}
+  html.dark .toggle-btn{background:var(--card);color:var(--muted);}
+  html.dark .pass-input{background:var(--card);color:var(--text);border-color:var(--border);}
+  html.dark th{color:var(--muted);}
+  html.dark tr:hover{background:#2A2A2A;}
+  html.dark .pill.male{background:#1A3A5C;color:#7AB8F5;}
+  html.dark .pill.female{background:#3A1A2A;color:#F5A0C0;}
+  html.dark .pill{background:#1A3A2A;color:#7AE5B8;}
+  /* theme switch */
+  .theme-switch-row{display:flex;align-items:center;justify-content:space-between;padding:1rem 0;}
+  .theme-switch-label{font-size:0.95rem;font-weight:600;color:var(--text);}
+  .theme-switch-sub{font-size:0.75rem;color:var(--muted);}
+  .switch{position:relative;width:52px;height:28px;flex-shrink:0;}
+  .switch input{opacity:0;width:0;height:0;}
+  .slider{position:absolute;inset:0;background:#ccc;border-radius:999px;cursor:pointer;transition:background 0.3s;}
+  .slider:before{content:'';position:absolute;width:22px;height:22px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:transform 0.3s;}
+  input:checked+.slider{background:var(--primary);}
+  input:checked+.slider:before{transform:translateX(24px);}
   body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);padding:0;padding-bottom:70px;}
   h1{font-size:1.4rem;font-weight:600;margin:0 0 0.3rem;}
   /* top bar */
@@ -493,7 +541,22 @@
 
 <!-- PAGE 5: SETTINGS -->
 <div class="page" id="pageSettings">
+
   <div class="card">
+    <p class="form-title">🎨 Appearance</p>
+    <div class="theme-switch-row">
+      <div>
+        <div class="theme-switch-label">Dark Mode</div>
+        <div class="theme-switch-sub">Switch between light and dark theme</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="darkModeToggle" onchange="applyTheme(this.checked)">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:0.5rem;">
     <p class="form-title">⚙️ Subject Totals — Standard 1 to 3</p>
     <p style="font-size:0.8rem;color:var(--muted);margin:0 0 1rem;">Set each subject maximum to 50 or 100. Cannot be changed while student data exists for that class.</p>
     <div id="settingsRowsPage"></div>
@@ -894,7 +957,11 @@ function switchPage(page){
   if(fabPost) fabPost.style.display = page==="forum" ? "flex" : "none";
 
   if(page==="classes")   buildClassGrid();
-  if(page==="settings")  buildSettingsPageRows();
+  if(page==="settings"){
+    buildSettingsPageRows();
+    const toggle = document.getElementById("darkModeToggle");
+    if(toggle) toggle.checked = document.documentElement.classList.contains("dark");
+  }
   if(page==="list")      render();
   if(page==="forum")     { renderForum(); }
   if(page==="resources") { initResources(); }
@@ -2268,6 +2335,32 @@ async function enableNotifications(){
 
 window.dismissNotifBanner = dismissNotifBanner;
 window.enableNotifications = enableNotifications;
+
+// ── Theme (Light / Dark) ──────────────────────────────────────────────────
+const THEME_KEY = "ea33_theme";
+
+function applyTheme(dark){
+  if(dark){
+    document.documentElement.classList.add("dark");
+    localStorage.setItem(THEME_KEY, "dark");
+  } else {
+    document.documentElement.classList.remove("dark");
+    localStorage.setItem(THEME_KEY, "light");
+  }
+  // Keep toggle in sync whenever settings page is opened
+  const toggle = document.getElementById("darkModeToggle");
+  if(toggle) toggle.checked = dark;
+}
+
+// Apply saved theme immediately on load (before paint)
+(function(){
+  const saved = localStorage.getItem(THEME_KEY);
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const dark = saved ? saved === "dark" : prefersDark;
+  if(dark) document.documentElement.classList.add("dark");
+})();
+
+window.applyTheme = applyTheme;
 
 // ── Init ──────────────────────────────────────────────────────────────────
 buildSubjectFields();
