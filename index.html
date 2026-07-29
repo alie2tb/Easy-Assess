@@ -2033,6 +2033,10 @@ function openNoteEditor(std, subject, key){
 }
 
 function closeNoteEditor(){
+  if(window._noteEditorFromResources){
+    closeNoteEditorOverride();
+    return;
+  }
   _currentNoteKey = null;
   buildNotesSubjectList();
   document.getElementById("notesListView").style.display   = "block";
@@ -2347,10 +2351,51 @@ function filterResources(){
   _resSearch = (document.getElementById("resSearch")||{}).value||"";
   renderResources();
 }
+window.filterResources=filterResources;
 
 function renderResources(){
   const container = document.getElementById("resourcesList");
   if(!container) return;
+
+  // ── NOTES tab — show the interactive subject notepad list ─────────────
+  if(_resCat === "Notes"){
+    const q = _resSearch.toLowerCase();
+    const NOTE_SUBJECTS_RES = {
+      5:["Agriculture","Life Skills","Social Studies","Primary Science","Religious Education"],
+      6:["Agriculture","Life Skills","Social Studies","Primary Science","Religious Education"],
+      7:["Agriculture","Life Skills","Social Studies","Primary Science","Religious Education"],
+      8:["Agriculture","Life Skills","Social Studies","Primary Science","Religious Education"],
+    };
+    // Build flat list of all subject notes
+    let noteItems = [];
+    [5,6,7,8].forEach(std=>{
+      NOTE_SUBJECTS_RES[std].forEach(subject=>{
+        noteItems.push({std, subject, label:`Standard ${std} ${subject}`});
+      });
+    });
+    if(q) noteItems = noteItems.filter(x=>x.label.toLowerCase().includes(q));
+
+    if(noteItems.length===0){
+      container.innerHTML=`<div style="text-align:center;padding:3rem;color:var(--muted);">No notes found.</div>`;
+      return;
+    }
+    container.innerHTML = `<div class="notes-list-wrap" style="margin-top:0.5rem;">` +
+      noteItems.map(item=>{
+        const key   = "ea33_note_" + item.std + "_" + item.subject.replace(/\s+/g,"_");
+        const saved = localStorage.getItem(key)||"";
+        return `
+        <div class="notes-item" onclick="openResNote(${item.std},'${item.subject}','${key}')">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span class="notes-item-dot ${saved?"has-note":""}"></span>
+            <span class="notes-item-label">${item.label}</span>
+          </div>
+          <span class="notes-item-arrow">›</span>
+        </div>`;
+      }).join("") + `</div>`;
+    return;
+  }
+
+  // ── All other tabs — show file resource cards ─────────────────────────
   const q = _resSearch.toLowerCase();
   let items = RESOURCES_DATA;
   if(_resCat !== "All") items = items.filter(r=>r.cat===_resCat);
@@ -2360,7 +2405,6 @@ function renderResources(){
     container.innerHTML=`<div style="text-align:center;padding:3rem;color:var(--muted);font-size:0.9rem;">No resources found.</div>`;
     return;
   }
-
   container.innerHTML = items.map(r=>{
     const bg = EXT_COLORS[r.ext] || "#E8F5EE";
     return `
@@ -2378,6 +2422,37 @@ function renderResources(){
     </div>`;
   }).join("");
 }
+
+// Open a note from the Resources Notes list
+function openResNote(std, subject, key){
+  _currentNoteKey = key;
+  document.getElementById("noteEditorTitle").textContent = `Standard ${std} — ${subject}`;
+  document.getElementById("notesArea").value = localStorage.getItem(key)||"";
+  document.getElementById("notesSaved").textContent = "";
+
+  // Show the note editor over the resources page
+  const editorEl = document.getElementById("notesEditorView");
+  const resPage   = document.getElementById("pageResources");
+  if(editorEl && resPage){
+    editorEl.style.display = "block";
+    editorEl.style.position = "fixed";
+    editorEl.style.inset = "0";
+    editorEl.style.background = "var(--bg)";
+    editorEl.style.zIndex = "600";
+    editorEl.style.padding = "70px 1rem 80px";
+    editorEl.style.overflowY = "auto";
+    // Override close button to go back to resources
+    window._noteEditorFromResources = true;
+  }
+}
+
+function closeNoteEditorOverride(){
+  const editorEl = document.getElementById("notesEditorView");
+  if(editorEl){ editorEl.style.display = "none"; editorEl.style.position = ""; editorEl.style.inset = ""; editorEl.style.zIndex = ""; }
+  window._noteEditorFromResources = false;
+  renderResources(); // refresh dots
+}
+window.openResNote = openResNote;
 
 function downloadResource(id){
   const r = RESOURCES_DATA.find(x=>x.id===id);
