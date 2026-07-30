@@ -146,8 +146,8 @@
   .report-info span{color:#5F5E5A;}
   .report-info strong{color:#2C2C2A;}
   .report-table{width:100%;border-collapse:collapse;font-size:0.85rem;margin-bottom:1rem;}
-  .report-table th{background:#0F6E56;color:#fff;padding:5px 7px;text-align:left;}
-  .report-table td{padding:5px 7px;border-bottom:1px solid rgba(0,0,0,0.08);}
+  .report-table th{background:#0F6E56;color:#fff;padding:2px 7px;text-align:left;}
+  .report-table td{padding:2px 7px;border-bottom:1px solid rgba(0,0,0,0.08);}
   .report-table tr:nth-child(even) td{background:#f0faf6;}
   .grade-badge{display:inline-block;padding:2px 10px;border-radius:999px;font-weight:600;font-size:0.8rem;}
   .g4{background:#E1F5EE;color:#085041;}
@@ -441,7 +441,7 @@
       <input type="text" id="search" class="search" placeholder="Search...">
       <div style="position:relative;">
         <button class="gear-btn" id="menuBtn" onclick="toggleMenu()" title="Options" style="font-size:1.3rem;padding:5px 10px;">⋮</button>
-        <div id="overflowMenu" style="display:none;position:absolute;right:0;top:110%;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.12);min-width:190px;z-index:500;overflow:hidden;">
+        <div id="overflowMenu" style="display:none;position:absolute;right:0;top:110%;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.15);min-width:190px;z-index:500;overflow:hidden;">
           <button class="menu-item" id="exportPdfBtn">📄 Export to PDF</button>
           <button class="menu-item" id="exportXlsBtn">📊 Export to Excel</button>
           <button class="menu-item" id="summaryBtn">📈 Summary</button>
@@ -728,8 +728,7 @@
 <div id="reportModal">
   <div id="reportBox">
     <div class="report-header">
-      <h2>Easy Assess 33</h2>
-      <p id="rClass">Student Academic Report</p>
+      <p id="rClass" style="font-size:1rem;font-weight:700;margin:0;">Student Academic Report</p>
     </div>
     <div class="report-info">
       <div><span>Name:</span><br><strong id="rName"></strong></div>
@@ -750,7 +749,6 @@
         </tr>
       </tfoot>
     </table>
-    <div class="report-footer">Developed by Juma Ali &nbsp;|&nbsp; +265 995 818 600</div>
     <div class="modal-actions">
       <button class="btn-danger btn-small" id="rDeleteBtn" onclick="deleteFromReport()">Delete</button>
       <button class="btn-secondary btn-small" id="rEditBtn" onclick="editFromReport()">Edit</button>
@@ -1769,61 +1767,110 @@ window.openSettings=openSettings;window.closeSettings=closeSettings;window.setTo
 // ── School Reports PDF ────────────────────────────────────────────────────
 function generateSchoolReportsPdf(cls, subs, list, school){
   const {jsPDF} = window.jspdf;
-  const doc = new jsPDF();
+  const doc      = new jsPDF();
   const maxTotal = getMaxTotal(subs);
-  const pageW = doc.internal.pageSize.getWidth();
-  const pageH = doc.internal.pageSize.getHeight();
+  const pageW    = doc.internal.pageSize.getWidth();
+  const pageH    = doc.internal.pageSize.getHeight();
+
+  // Pre-compute dense-rank positions (same logic as student list)
+  const uniqueTotals = [...new Set(list.map(s=>calcTotal(s,subs)))].sort((a,b)=>b-a);
+
+  // Each report occupies half a page; 2 per A4
+  const slotH   = pageH / 2;
+  const margin  = 8;
 
   list.forEach((s, idx)=>{
-    const total = calcTotal(s,subs);
+    const total  = calcTotal(s,subs);
     const {level,remark} = getLevelAndRemark(total,maxTotal);
-    const uniqueTotals = [...new Set(list.map(x=>calcTotal(x,subs)))].sort((a,b)=>b-a);
-    const pos = uniqueTotals.indexOf(total) + 1;
-    if(idx>0) doc.addPage();
-    let y=14;
+    const pos    = uniqueTotals.indexOf(total) + 1;
+    const pf     = getPassFail(total, cls);
+    const slot   = idx % 2;          // 0 = top half, 1 = bottom half
+
+    if(idx > 0 && slot === 0) doc.addPage();   // new page every 2 reports
+
+    const yBase  = slot * slotH + margin;
+
+    // Divider between the two slots (only draw on bottom slot)
+    if(slot === 1){
+      doc.setDrawColor(180,180,180);
+      doc.setLineDashPattern([3,2],0);
+      doc.line(margin, slot * slotH, pageW - margin, slot * slotH);
+      doc.setLineDashPattern([],0);
+    }
+
+    let y = yBase;
+
+    // ── Header ──
     doc.setFillColor(15,110,86);
-    doc.rect(0,0,pageW,22,"F");
-    doc.setFontSize(14);doc.setFont(undefined,"bold");doc.setTextColor(255,255,255);
-    doc.text("Easy Assess 33",pageW/2,10,{align:"center"});
-    doc.setFontSize(9);doc.setFont(undefined,"normal");
-    if(school) doc.text(school,pageW/2,16,{align:"center"});
-    doc.text(`Standard ${cls} — Academic Report`,pageW/2,school?21:16,{align:"center"});
+    doc.rect(0, y, pageW, 16, "F");
+    doc.setFontSize(10);doc.setFont(undefined,"bold");doc.setTextColor(255,255,255);
+    doc.text("Easy Assess", pageW/2, y+7, {align:"center"});
+    doc.setFontSize(7);doc.setFont(undefined,"normal");
+    const subTitle = school ? `${school}  ·  Standard ${cls} — Academic Report` : `Standard ${cls} — Academic Report`;
+    doc.text(subTitle, pageW/2, y+13, {align:"center"});
     doc.setTextColor(0,0,0);
-    y=28;
+    y += 20;
+
+    // ── Info grid (2 columns) ──
     const infoItems=[
-      ["Name",s.name],["Sex",s.sex==="Male"?"M":"F"],
-      ["Position",`${pos} of ${list.length}`],["Date",new Date().toLocaleDateString()],
-      ["Total Score",`${total} / ${maxTotal}`],["Level",String(level)],["Remarks",remark],
+      ["Name",       s.name],
+      ["Sex",        s.sex==="Male"?"M":"F"],
+      ["Position",   `${pos} of ${list.length}`],
+      ["Total",      `${total} / ${maxTotal}`],
+      ["Level",      String(level)],
+      ["Remarks",    remark],
+      ["Result",     pf],
+      ["Date",       new Date().toLocaleDateString()],
     ];
     infoItems.forEach((item,i)=>{
-      const col=i%2===0?14:pageW/2+1;
-      const ry=y+Math.floor(i/2)*9;
-      doc.setFontSize(7.5);doc.setFont(undefined,"normal");doc.setTextColor(120,120,120);
-      doc.text(item[0]+":",col,ry);
+      const col = i%2===0 ? margin : pageW/2+2;
+      const ry  = y + Math.floor(i/2)*7.5;
+      doc.setFontSize(6.5);doc.setFont(undefined,"normal");doc.setTextColor(120,120,120);
+      doc.text(item[0]+":", col, ry);
       doc.setFont(undefined,"bold");doc.setTextColor(0,0,0);
-      doc.text(String(item[1]),col+22,ry);
+      doc.text(String(item[1]), col+18, ry);
     });
-    y+=Math.ceil(infoItems.length/2)*9+4;
-    doc.setDrawColor(200,200,200);doc.line(14,y,pageW-14,y);y+=5;
+    y += Math.ceil(infoItems.length/2)*7.5 + 3;
+
+    // Thin divider
+    doc.setDrawColor(210,210,210);
+    doc.line(margin, y, pageW-margin, y);
+    y += 3;
+
+    // ── Subject table ──
     const tableHead=[["Subject","Score","Grade"]];
     const tableBody=subs.map(sub=>{
       const score=s[sub.key]||0;
-      return [sub.label,score,`Grade ${getGradeScaled(score,sub.max)}`];
+      return [sub.label, score, `Grade ${getGradeScaled(score,sub.max)}`];
     });
-    tableBody.push(["Total",total,""]);
+    tableBody.push(["Total", total, ""]);
+
     doc.autoTable({
-      head:tableHead,body:tableBody,startY:y,
-      headStyles:{fillColor:[29,158,117],textColor:255,fontStyle:"bold",fontSize:8},
-      bodyStyles:{fontSize:8,cellPadding:3},
+      head:tableHead, body:tableBody, startY:y,
+      headStyles:{fillColor:[29,158,117],textColor:255,fontStyle:"bold",fontSize:6.5},
+      bodyStyles:{fontSize:6.5,cellPadding:2},
       alternateRowStyles:{fillColor:[240,250,246]},
-      didParseCell:function(data){if(data.row.index===tableBody.length-1){data.cell.styles.fontStyle="bold";data.cell.styles.fillColor=[224,244,238];}},
-      margin:{left:14,right:14},
+      tableWidth:"auto",
+      didParseCell:function(data){
+        if(data.row.index===tableBody.length-1){
+          data.cell.styles.fontStyle="bold";data.cell.styles.fillColor=[224,244,238];
+        }
+      },
+      margin:{left:margin,right:margin},
+      // Stop the table at the bottom of the slot
+      pageBreak:"avoid",
     });
-    const footY=pageH-10;
-    doc.setFontSize(7);doc.setTextColor(150,150,150);
-    doc.text(`Developed by Juma Ali  |  +265 995 818 600  |  Page ${idx+1} of ${list.length}`,pageW/2,footY,{align:"center"});
+
+    // ── Footer ──
+    const footY = yBase + slotH - 5;
+    doc.setFontSize(5.5);doc.setTextColor(160,160,160);
+    doc.text(
+      `Developed by Juma Ali  |  +265 995 818 600  |  Report ${idx+1} of ${list.length}`,
+      pageW/2, footY, {align:"center"}
+    );
     doc.setTextColor(0,0,0);
   });
+
   const fname=(school?school.replace(/\s+/g,"-")+"-":"")+"std"+cls+"-all-reports.pdf";
   doc.save(fname);
 }
