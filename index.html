@@ -1525,37 +1525,6 @@ function generatePdf(){
   doc.setTextColor(0);
   y+=6;
 
-  // ── Main scores table with dense ranking ──
-  const headers=[["#","Name","Sex",...subs.map(s=>s.label),"Total","Pass/Fail"]];
-  const rows = list.map(s=>{
-    const total = calcTotal(s,subs);
-    const pos   = uniqueTotals.indexOf(total)+1;
-    const pf    = getPassFail(total,cls);
-    return [pos, s.name, s.sex==="Male"?"M":"F", ...subs.map(sub=>s[sub.key]||0), total, pf];
-  });
-
-  doc.autoTable({
-    head:headers, body:rows, startY:y,
-    headStyles:{fillColor:[29,158,117],textColor:255,fontStyle:"bold"},
-    alternateRowStyles:{fillColor:[240,250,246]},
-    styles:{fontSize:7.5,cellPadding:2.5},
-    columnStyles:{
-      0:{halign:"center",cellWidth:8},
-      2:{halign:"center"},
-      [3+subs.length]:{halign:"center"},       // Total col
-      [3+subs.length+1]:{halign:"center"},     // Pass/Fail col
-    },
-    didParseCell:function(data){
-      if(data.section==="body" && data.col===3+subs.length+1){
-        const val=data.cell.raw;
-        data.cell.styles.textColor = val==="PASS"?[8,80,65]:[216,90,48];
-        data.cell.styles.fontStyle = "bold";
-      }
-    }
-  });
-
-  y = doc.lastAutoTable.finalY + 10;
-
   // ── Summary table: Levels by gender ──
   doc.setFontSize(10);doc.setFont(undefined,"bold");
   doc.text("Summary — Levels by Gender",14,y);
@@ -1588,6 +1557,37 @@ function generatePdf(){
       if(data.section==="body" && data.row.index===sumRows.length-1){
         data.cell.styles.fontStyle="bold";
         data.cell.styles.fillColor=[224,244,238];
+      }
+    }
+  });
+
+  y = doc.lastAutoTable.finalY + 10;
+
+  // ── Main scores table with dense ranking ──
+  const headers=[["#","Name","Sex",...subs.map(s=>s.label),"Total","Pass/Fail"]];
+  const rows = list.map(s=>{
+    const total = calcTotal(s,subs);
+    const pos   = uniqueTotals.indexOf(total)+1;
+    const pf    = getPassFail(total,cls);
+    return [pos, s.name, s.sex==="Male"?"M":"F", ...subs.map(sub=>s[sub.key]||0), total, pf];
+  });
+
+  doc.autoTable({
+    head:headers, body:rows, startY:y,
+    headStyles:{fillColor:[29,158,117],textColor:255,fontStyle:"bold"},
+    alternateRowStyles:{fillColor:[240,250,246]},
+    styles:{fontSize:7.5,cellPadding:2.5},
+    columnStyles:{
+      0:{halign:"center",cellWidth:8},
+      2:{halign:"center"},
+      [3+subs.length]:{halign:"center"},       // Total col
+      [3+subs.length+1]:{halign:"center"},     // Pass/Fail col
+    },
+    didParseCell:function(data){
+      if(data.section==="body" && data.col===3+subs.length+1){
+        const val=data.cell.raw;
+        data.cell.styles.textColor = val==="PASS"?[8,80,65]:[216,90,48];
+        data.cell.styles.fontStyle = "bold";
       }
     }
   });
