@@ -334,6 +334,14 @@
   #pdfBox label{font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;}
   #pdfBox input,#pdfBox select{width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:0.95rem;margin-bottom:1rem;background:#fff;}
   #pdfBox input:focus,#pdfBox select:focus{outline:none;border-color:var(--primary);}
+  /* school reports dialog */
+  #srModal{display:none;position:fixed;inset:0;z-index:8890;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;padding:1rem;}
+  #srModal.open{display:flex;}
+  #srBox{background:#fff;border-radius:14px;width:100%;max-width:380px;padding:1.5rem;}
+  #srBox h3{font-size:1rem;font-weight:600;margin:0 0 1rem;}
+  #srBox label{font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;}
+  #srBox input{width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:0.95rem;margin-bottom:1rem;background:#fff;}
+  #srBox input:focus{outline:none;border-color:var(--primary);}
 </style>
 </head>
 <body>
@@ -835,6 +843,23 @@
     <div style="display:flex;gap:8px;justify-content:flex-end;">
       <button class="btn-secondary" style="padding:9px 18px;font-size:0.9rem;" onclick="closePdfModal()">Cancel</button>
       <button class="btn-primary" style="padding:9px 18px;font-size:0.9rem;" onclick="generatePdf()">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- School Reports info dialog -->
+<div id="srModal">
+  <div id="srBox">
+    <h3>📄 School Reports to PDF</h3>
+    <label for="srSchool">School</label>
+    <input type="text" id="srSchool" placeholder="School e.g MTUWA FP SCHOOL">
+    <label for="srTotalInClass">Total in Class</label>
+    <input type="number" id="srTotalInClass" placeholder="Total in Class" min="0">
+    <label for="srNextTerm">Next Term Begins</label>
+    <input type="date" id="srNextTerm">
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button class="btn-secondary" style="padding:9px 18px;font-size:0.9rem;" onclick="closeSrModal()">Cancel</button>
+      <button class="btn-primary" style="padding:9px 18px;font-size:0.9rem;" onclick="confirmSchoolReports()">OK</button>
     </div>
   </div>
 </div>
@@ -1348,12 +1373,10 @@ document.addEventListener("DOMContentLoaded", ()=>{
   const schoolReportsBtn = document.getElementById("schoolReportsBtn");
   if(schoolReportsBtn) schoolReportsBtn.addEventListener("click",()=>{
     closeMenu();
-    const cls=currentClass(),subs=getSubjects(cls);
-    const list=getList(cls).sort((a,b)=>calcTotal(b,subs)-calcTotal(a,subs));
+    const cls=currentClass(),list=getList(cls);
     if(list.length===0){alert("No students to generate reports for.");return;}
-    const school=prompt("Enter School Name (optional):","") || "";
-    if(school===null) return;
-    generateSchoolReportsPdf(cls,subs,list,school);
+    document.getElementById("srModal").classList.add("open");
+    document.getElementById("srSchool").focus();
   });
 
   // Notes auto-save
@@ -1614,6 +1637,11 @@ document.getElementById("pdfModal").addEventListener("click",function(e){
 });
 window.closePdfModal=closePdfModal;window.generatePdf=generatePdf;
 
+document.getElementById("srModal").addEventListener("click",function(e){
+  if(e.target===this) closeSrModal();
+});
+window.closeSrModal=closeSrModal;window.confirmSchoolReports=confirmSchoolReports;
+
 // ── SCAN FEATURE ──────────────────────────────────────────────────────────
 let scannedImageBase64 = null;
 
@@ -1837,113 +1865,109 @@ document.getElementById("settingsModal").addEventListener("click",function(e){
 window.openSettings=openSettings;window.closeSettings=closeSettings;window.setTotal=setTotal;
 
 // ── School Reports PDF ────────────────────────────────────────────────────
-function generateSchoolReportsPdf(cls, subs, list, school){
+const GRADE_REMARK = {1:"Need Support",2:"Good",3:"Very Good",4:"Excellent"};
+
+function closeSrModal(){
+  document.getElementById("srModal").classList.remove("open");
+}
+
+function confirmSchoolReports(){
+  const cls    = currentClass();
+  const subs   = getSubjects(cls);
+  const school = document.getElementById("srSchool").value.trim();
+  const totalInClass = parseInt(document.getElementById("srTotalInClass").value,10) || 0;
+  const nextTermRaw  = document.getElementById("srNextTerm").value; // yyyy-mm-dd
+  let nextTermBegins = "";
+  if(nextTermRaw){
+    const [yy,mm,dd] = nextTermRaw.split("-");
+    nextTermBegins = `${dd}/${mm}/${yy}`;
+  }
+  closeSrModal();
+
+  const list = getList(cls).sort((a,b)=>calcTotal(b,subs)-calcTotal(a,subs));
+  if(list.length===0){alert("No students to generate reports for.");return;}
+  generateSchoolReportsPdf(cls,subs,list,school,totalInClass,nextTermBegins);
+}
+
+function generateSchoolReportsPdf(cls, subs, list, school, totalInClass, nextTermBegins){
   const {jsPDF} = window.jspdf;
   const doc      = new jsPDF();
   const maxTotal = getMaxTotal(subs);
-  const pageW    = doc.internal.pageSize.getWidth();
-  const pageH    = doc.internal.pageSize.getHeight();
+  const term     = getCurrentTerm();
+  const year     = new Date().getFullYear();
 
   // Pre-compute dense-rank positions (same logic as student list)
   const uniqueTotals = [...new Set(list.map(s=>calcTotal(s,subs)))].sort((a,b)=>b-a);
 
-  // Each report occupies half a page; 2 per A4
-  const slotH   = pageH / 2;
-  const margin  = 8;
+  const plainStyles={fontSize:9,cellPadding:2.5,textColor:[0,0,0],lineColor:[0,0,0],lineWidth:0.2,halign:"left"};
+  const plainHead={fillColor:[255,255,255],textColor:[0,0,0],fontStyle:"bold",lineColor:[0,0,0],lineWidth:0.2,halign:"left"};
 
   list.forEach((s, idx)=>{
-    const total  = calcTotal(s,subs);
-    const {level,remark} = getLevelAndRemark(total,maxTotal);
-    const pos    = uniqueTotals.indexOf(total) + 1;
-    const pf     = getPassFail(total, cls);
-    const slot   = idx % 2;          // 0 = top half, 1 = bottom half
+    if(idx > 0) doc.addPage();
 
-    if(idx > 0 && slot === 0) doc.addPage();   // new page every 2 reports
+    const total   = calcTotal(s,subs);
+    const {level} = getLevelAndRemark(total,maxTotal);
+    const pos     = uniqueTotals.indexOf(total) + 1;
+    const pf      = getPassFail(total, cls);
 
-    const yBase  = slot * slotH + margin;
+    let y = 18;
 
-    // Divider between the two slots (only draw on bottom slot)
-    if(slot === 1){
-      doc.setDrawColor(180,180,180);
-      doc.setLineDashPattern([3,2],0);
-      doc.line(margin, slot * slotH, pageW - margin, slot * slotH);
-      doc.setLineDashPattern([],0);
+    // ── School name & report title ──
+    if(school){
+      doc.setFontSize(15);doc.setFont(undefined,"bold");
+      doc.text(school,105,y,{align:"center"});
+      y+=8;
     }
+    doc.setFontSize(13);doc.setFont(undefined,"bold");
+    doc.text(`STANDARD ${cls} REPORT CARD`,105,y,{align:"center"});
+    y+=10;
 
-    let y = yBase;
-
-    // ── Header ──
-    doc.setFillColor(15,110,86);
-    doc.rect(0, y, pageW, 16, "F");
-    doc.setFontSize(10);doc.setFont(undefined,"bold");doc.setTextColor(255,255,255);
-    doc.text("Easy Assess", pageW/2, y+7, {align:"center"});
-    doc.setFontSize(7);doc.setFont(undefined,"normal");
-    const subTitle = school ? `${school}  ·  Standard ${cls} — Academic Report` : `Standard ${cls} — Academic Report`;
-    doc.text(subTitle, pageW/2, y+13, {align:"center"});
-    doc.setTextColor(0,0,0);
-    y += 20;
-
-    // ── Info grid (2 columns) ──
-    const infoItems=[
-      ["Name",       s.name],
-      ["Sex",        s.sex==="Male"?"M":"F"],
-      ["Position",   `${pos} of ${list.length}`],
-      ["Total",      `${total} / ${maxTotal}`],
-      ["Level",      String(level)],
-      ["Remarks",    remark],
-      ["Result",     pf],
-      ["Date",       new Date().toLocaleDateString()],
-    ];
-    infoItems.forEach((item,i)=>{
-      const col = i%2===0 ? margin : pageW/2+2;
-      const ry  = y + Math.floor(i/2)*7.5;
-      doc.setFontSize(6.5);doc.setFont(undefined,"normal");doc.setTextColor(120,120,120);
-      doc.text(item[0]+":", col, ry);
-      doc.setFont(undefined,"bold");doc.setTextColor(0,0,0);
-      doc.text(String(item[1]), col+18, ry);
-    });
-    y += Math.ceil(infoItems.length/2)*7.5 + 3;
-
-    // Thin divider
-    doc.setDrawColor(210,210,210);
-    doc.line(margin, y, pageW-margin, y);
-    y += 3;
+    // ── Name / meta line ──
+    doc.setFontSize(10);doc.setFont(undefined,"normal");
+    doc.text(`Name: ${s.name}`,14,y);
+    y+=6;
+    doc.text(`Total in Class: ${totalInClass}   Term: ${term}   Year: ${year}   Position: ${pos}   Level: ${level}`,14,y);
+    y+=5;
 
     // ── Subject table ──
-    const tableHead=[["Subject","Score","Grade"]];
+    const tableHead=[["SUBJECTS","TOTAL","SCORE","GRADE","REMARKS"]];
     const tableBody=subs.map(sub=>{
-      const score=s[sub.key]||0;
-      return [sub.label, score, `Grade ${getGradeScaled(score,sub.max)}`];
+      const score = s[sub.key]||0;
+      const grade = getGradeScaled(score,sub.max);
+      return [sub.label, sub.max, score, grade, GRADE_REMARK[grade]];
     });
-    tableBody.push(["Total", total, ""]);
+    tableBody.push(["TOTAL MARKS", maxTotal, total, level, pf==="PASS"?"Pass":"Fail"]);
 
     doc.autoTable({
       head:tableHead, body:tableBody, startY:y,
-      headStyles:{fillColor:[29,158,117],textColor:255,fontStyle:"bold",fontSize:6.5},
-      bodyStyles:{fontSize:6.5,cellPadding:2},
-      alternateRowStyles:{fillColor:[240,250,246]},
-      tableWidth:"auto",
+      theme:"grid", styles:plainStyles, headStyles:plainHead,
+      columnStyles:{1:{halign:"center"},2:{halign:"center"},3:{halign:"center"}},
       didParseCell:function(data){
-        if(data.row.index===tableBody.length-1){
-          data.cell.styles.fontStyle="bold";data.cell.styles.fillColor=[224,244,238];
+        if(data.section==="body" && data.row.index===tableBody.length-1){
+          data.cell.styles.fontStyle="bold";
         }
-      },
-      margin:{left:margin,right:margin},
-      // Stop the table at the bottom of the slot
-      pageBreak:"avoid",
+      }
     });
+    y = doc.lastAutoTable.finalY + 6;
 
-    // ── Footer ──
-    const footY = yBase + slotH - 5;
-    doc.setFontSize(5.5);doc.setTextColor(160,160,160);
-    doc.text(
-      `Developed by Juma Ali  |  +265 995 818 600  |  Report ${idx+1} of ${list.length}`,
-      pageW/2, footY, {align:"center"}
-    );
-    doc.setTextColor(0,0,0);
+    // ── Key ──
+    doc.setFontSize(9);doc.setFont(undefined,"bold");
+    doc.text("KEY:",14,y);
+    y+=5;
+    doc.setFont(undefined,"normal");
+    doc.text("0-39 = F(fail), 40-59 = D(pass), 60-69 = C (good), 70-79 = B (v. good), 80-100 = A (excellent)",14,y);
+    y+=8;
+
+    // ── Next term & signatures ──
+    doc.setFontSize(9);
+    doc.text(`Next term begins on: ${nextTermBegins||"__________"}`,14,y);
+    y+=7;
+    doc.text("Class Teacher's Remarks: ________________________     Signature: __________",14,y);
+    y+=7;
+    doc.text("Head Teacher's Remarks: __________________________     Signature: __________",14,y);
   });
 
-  const fname=(school?school.replace(/\s+/g,"-")+"-":"")+"std"+cls+"-all-reports.pdf";
+  const fname=(school?school.replace(/\s+/g,"-")+"-":"")+"std"+cls+"-report-cards.pdf";
   doc.save(fname);
 }
 
