@@ -332,8 +332,8 @@
   #pdfBox{background:#fff;border-radius:14px;width:100%;max-width:380px;padding:1.5rem;}
   #pdfBox h3{font-size:1rem;font-weight:600;margin:0 0 1rem;}
   #pdfBox label{font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;}
-  #pdfBox input{width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:0.95rem;margin-bottom:1rem;}
-  #pdfBox input:focus{outline:none;border-color:var(--primary);}
+  #pdfBox input,#pdfBox select{width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:0.95rem;margin-bottom:1rem;background:#fff;}
+  #pdfBox input:focus,#pdfBox select:focus{outline:none;border-color:var(--primary);}
 </style>
 </head>
 <body>
@@ -810,14 +810,31 @@
 <!-- PDF info dialog -->
 <div id="pdfModal">
   <div id="pdfBox">
-    <h3>📄 Export to PDF</h3>
-    <label for="pdfSchool">School Name</label>
-    <input type="text" id="pdfSchool" placeholder="e.g. Lilongwe Primary School">
-    <label for="pdfClass">Class / Stream</label>
-    <input type="text" id="pdfClass" placeholder="e.g. Standard 3 — Red Stream">
+    <h3>📄 Progress Report to PDF</h3>
+    <label for="pdfSchool">School</label>
+    <input type="text" id="pdfSchool" placeholder="School e.g MTUWA FP SCHOOL">
+    <label for="pdfTest">Test</label>
+    <select id="pdfTest">
+      <option>Week 1 Test</option>
+      <option>Week 2 Test</option>
+      <option>Week 3 Test</option>
+      <option>Week 4 Test</option>
+      <option>Week 5 Test</option>
+      <option>Week 6 Test</option>
+      <option>Week 7 Test</option>
+      <option>Week 8 Test</option>
+      <option>Week 9 Test</option>
+      <option>Week 10 Test</option>
+      <option>Final Test</option>
+      <option>Midterm</option>
+    </select>
+    <label for="pdfTotalBoys">Total Boys In Class</label>
+    <input type="number" id="pdfTotalBoys" placeholder="Total Boys In Class" min="0">
+    <label for="pdfTotalGirls">Total Girls In Class</label>
+    <input type="number" id="pdfTotalGirls" placeholder="Total Girls In Class" min="0">
     <div style="display:flex;gap:8px;justify-content:flex-end;">
       <button class="btn-secondary" style="padding:9px 18px;font-size:0.9rem;" onclick="closePdfModal()">Cancel</button>
-      <button class="btn-primary" style="padding:9px 18px;font-size:0.9rem;" onclick="generatePdf()">Export PDF</button>
+      <button class="btn-primary" style="padding:9px 18px;font-size:0.9rem;" onclick="generatePdf()">OK</button>
     </div>
   </div>
 </div>
@@ -1302,7 +1319,6 @@ document.addEventListener("DOMContentLoaded", ()=>{
     closeMenu();
     const cls=currentClass(),list=getList(cls);
     if(list.length===0){alert("No students to export.");return;}
-    document.getElementById("pdfClass").value=`Standard ${cls}`;
     document.getElementById("pdfModal").classList.add("open");
     document.getElementById("pdfSchool").focus();
   });
@@ -1481,13 +1497,22 @@ function closePdfModal(){
   document.getElementById("pdfModal").classList.remove("open");
 }
 
+function getCurrentTerm(){
+  const m = new Date().getMonth()+1; // 1-12
+  if(m>=1 && m<=4) return 1;
+  if(m>=5 && m<=8) return 2;
+  return 3;
+}
+
 function generatePdf(){
   const cls        = currentClass();
   const subs       = getSubjects(cls);
   const maxTotal   = getMaxTotal(subs);
   const rawList    = getList(cls);
   const schoolName = document.getElementById("pdfSchool").value.trim();
-  const className  = document.getElementById("pdfClass").value.trim();
+  const testName   = document.getElementById("pdfTest").value;
+  const totalBoysInClass  = parseInt(document.getElementById("pdfTotalBoys").value,10)  || 0;
+  const totalGirlsInClass = parseInt(document.getElementById("pdfTotalGirls").value,10) || 0;
   closePdfModal();
 
   // Sort descending by total
@@ -1496,103 +1521,91 @@ function generatePdf(){
   // Dense ranking
   const uniqueTotals = [...new Set(list.map(s=>calcTotal(s,subs)))].sort((a,b)=>b-a);
 
+  const boysSat  = list.filter(s=>s.sex==="Male");
+  const girlsSat = list.filter(s=>s.sex==="Female");
+  const boysPass  = boysSat.filter(s=>getPassFail(calcTotal(s,subs),cls)==="PASS").length;
+  const girlsPass = girlsSat.filter(s=>getPassFail(calcTotal(s,subs),cls)==="PASS").length;
+  const boysFail  = boysSat.length - boysPass;
+  const girlsFail = girlsSat.length - girlsPass;
+
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF();
-  let y=12;
+  let y=20;
 
-  // School name
+  // School name (large, bold, centered)
   if(schoolName){
-    doc.setFontSize(15);doc.setFont(undefined,"bold");
+    doc.setFontSize(22);doc.setFont(undefined,"bold");
     doc.text(schoolName,105,y,{align:"center"});
-    y+=8;
+    y+=10;
   }
 
-  // Class / stream
-  if(className){
-    doc.setFontSize(11);doc.setFont(undefined,"normal");
-    doc.text(className,105,y,{align:"center"});
-    y+=6;
-  }
+  // Test name (large, bold, centered)
+  doc.setFontSize(18);doc.setFont(undefined,"bold");
+  doc.text(testName,105,y,{align:"center"});
+  y+=10;
 
-  // Score report label
-  doc.setFontSize(10);doc.setFont(undefined,"normal");
-  doc.text(`Score Report — Standard ${cls}`,105,y,{align:"center"});
-  y+=5;
+  // Standard / Term / Year line
+  doc.setFontSize(12);doc.setFont(undefined,"bold");
+  doc.text(`Standard: ${cls}   Term: ${getCurrentTerm()}   Year: ${new Date().getFullYear()}`,105,y,{align:"center"});
+  y+=8;
 
-  // Date
-  doc.setFontSize(8);doc.setTextColor(120);
-  doc.text("Generated: "+new Date().toLocaleString(),105,y,{align:"center"});
-  doc.setTextColor(0);
-  y+=6;
+  const plainStyles={fontSize:9,cellPadding:2.5,textColor:[0,0,0],lineColor:[0,0,0],lineWidth:0.2,halign:"center"};
+  const plainHead={fillColor:[255,255,255],textColor:[0,0,0],fontStyle:"bold",lineColor:[0,0,0],lineWidth:0.2,halign:"center"};
 
-  // ── Summary table: Levels by gender ──
-  doc.setFontSize(10);doc.setFont(undefined,"bold");
-  doc.text("Summary — Levels by Gender",14,y);
-  y+=4;
-
-  const levels=[4,3,2,1];
-  const sumHead=[["Level","Boys","Girls","Total","Pass","Fail"]];
-  const sumRows = levels.map(lv=>{
-    const inLevel = list.filter(s=>getLevelAndRemark(calcTotal(s,subs),maxTotal).level===lv);
-    const boys    = inLevel.filter(s=>s.sex==="Male").length;
-    const girls   = inLevel.filter(s=>s.sex==="Female").length;
-    const pass    = inLevel.filter(s=>getPassFail(calcTotal(s,subs),cls)==="PASS").length;
-    const fail    = inLevel.length - pass;
-    return [`Level ${lv}`, boys, girls, inLevel.length, pass, fail];
+  // ── Table 1: Enroll / Sat / Passed / Failed ──
+  doc.autoTable({
+    startY:y,
+    head:[["","ENROLL","SAT","PASSED","FAILED"]],
+    body:[
+      ["BOYS",  totalBoysInClass,                    boysSat.length,  boysPass,           boysFail],
+      ["GIRLS", totalGirlsInClass,                   girlsSat.length, girlsPass,          girlsFail],
+      ["TOTAL", totalBoysInClass+totalGirlsInClass,  list.length,     boysPass+girlsPass, boysFail+girlsFail],
+    ],
+    theme:"grid", styles:plainStyles, headStyles:plainHead,
+    columnStyles:{0:{halign:"left",fontStyle:"bold"}}
   });
+  y = doc.lastAutoTable.finalY + 8;
 
-  // Totals row
-  const totalBoys  = list.filter(s=>s.sex==="Male").length;
-  const totalGirls = list.filter(s=>s.sex==="Female").length;
-  const totalPass  = list.filter(s=>getPassFail(calcTotal(s,subs),cls)==="PASS").length;
-  sumRows.push(["Total", totalBoys, totalGirls, list.length, totalPass, list.length-totalPass]);
+  // ── Table 2: Levels by gender ──
+  const levels=[4,3,2,1];
+  const levelCounts = sex => levels.map(lv =>
+    list.filter(s => s.sex===sex && getLevelAndRemark(calcTotal(s,subs),maxTotal).level===lv).length
+  );
+  const boysLevels  = levelCounts("Male");
+  const girlsLevels = levelCounts("Female");
+  const totalLevels = levels.map((lv,i)=>boysLevels[i]+girlsLevels[i]);
 
   doc.autoTable({
-    head:sumHead, body:sumRows, startY:y,
-    headStyles:{fillColor:[15,110,86],textColor:255,fontStyle:"bold"},
-    alternateRowStyles:{fillColor:[240,250,246]},
-    styles:{fontSize:8,cellPadding:2.5,halign:"center"},
-    columnStyles:{0:{halign:"left",fontStyle:"bold"}},
-    didParseCell:function(data){
-      if(data.section==="body" && data.row.index===sumRows.length-1){
-        data.cell.styles.fontStyle="bold";
-        data.cell.styles.fillColor=[224,244,238];
-      }
-    }
+    startY:y,
+    head:[["","LEVEL 4","LEVEL 3","LEVEL 2","LEVEL 1","TOTAL"]],
+    body:[
+      ["BOYS",  ...boysLevels,  boysSat.length],
+      ["GIRLS", ...girlsLevels, girlsSat.length],
+      ["TOTAL", ...totalLevels, list.length],
+    ],
+    theme:"grid", styles:plainStyles, headStyles:plainHead,
+    columnStyles:{0:{halign:"left",fontStyle:"bold"}}
   });
+  y = doc.lastAutoTable.finalY + 8;
 
-  y = doc.lastAutoTable.finalY + 10;
-
-  // ── Main scores table with dense ranking ──
-  const headers=[["#","Name","Sex",...subs.map(s=>s.label),"Total","Pass/Fail"]];
+  // ── Table 3: Per-student results ──
+  const headers=[["NAME","SEX",...subs.map(s=>s.label),"TOTAL","LEVEL","REMARKS","POS"]];
   const rows = list.map(s=>{
     const total = calcTotal(s,subs);
     const pos   = uniqueTotals.indexOf(total)+1;
+    const {level} = getLevelAndRemark(total,maxTotal);
     const pf    = getPassFail(total,cls);
-    return [pos, s.name, s.sex==="Male"?"M":"F", ...subs.map(sub=>s[sub.key]||0), total, pf];
+    return [s.name, s.sex==="Male"?"M":"F", ...subs.map(sub=>s[sub.key]||0), total, level, pf, pos];
   });
 
   doc.autoTable({
-    head:headers, body:rows, startY:y,
-    headStyles:{fillColor:[29,158,117],textColor:255,fontStyle:"bold"},
-    alternateRowStyles:{fillColor:[240,250,246]},
-    styles:{fontSize:7.5,cellPadding:2.5},
-    columnStyles:{
-      0:{halign:"center",cellWidth:8},
-      2:{halign:"center"},
-      [3+subs.length]:{halign:"center"},       // Total col
-      [3+subs.length+1]:{halign:"center"},     // Pass/Fail col
-    },
-    didParseCell:function(data){
-      if(data.section==="body" && data.col===3+subs.length+1){
-        const val=data.cell.raw;
-        data.cell.styles.textColor = val==="PASS"?[8,80,65]:[216,90,48];
-        data.cell.styles.fontStyle = "bold";
-      }
-    }
+    startY:y,
+    head:headers, body:rows,
+    theme:"grid", styles:plainStyles, headStyles:plainHead,
+    columnStyles:{0:{halign:"left"}}
   });
 
-  const filename=(schoolName?schoolName.replace(/\s+/g,"-")+"-":"")+"standard-"+cls+"-scores.pdf";
+  const filename=(schoolName?schoolName.replace(/\s+/g,"-")+"-":"")+testName.replace(/\s+/g,"-")+"-standard-"+cls+"-report.pdf";
   doc.save(filename);
 }
 
