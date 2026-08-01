@@ -1,4 +1,4 @@
-const CACHE_NAME = "score-manager-v32";
+const CACHE_NAME = "score-manager-v33";
 
 const STATIC_ASSETS = [
   "./",
@@ -19,7 +19,6 @@ const CDN_ASSETS = [
 
 // Install
 self.addEventListener("install", event => {
-  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache =>
       cache.addAll(STATIC_ASSETS).then(() =>
