@@ -1612,20 +1612,21 @@ function generatePdf(){
   y = doc.lastAutoTable.finalY + 8;
 
   // ── Table 3: Per-student results ──
-  const headers=[["NAME","SEX",...subs.map(s=>s.label),"TOTAL","LEVEL","REMARKS","POS"]];
+  const headerLabel = lbl => lbl==="Expressive Arts" ? "EA" : lbl==="Religious Education" ? "RE" : lbl;
+  const headers=[["POS","NAME","SEX",...subs.map(s=>headerLabel(s.label)),"TOTAL","LEVEL","REMARKS"]];
   const rows = list.map(s=>{
     const total = calcTotal(s,subs);
     const pos   = uniqueTotals.indexOf(total)+1;
     const {level} = getLevelAndRemark(total,maxTotal);
     const pf    = getPassFail(total,cls);
-    return [s.name, s.sex==="Male"?"M":"F", ...subs.map(sub=>s[sub.key]||0), total, level, pf, pos];
+    return [pos, s.name, s.sex==="Male"?"M":"F", ...subs.map(sub=>s[sub.key]||0), total, level, pf];
   });
 
   doc.autoTable({
     startY:y,
     head:headers, body:rows,
     theme:"grid", styles:plainStyles, headStyles:plainHead,
-    columnStyles:{0:{halign:"left"}}
+    columnStyles:{1:{halign:"left"}}
   });
 
   const filename=(schoolName?schoolName.replace(/\s+/g,"-")+"-":"")+testName.replace(/\s+/g,"-")+"-standard-"+cls+"-report.pdf";
@@ -1895,39 +1896,56 @@ function generateSchoolReportsPdf(cls, subs, list, school, totalInClass, nextTer
   const maxTotal = getMaxTotal(subs);
   const term     = getCurrentTerm();
   const year     = new Date().getFullYear();
+  const pageW    = doc.internal.pageSize.getWidth();
+  const pageH    = doc.internal.pageSize.getHeight();
+
+  // Two reports per A4 page
+  const slotH  = pageH / 2;
+  const margin = 10;
 
   // Pre-compute dense-rank positions (same logic as student list)
   const uniqueTotals = [...new Set(list.map(s=>calcTotal(s,subs)))].sort((a,b)=>b-a);
 
-  const plainStyles={fontSize:9,cellPadding:2.5,textColor:[0,0,0],lineColor:[0,0,0],lineWidth:0.2,halign:"left"};
-  const plainHead={fillColor:[255,255,255],textColor:[0,0,0],fontStyle:"bold",lineColor:[0,0,0],lineWidth:0.2,halign:"left"};
+  const plainStyles={fontSize:7,cellPadding:1.5,textColor:[0,0,0],lineColor:[0,0,0],lineWidth:0.2,halign:"left"};
+  const plainHead={fillColor:[255,255,255],textColor:[0,0,0],fontStyle:"bold",lineColor:[0,0,0],lineWidth:0.2,halign:"left",fontSize:7};
 
   list.forEach((s, idx)=>{
-    if(idx > 0) doc.addPage();
+    const slot = idx % 2;              // 0 = top half, 1 = bottom half
+    if(idx > 0 && slot === 0) doc.addPage();   // new page every 2 reports
+
+    const yBase = slot * slotH + margin;
+
+    // Divider between the two slots
+    if(slot === 1){
+      doc.setDrawColor(180,180,180);
+      doc.setLineDashPattern([3,2],0);
+      doc.line(margin, slot * slotH, pageW - margin, slot * slotH);
+      doc.setLineDashPattern([],0);
+    }
+
+    let y = yBase;
 
     const total   = calcTotal(s,subs);
     const {level} = getLevelAndRemark(total,maxTotal);
     const pos     = uniqueTotals.indexOf(total) + 1;
     const pf      = getPassFail(total, cls);
 
-    let y = 18;
-
     // ── School name & report title ──
     if(school){
-      doc.setFontSize(15);doc.setFont(undefined,"bold");
+      doc.setFontSize(12);doc.setFont(undefined,"bold");
       doc.text(school,105,y,{align:"center"});
-      y+=8;
+      y+=6;
     }
-    doc.setFontSize(13);doc.setFont(undefined,"bold");
+    doc.setFontSize(10);doc.setFont(undefined,"bold");
     doc.text(`STANDARD ${cls} REPORT CARD`,105,y,{align:"center"});
-    y+=10;
+    y+=6;
 
     // ── Name / meta line ──
-    doc.setFontSize(10);doc.setFont(undefined,"normal");
-    doc.text(`Name: ${s.name}`,14,y);
-    y+=6;
-    doc.text(`Total in Class: ${totalInClass}   Term: ${term}   Year: ${year}   Position: ${pos}   Level: ${level}`,14,y);
-    y+=5;
+    doc.setFontSize(8);doc.setFont(undefined,"normal");
+    doc.text(`Name: ${s.name}`,margin,y);
+    y+=4.5;
+    doc.text(`Total in Class: ${totalInClass}   Term: ${term}   Year: ${year}   Position: ${pos}   Level: ${level}`,margin,y);
+    y+=3;
 
     // ── Subject table ──
     const tableHead=[["SUBJECTS","TOTAL","SCORE","GRADE","REMARKS"]];
@@ -1942,29 +1960,32 @@ function generateSchoolReportsPdf(cls, subs, list, school, totalInClass, nextTer
       head:tableHead, body:tableBody, startY:y,
       theme:"grid", styles:plainStyles, headStyles:plainHead,
       columnStyles:{1:{halign:"center"},2:{halign:"center"},3:{halign:"center"}},
+      margin:{left:margin,right:margin},
+      tableWidth:pageW-margin*2,
+      pageBreak:"avoid",
       didParseCell:function(data){
         if(data.section==="body" && data.row.index===tableBody.length-1){
           data.cell.styles.fontStyle="bold";
         }
       }
     });
-    y = doc.lastAutoTable.finalY + 6;
+    y = doc.lastAutoTable.finalY + 3;
 
     // ── Key ──
-    doc.setFontSize(9);doc.setFont(undefined,"bold");
-    doc.text("KEY:",14,y);
-    y+=5;
+    doc.setFontSize(6.5);doc.setFont(undefined,"bold");
+    doc.text("KEY:",margin,y);
+    y+=3.5;
     doc.setFont(undefined,"normal");
-    doc.text("0-39 = F(fail), 40-59 = D(pass), 60-69 = C (good), 70-79 = B (v. good), 80-100 = A (excellent)",14,y);
-    y+=8;
+    doc.text("0-39 = F(fail), 40-59 = D(pass), 60-69 = C (good), 70-79 = B (v. good), 80-100 = A (excellent)",margin,y);
+    y+=5;
 
     // ── Next term & signatures ──
-    doc.setFontSize(9);
-    doc.text(`Next term begins on: ${nextTermBegins||"__________"}`,14,y);
-    y+=7;
-    doc.text("Class Teacher's Remarks: ________________________     Signature: __________",14,y);
-    y+=7;
-    doc.text("Head Teacher's Remarks: __________________________     Signature: __________",14,y);
+    doc.setFontSize(7.5);
+    doc.text(`Next term begins on: ${nextTermBegins||"__________"}`,margin,y);
+    y+=4.5;
+    doc.text("Class Teacher's Remarks: ______________________   Signature: _________",margin,y);
+    y+=4.5;
+    doc.text("Head Teacher's Remarks: _________________________   Signature: _________",margin,y);
   });
 
   const fname=(school?school.replace(/\s+/g,"-")+"-":"")+"std"+cls+"-report-cards.pdf";
