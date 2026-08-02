@@ -1,4 +1,4 @@
-const CACHE_NAME = "score-manager-v33";
+const CACHE_NAME = "score-manager-v36";
 
 const STATIC_ASSETS = [
   "./",
@@ -49,10 +49,10 @@ self.addEventListener("fetch", event => {
 
   if(isJson){
     event.respondWith(
-      fetch(event.request).then(response => {
+      fetch(event.request, { cache: "no-store" }).then(response => {
         if(response && response.status === 200){
           const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone)));
         }
         return response;
       }).catch(() => caches.match(event.request))
@@ -67,7 +67,7 @@ self.addEventListener("fetch", event => {
       return fetch(event.request).then(response => {
         if(response && response.status === 200){
           const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone));
+          event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone)));
         }
         return response;
       }).catch(() => caches.match("./index.html"));

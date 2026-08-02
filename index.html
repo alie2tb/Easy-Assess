@@ -2377,8 +2377,8 @@ let NEWS_DATA          = null;
 async function fetchNewsData(){
   try {
     const [annRes, newsRes] = await Promise.all([
-      fetch("./announcements.json?v=" + Date.now()),
-      fetch("./latestNews.json?v=" + Date.now())
+      fetch("./announcements.json"),
+      fetch("./latestNews.json")
     ]);
     ANNOUNCEMENTS_DATA = annRes.ok  ? await annRes.json()  : ANNOUNCEMENTS_FALLBACK;
     NEWS_DATA          = newsRes.ok ? await newsRes.json() : NEWS_FALLBACK;
