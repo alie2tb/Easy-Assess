@@ -249,6 +249,19 @@
   .res-meta{font-size:0.75rem;color:var(--muted);}
   .res-dl{width:42px;height:42px;border-radius:50%;background:var(--primary-dark);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;color:#fff;font-size:1.1rem;transition:background 0.2s;}
   .res-dl:hover{background:var(--primary);}
+  /* lesson plan form */
+  .lp-form{background:#fff;border-radius:16px;padding:1.3rem;border:1px solid var(--border);}
+  .lp-form h3{margin:0 0 1.2rem;font-size:1.1rem;font-weight:700;color:var(--text);}
+  .lp-form label{display:block;font-size:0.85rem;font-weight:700;color:var(--text);margin:0 0 6px;}
+  .lp-form select,.lp-form input,.lp-form textarea{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:12px;font-size:0.95rem;font-family:inherit;margin-bottom:1.1rem;background:#fff;color:var(--text);}
+  .lp-form select:focus,.lp-form input:focus,.lp-form textarea:focus{outline:none;border-color:var(--primary);}
+  .lp-form textarea{resize:vertical;min-height:70px;}
+  .lp-form ::placeholder{color:#9a9a97;}
+  #lessonPlanResult{margin-top:1rem;}
+  .lesson-plan-card{background:#fff;border-radius:16px;padding:1.2rem;border:1px solid var(--border);}
+  .lesson-plan-card h4{margin:0 0 0.8rem;font-size:1.02rem;font-weight:700;color:var(--primary-dark);}
+  .lesson-plan-card p{font-size:0.88rem;color:var(--text);line-height:1.5;}
+  .lesson-plan-card li{font-size:0.88rem;color:var(--text);line-height:1.5;}
   /* floating add button */
   #fabAddStudent{position:fixed;bottom:78px;right:16px;z-index:400;background:var(--primary);color:#fff;border:none;border-radius:999px;padding:12px 20px;display:none;align-items:center;gap:8px;cursor:pointer;box-shadow:0 4px 16px rgba(29,158,117,0.4);font-family:inherit;transition:background 0.2s,transform 0.15s;}
   #fabAddStudent:hover{background:var(--primary-dark);transform:scale(1.04);}
@@ -2442,7 +2455,7 @@ async function renderNews(){
 }
 
 // ── Resources ─────────────────────────────────────────────────────────────
-const RES_CATEGORIES = ["All","Notes","Syllabuses","Teachers Guides","Learners Books","Past Papers","Schemes of Work"];
+const RES_CATEGORIES = ["All","Lesson Plan","Notes","Syllabuses","Teachers Guides","Learners Books","Past Papers","Schemes of Work"];
 
 const RESOURCES_DATA = [
   {id:"r1", cat:"Notes",          ext:"PDF",  icon:"📄", title:"Standard 4 Mathematics — Fractions & Decimals Notes",          level:"Standard 4",  size:"1.2 MB",  url:"#"},
@@ -2492,6 +2505,12 @@ window.filterResources=filterResources;
 function renderResources(){
   const container = document.getElementById("resourcesList");
   if(!container) return;
+
+  // ── LESSON PLAN tab — show the "Build your lesson" form ───────────────
+  if(_resCat === "Lesson Plan"){
+    renderLessonPlanForm();
+    return;
+  }
 
   // ── NOTES tab — show the interactive subject notepad list ─────────────
   if(_resCat === "Notes"){
@@ -2557,6 +2576,111 @@ function renderResources(){
       <button class="res-dl" onclick="downloadResource('${r.id}')" title="Download">⬇</button>
     </div>`;
   }).join("");
+}
+
+// ── Lesson Plan builder ──────────────────────────────────────────────────
+function getLessonSubjects(cls){
+  if(cls<=4) return getSubjects(cls).map(s=>s.label);
+  return ["English","Chichewa","Mathematics","Agriculture","Life Skills","Social Studies","Primary Science","Religious Education"];
+}
+
+function renderLessonPlanForm(){
+  const container = document.getElementById("resourcesList");
+  container.innerHTML = `
+    <div class="lp-form">
+      <h3>Build your lesson</h3>
+      <label for="lpClass">Class</label>
+      <select id="lpClass" onchange="updateLessonSubjects()"></select>
+      <label for="lpSubject">Subject</label>
+      <select id="lpSubject"></select>
+      <label for="lpTopic">Topic</label>
+      <input type="text" id="lpTopic" placeholder="e.g., Greetings">
+      <label for="lpDate">Date</label>
+      <input type="date" id="lpDate">
+      <label for="lpTime">Start Time</label>
+      <input type="time" id="lpTime">
+      <label for="lpCriteria">Success Criteria (optional)</label>
+      <textarea id="lpCriteria" rows="3" placeholder="If empty, AI will create 3-4 aligned success criteria."></textarea>
+      <button class="btn-primary" style="width:100%;" onclick="buildLesson()">OK</button>
+      <div id="lessonPlanResult"></div>
+    </div>`;
+
+  const classSel = document.getElementById("lpClass");
+  classSel.innerHTML = [1,2,3,4,5,6,7,8].map(c=>`<option value="${c}">Standard ${c}</option>`).join("");
+  classSel.value = currentClass();
+  updateLessonSubjects();
+  document.getElementById("lpDate").value = new Date().toISOString().slice(0,10);
+}
+window.renderLessonPlanForm = renderLessonPlanForm;
+
+function updateLessonSubjects(){
+  const cls  = parseInt(document.getElementById("lpClass").value,10);
+  const subs = getLessonSubjects(cls);
+  document.getElementById("lpSubject").innerHTML = subs.map(s=>`<option>${s}</option>`).join("");
+}
+window.updateLessonSubjects = updateLessonSubjects;
+
+async function buildLesson(){
+  const cls      = document.getElementById("lpClass").value;
+  const subject  = document.getElementById("lpSubject").value;
+  const topic    = document.getElementById("lpTopic").value.trim();
+  const date     = document.getElementById("lpDate").value;
+  const time     = document.getElementById("lpTime").value;
+  const criteriaRaw = document.getElementById("lpCriteria").value.trim();
+  const resultEl = document.getElementById("lessonPlanResult");
+
+  if(!topic){ alert("Please enter a topic."); return; }
+
+  let criteria = criteriaRaw
+    ? criteriaRaw.split("\n").map(s=>s.trim()).filter(Boolean)
+    : null;
+
+  if(!criteria){
+    resultEl.innerHTML = `<div style="padding:1rem;color:var(--muted);font-size:0.85rem;"><span class="spinner"></span> Generating success criteria...</div>`;
+    try {
+      const prompt = `Create 3-4 concise, measurable lesson success criteria for a Standard ${cls} ${subject} lesson on the topic "${topic}". Return ONLY a valid JSON array of strings, no markdown, no explanation.`;
+      const resp = await fetch("https://api.anthropic.com/v1/messages", {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+          "anthropic-version":"2023-06-01",
+          "anthropic-dangerous-direct-browser-access":"true"
+        },
+        body: JSON.stringify({
+          model:"claude-sonnet-4-6",
+          max_tokens:400,
+          messages:[{role:"user", content:prompt}]
+        })
+      });
+      const data = await resp.json();
+      if(data.error) throw new Error(data.error.message);
+      const text  = data.content.filter(b=>b.type==="text").map(b=>b.text).join("");
+      const clean = text.replace(/^```(?:json)?\s*/i,"").replace(/\s*```$/,"").trim();
+      criteria = JSON.parse(clean);
+      if(!Array.isArray(criteria) || criteria.length===0) throw new Error("empty");
+    } catch(e){
+      criteria = ["Could not auto-generate success criteria — please add your own and try again."];
+    }
+  }
+
+  renderLessonResult({cls, subject, topic, date, time, criteria});
+}
+window.buildLesson = buildLesson;
+
+function renderLessonResult({cls, subject, topic, date, time, criteria}){
+  const resultEl = document.getElementById("lessonPlanResult");
+  const dateStr  = date ? new Date(date+"T00:00:00").toLocaleDateString() : "—";
+  resultEl.innerHTML = `
+    <div class="lesson-plan-card">
+      <h4>Standard ${cls} — ${escapeHtml(subject)}</h4>
+      <p style="margin:0 0 4px;"><strong>Topic:</strong> ${escapeHtml(topic)}</p>
+      <p style="margin:0 0 10px;"><strong>Date:</strong> ${dateStr}${time?(" · "+time):""}</p>
+      <p style="margin:0 0 4px;"><strong>Success Criteria:</strong></p>
+      <ul style="margin:0;padding-left:1.2rem;">
+        ${criteria.map(c=>`<li>${escapeHtml(c)}</li>`).join("")}
+      </ul>
+      <button class="btn-secondary" style="margin-top:1rem;width:100%;" onclick="renderLessonPlanForm()">Build Another Lesson</button>
+    </div>`;
 }
 
 // Open a note from the Resources Notes list
