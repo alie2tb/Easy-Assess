@@ -22,7 +22,6 @@
   html.dark .top-bar{background:var(--card);}
   html.dark .card{background:var(--card);}
   html.dark input,html.dark select,html.dark textarea{background:var(--card);color:var(--text);border-color:var(--border);}
-  html.dark .forum-card,html.dark .news-card,html.dark .res-card,html.dark .announcement-card{background:var(--card);}
   html.dark .class-card{background:var(--card);}
   html.dark .bottom-nav{background:var(--card);border-color:var(--border);}
   html.dark .nav-item{color:var(--muted);}
@@ -30,16 +29,14 @@
   html.dark #updateDialogBox{background:var(--card);}
   html.dark #updateDialogFooter{border-color:var(--border);}
   html.dark .upd-btn.later{background:var(--card);color:var(--muted);}
-  html.dark #notifBanner{background:#0F6E56;}
   html.dark .mode-tab{background:var(--card);color:var(--muted);}
   html.dark .mode-tab.active{background:var(--primary);color:#fff;}
-  html.dark .res-tab{background:#2A2A2A;color:var(--muted);border-color:var(--border);}
-  html.dark .forum-tab{color:var(--muted);}
-  html.dark .forum-search-wrap{background:#2A2A2A;}
   html.dark .notes-item{background:var(--card);}
   html.dark .notes-list-wrap{background:var(--card);}
   html.dark .notes-std-header{background:#2A2A2A;}
-  html.dark #reportBox,html.dark #pdfBox,html.dark #shareBox,html.dark #settingsBox,html.dark #newPostModal>div,html.dark #settingsModal>div{background:var(--card);color:var(--text);}
+  html.dark #noteEditorModal{background:var(--card);}
+  html.dark #notesArea{background:var(--card);}
+  html.dark #reportBox,html.dark #pdfBox,html.dark #shareBox,html.dark #settingsBox,html.dark #settingsModal>div{background:var(--card);color:var(--text);}
   html.dark .menu-item{background:none;color:var(--text);}
   html.dark .menu-item:hover{background:#2A2A2A;}
   html.dark #overflowMenu{background:var(--card);border-color:var(--border);}
@@ -193,75 +190,17 @@
   .notes-item-arrow{color:var(--muted);font-size:0.9rem;}
   .notes-list-wrap{background:#fff;border-radius:12px;border:1px solid var(--border);overflow:hidden;margin-bottom:1rem;}
   .notes-std-header{padding:8px 16px;background:var(--grey-100,#f5f6f8);font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid var(--border);}
-  /* forum & news */
-  .forum-search-wrap{display:flex;align-items:center;gap:10px;background:#f0f0ee;border-radius:999px;padding:10px 16px;margin:0.8rem 0 1rem;}
-  .forum-search-icon{font-size:1rem;color:var(--muted);}
-  .forum-search{background:none;border:none;outline:none;font-size:0.95rem;color:var(--text);width:100%;}
-  .forum-tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:1rem;}
-  .forum-tab{flex:1;background:none;border:none;padding:10px 4px;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;letter-spacing:0.04em;}
-  .forum-tab.active{color:var(--primary-dark);border-bottom-color:var(--primary);}
-  .forum-card{background:#fff;border-radius:14px;padding:1rem;margin-bottom:1rem;box-shadow:0 1px 6px rgba(0,0,0,0.07);border:1px solid var(--border);}
-  .forum-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.7rem;}
-  .forum-avatar{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;color:#fff;flex-shrink:0;}
-  .forum-author-wrap{display:flex;align-items:center;gap:10px;}
-  .forum-author{font-size:0.9rem;font-weight:600;color:var(--text);}
-  .forum-time{font-size:0.75rem;color:var(--muted);}
-  .forum-category{font-size:0.72rem;font-weight:600;padding:3px 10px;border-radius:999px;background:#E1F5EE;color:var(--primary-dark);}
-  .forum-title{font-size:0.98rem;font-weight:700;color:var(--text);margin:0 0 0.4rem;line-height:1.35;}
-  .forum-excerpt{font-size:0.82rem;color:var(--muted);line-height:1.5;margin:0 0 0.8rem;}
-  .forum-footer{display:flex;align-items:center;justify-content:space-between;padding-top:0.6rem;border-top:1px solid var(--border);}
-  .forum-stats{display:flex;gap:14px;font-size:0.8rem;color:var(--muted);}
-  .forum-view{font-size:0.82rem;font-weight:600;color:var(--primary);text-decoration:none;cursor:pointer;}
-  #fabNewPost{position:fixed;bottom:78px;right:16px;z-index:400;background:var(--primary);color:#fff;border:none;border-radius:999px;padding:12px 20px;display:none;align-items:center;gap:8px;cursor:pointer;box-shadow:0 4px 16px rgba(29,158,117,0.4);font-family:inherit;transition:background 0.2s;}
-  #fabNewPost:hover{background:var(--primary-dark);}
-  /* news */
-  .news-section-title{font-size:1.1rem;font-weight:700;color:var(--text);margin:0 0 0.8rem;}
-  .news-see-all{font-size:0.88rem;font-weight:600;color:var(--primary);cursor:pointer;}
-  .announcement-card{background:#fff;border-radius:12px;padding:1rem 1rem 1rem 0;margin-bottom:0.8rem;display:flex;align-items:flex-start;gap:0;box-shadow:0 1px 4px rgba(0,0,0,0.06);border:1px solid var(--border);overflow:hidden;}
-  .announcement-bar{width:4px;min-height:100%;background:#BA7517;border-radius:0;flex-shrink:0;align-self:stretch;margin-right:12px;}
-  .announcement-body{flex:1;}
-  .announcement-title{font-size:0.92rem;font-weight:700;color:var(--text);line-height:1.35;margin:0 0 0.3rem;}
-  .announcement-date{font-size:0.78rem;color:var(--muted);}
-  .announcement-arrow{color:var(--muted);font-size:1rem;margin-left:8px;align-self:center;}
-  .news-card{background:#fff;border-radius:14px;overflow:hidden;margin-bottom:1rem;box-shadow:0 1px 6px rgba(0,0,0,0.07);border:1px solid var(--border);}
-  .news-img{width:100%;height:180px;background:var(--primary-dark);display:flex;align-items:flex-end;padding:0.7rem;position:relative;}
-  .news-tag{font-size:0.72rem;font-weight:700;background:rgba(0,0,0,0.55);color:#fff;padding:4px 12px;border-radius:8px;}
-  .news-body{padding:1rem;}
-  .news-title{font-size:1rem;font-weight:700;color:var(--text);line-height:1.35;margin:0 0 0.5rem;}
-  .news-excerpt{font-size:0.82rem;color:var(--muted);line-height:1.5;margin:0 0 0.8rem;}
-  .news-footer{display:flex;align-items:center;justify-content:space-between;}
-  .news-date{font-size:0.75rem;color:var(--muted);}
-  .news-read{font-size:0.82rem;font-weight:600;color:var(--primary);cursor:pointer;}
-  /* resources */
-  .res-tabs-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:1rem;}
-  .res-tabs{display:flex;gap:8px;padding-bottom:4px;white-space:nowrap;}
-  .res-tab{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:999px;border:1.5px solid var(--border);background:#fff;font-size:0.8rem;font-weight:500;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all 0.15s;}
-  .res-tab.active{background:var(--grey-700,#3A3A38);color:#fff;border-color:var(--grey-700,#3A3A38);}
-  .res-tab.active .res-check{display:inline;}
-  .res-check{display:none;font-size:0.8rem;}
-  .res-card{background:#fff;border-radius:14px;padding:1rem;margin-bottom:0.8rem;display:flex;align-items:center;gap:12px;box-shadow:0 1px 5px rgba(0,0,0,0.06);border:1px solid var(--border);}
-  .res-icon{width:56px;height:56px;border-radius:12px;background:#E8F5EE;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;}
-  .res-icon span{font-size:1.3rem;line-height:1;}
-  .res-icon .res-ext{font-size:0.6rem;font-weight:800;color:var(--primary-dark);letter-spacing:0.04em;margin-top:2px;}
-  .res-body{flex:1;min-width:0;}
-  .res-cat{font-size:0.7rem;font-weight:600;padding:2px 8px;border-radius:999px;background:#E1F5EE;color:var(--primary-dark);display:inline-block;margin-bottom:4px;}
-  .res-title{font-size:0.9rem;font-weight:700;color:var(--text);line-height:1.3;margin:0 0 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
-  .res-meta{font-size:0.75rem;color:var(--muted);}
-  .res-dl{width:42px;height:42px;border-radius:50%;background:var(--primary-dark);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;color:#fff;font-size:1.1rem;transition:background 0.2s;}
-  .res-dl:hover{background:var(--primary);}
-  /* lesson plan form */
-  .lp-form{background:#fff;border-radius:16px;padding:1.3rem;border:1px solid var(--border);}
-  .lp-form h3{margin:0 0 1.2rem;font-size:1.1rem;font-weight:700;color:var(--text);}
-  .lp-form label{display:block;font-size:0.85rem;font-weight:700;color:var(--text);margin:0 0 6px;}
-  .lp-form select,.lp-form input,.lp-form textarea{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:12px;font-size:0.95rem;font-family:inherit;margin-bottom:1.1rem;background:#fff;color:var(--text);}
-  .lp-form select:focus,.lp-form input:focus,.lp-form textarea:focus{outline:none;border-color:var(--primary);}
-  .lp-form textarea{resize:vertical;min-height:70px;}
-  .lp-form ::placeholder{color:#9a9a97;}
-  #lessonPlanResult{margin-top:1rem;}
-  .lesson-plan-card{background:#fff;border-radius:16px;padding:1.2rem;border:1px solid var(--border);}
-  .lesson-plan-card h4{margin:0 0 0.8rem;font-size:1.02rem;font-weight:700;color:var(--primary-dark);}
-  .lesson-plan-card p{font-size:0.88rem;color:var(--text);line-height:1.5;}
-  .lesson-plan-card li{font-size:0.88rem;color:var(--text);line-height:1.5;}
+  /* note editor overlay */
+  #noteEditorModal{display:none;position:fixed;inset:0;z-index:8880;background:#fff;flex-direction:column;}
+  #noteEditorModal.open{display:flex;}
+  #noteEditorBox{display:flex;flex-direction:column;height:100%;padding:1rem;box-sizing:border-box;}
+  #noteEditorHeader{display:flex;align-items:center;gap:10px;margin-bottom:0.8rem;}
+  #noteEditorHeader h3{flex:1;margin:0;font-size:1rem;font-weight:700;color:var(--text);}
+  .ne-icon-btn{background:none;border:none;font-size:1.1rem;cursor:pointer;color:var(--text);padding:6px;border-radius:8px;}
+  .ne-icon-btn:hover{background:var(--grey-100,#f5f6f8);}
+  #notesArea{flex:1;width:100%;border:1px solid var(--border);border-radius:10px;padding:0.9rem;font-size:0.95rem;font-family:inherit;resize:none;box-sizing:border-box;color:var(--text);background:#fff;}
+  #notesArea:focus{outline:none;border-color:var(--primary);}
+  #notesSaved{font-size:0.8rem;color:var(--primary);min-height:1.4em;margin-top:0.5rem;text-align:right;}
   /* floating add button */
   #fabAddStudent{position:fixed;bottom:78px;right:16px;z-index:400;background:var(--primary);color:#fff;border:none;border-radius:999px;padding:12px 20px;display:none;align-items:center;gap:8px;cursor:pointer;box-shadow:0 4px 16px rgba(29,158,117,0.4);font-family:inherit;transition:background 0.2s,transform 0.15s;}
   #fabAddStudent:hover{background:var(--primary-dark);transform:scale(1.04);}
@@ -476,86 +415,9 @@
 
 </div><!-- end pageList -->
 
-<!-- PAGE 4: FORUM -->
-<div class="page" id="pageForum">
-  <!-- Search bar -->
-  <div class="forum-search-wrap">
-    <span class="forum-search-icon">🔍</span>
-    <input type="text" id="forumSearch" class="forum-search" placeholder="Search discussions..." oninput="filterForum()">
-  </div>
-  <!-- Tabs -->
-  <div class="forum-tabs">
-    <button class="forum-tab active" id="ftLatest"  onclick="setForumTab('latest')">LATEST</button>
-    <button class="forum-tab"        id="ftPopular" onclick="setForumTab('popular')">POPULAR</button>
-    <button class="forum-tab"        id="ftMine"    onclick="setForumTab('mine')">MY POSTS</button>
-  </div>
-  <!-- Post list -->
-  <div id="forumList"></div>
-  <!-- FAB new post -->
-  <button id="fabNewPost" onclick="openNewPost()" title="New Post">
-    <span style="font-size:1.4rem;line-height:1;">✏️</span>
-    <span style="font-size:0.8rem;font-weight:600;">New Post</span>
-  </button>
-</div>
-
-<!-- New post modal -->
-<div id="newPostModal" style="display:none;position:fixed;inset:0;z-index:8900;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;padding:1rem;">
-  <div style="background:#fff;border-radius:14px;width:100%;max-width:440px;padding:1.5rem;max-height:90vh;overflow-y:auto;">
-    <h3 style="margin:0 0 1rem;font-size:1rem;font-weight:600;">New Discussion Post</h3>
-    <label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">Your Name</label>
-    <input type="text" id="postAuthor" placeholder="e.g. Chisomo Banda" style="width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;margin-bottom:0.8rem;">
-    <label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">Category</label>
-    <select id="postCategory" style="width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;margin-bottom:0.8rem;">
-      <option>Mathematics</option><option>English</option><option>Chichewa</option>
-      <option>Science</option><option>Social Studies</option><option>Classroom Mgmt</option>
-      <option>Assessment</option><option>General</option>
-    </select>
-    <label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">Title</label>
-    <input type="text" id="postTitle" placeholder="Discussion title..." style="width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;margin-bottom:0.8rem;">
-    <label style="font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;">Body</label>
-    <textarea id="postBody" placeholder="Describe your question or topic..." style="width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;min-height:100px;font-family:inherit;margin-bottom:1rem;resize:vertical;"></textarea>
-    <div style="display:flex;gap:8px;justify-content:flex-end;">
-      <button class="btn-secondary" style="padding:9px 18px;" onclick="closeNewPost()">Cancel</button>
-      <button class="btn-primary"   style="padding:9px 18px;" onclick="submitPost()">Post</button>
-    </div>
-  </div>
-</div>
-
-<!-- PAGE 5: RESOURCES -->
-<div class="page" id="pageResources">
-  <!-- Search bar -->
-  <div class="forum-search-wrap">
-    <span class="forum-search-icon">🔍</span>
-    <input type="text" id="resSearch" class="forum-search" placeholder="Search resources..." oninput="filterResources()">
-  </div>
-  <!-- Category tabs (horizontal scroll) -->
-  <div class="res-tabs-wrap">
-    <div class="res-tabs" id="resTabs">
-      <button class="res-tab active"  onclick="setResCat('All')">✓ All</button>
-      <button class="res-tab" onclick="setResCat('Notes')">Notes</button>
-      <button class="res-tab" onclick="setResCat('Syllabuses')">Syllabuses</button>
-      <button class="res-tab" onclick="setResCat('Teachers Guides')">Teachers Guides</button>
-      <button class="res-tab" onclick="setResCat('Learners Books')">Learners Books</button>
-      <button class="res-tab" onclick="setResCat('Past Papers')">Past Papers</button>
-      <button class="res-tab" onclick="setResCat('Schemes of Work')">Schemes of Work</button>
-    </div>
-  </div>
-  <!-- Resource list -->
-  <div id="resourcesList"></div>
-</div>
-
-<!-- PAGE 6: NEWS -->
-<div class="page" id="pageNews">
-  <!-- Announcements section -->
-  <div class="news-section-title">Announcements</div>
-  <div id="announcementsList"></div>
-
-  <!-- Latest News section -->
-  <div style="display:flex;align-items:center;justify-content:space-between;margin:1.2rem 0 0.8rem;">
-    <div class="news-section-title" style="margin:0;">Latest News</div>
-    <span class="news-see-all" onclick="switchPage('news')">See All</span>
-  </div>
-  <div id="newsList"></div>
+<!-- PAGE 5: NOTES -->
+<div class="page" id="pageNotes">
+  <div id="notesListContainer"></div>
 </div>
 
 <!-- PAGE 5: SETTINGS -->
@@ -574,16 +436,12 @@
   <!-- Stats row -->
   <div class="profile-stats">
     <div class="profile-stat">
-      <strong id="profilePosts">0</strong>
-      <span>Posts</span>
+      <strong id="profileClasses">0</strong>
+      <span>Classes</span>
     </div>
     <div class="profile-stat">
-      <strong>0</strong>
-      <span>Resources</span>
-    </div>
-    <div class="profile-stat">
-      <strong id="profileLikes">0</strong>
-      <span>Likes</span>
+      <strong id="profileStudents">0</strong>
+      <span>Students</span>
     </div>
   </div>
 
@@ -593,16 +451,6 @@
     <div class="profile-menu-item" onclick="openEditProfile()">
       <span class="pmi-icon">✏️</span>
       <span class="pmi-label">Edit Profile</span>
-      <span class="pmi-arrow">›</span>
-    </div>
-    <div class="profile-menu-item" onclick="enableNotifications()">
-      <span class="pmi-icon">🔔</span>
-      <span class="pmi-label">Notifications</span>
-      <span class="pmi-arrow">›</span>
-    </div>
-    <div class="profile-menu-item" onclick="switchPage('settings')">
-      <span class="pmi-icon">⚙️</span>
-      <span class="pmi-label">Settings</span>
       <span class="pmi-arrow">›</span>
     </div>
   </div>
@@ -660,7 +508,7 @@
   </div>
 </div>
 
-<!-- PAGE 8: SETTINGS (opened from Profile) -->
+<!-- PAGE 8: SETTINGS -->
 <div class="page" id="pageSettings">
 
   <div class="card">
@@ -803,6 +651,19 @@
     <div style="display:flex;justify-content:flex-end;margin-top:1rem;">
       <button class="btn-secondary btn-small" onclick="closeFilter()">Close</button>
     </div>
+  </div>
+</div>
+
+<!-- Note editor overlay -->
+<div id="noteEditorModal">
+  <div id="noteEditorBox">
+    <div id="noteEditorHeader">
+      <button class="ne-icon-btn" onclick="closeNoteEditor()" title="Back">←</button>
+      <h3 id="noteEditorTitle"></h3>
+      <button class="ne-icon-btn" onclick="clearCurrentNote()" title="Clear note">🗑</button>
+    </div>
+    <textarea id="notesArea" placeholder="Type your notes here..."></textarea>
+    <div id="notesSaved"></div>
   </div>
 </div>
 
@@ -1073,32 +934,33 @@ function buildClassGrid(){
 }
 
 function switchPage(page){
-  const allPages = ["pageClasses","pageAdd","pageList","pageForum","pageResources","pageNews","pageProfile","pageSettings"];
+  const allPages = ["pageClasses","pageAdd","pageList","pageNotes","pageProfile","pageSettings"];
   allPages.forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove("active"); });
 
   const pageMap = {
     classes:"pageClasses", add:"pageAdd", list:"pageList",
-    forum:"pageForum", resources:"pageResources", news:"pageNews",
+    notes:"pageNotes",
     profile:"pageProfile", settings:"pageSettings"
   };
   const target = document.getElementById(pageMap[page]);
   if(target) target.classList.add("active");
 
-  const navMap = {classes:"navClasses", forum:"navForum", resources:"navResources", news:"navNews", profile:"navProfile"};
-  ["navClasses","navForum","navResources","navNews","navProfile"].forEach(id=>{
+  // Bottom nav — profile nav tab is now labelled "Settings" and highlights for both settings and profile pages
+  const navMap = {classes:"navClasses", notes:"navNotes", settings:"navProfile", profile:"navProfile"};
+  ["navClasses","navNotes","navProfile"].forEach(id=>{
     const el=document.getElementById(id); if(el) el.classList.remove("active");
   });
-  // Settings is a sub-page of Profile — keep Profile nav active
-  const activeNav = navMap[page==="settings"?"profile":page];
+  const activeNav = navMap[page];
   if(activeNav){ const el=document.getElementById(activeNav); if(el) el.classList.add("active"); }
 
+  // Back button: show on add, list, and profile (sub-page of settings)
   const backBtn = document.getElementById("backBtn");
-  if(backBtn) backBtn.style.display=(page==="add"||page==="list"||page==="settings")?"inline-block":"none";
+  if(backBtn) backBtn.style.display=(page==="add"||page==="list"||page==="profile")?"inline-block":"none";
 
   const titles = {
     classes:"Easy Assess", add:`Standard ${_currentClass} — Add Student`,
     list:`Standard ${_currentClass} — Students`,
-    forum:"Forum", resources:"Resources", news:"News",
+    notes:"Notes",
     profile:"My Profile", settings:"Settings"
   };
   const titleEl = document.getElementById("topTitle");
@@ -1106,8 +968,6 @@ function switchPage(page){
 
   const fab = document.getElementById("fabAddStudent");
   if(fab) fab.style.display = page==="list" ? "flex" : "none";
-  const fabPost = document.getElementById("fabNewPost");
-  if(fabPost) fabPost.style.display = page==="forum" ? "flex" : "none";
 
   if(page==="classes")  buildClassGrid();
   if(page==="settings"){
@@ -1117,16 +977,14 @@ function switchPage(page){
   }
   if(page==="profile")   buildProfilePage();
   if(page==="list")      render();
-  if(page==="forum")     renderForum();
-  if(page==="resources") initResources();
-  if(page==="news")      { renderNews(); sendAnnouncementNotifications(); }
+  if(page==="notes")     renderNotesList();
 }
 
 function goBack(){
-  const settingsActive = document.getElementById("pageSettings").classList.contains("active");
+  const profileActive  = document.getElementById("pageProfile").classList.contains("active");
   const listActive     = document.getElementById("pageList").classList.contains("active");
   const addActive      = document.getElementById("pageAdd").classList.contains("active");
-  if(settingsActive) switchPage("profile");
+  if(profileActive)  switchPage("settings");   // Profile is sub-page of Settings
   else if(listActive) switchPage("add");
   else if(addActive)  switchPage("classes");
 }
@@ -2120,103 +1978,6 @@ function showFilterResults(sub,list){
 function closeFilter(){document.getElementById("filterModal").style.display="none";}
 window.closeFilter=closeFilter;
 
-// ── Notes ─────────────────────────────────────────────────────────────────
-const NOTES_KEY_PREFIX = "ea33_note_";
-const NOTE_SUBJECTS = {
-  5: ["Agriculture","Life Skills","Social Studies","Primary Science","Religious Education"],
-  6: ["Agriculture","Life Skills","Social Studies","Primary Science","Religious Education"],
-  7: ["Agriculture","Life Skills","Social Studies","Primary Science","Religious Education"],
-  8: ["Agriculture","Life Skills","Social Studies","Primary Science","Religious Education"],
-};
-let _currentNoteKey = null;
-let _noteSaveTimer  = null;
-
-function notesStorageKey(std, subject){
-  return NOTES_KEY_PREFIX + std + "_" + subject.replace(/\s+/g,"_");
-}
-
-function loadNotes(){
-  buildNotesSubjectList();
-  document.getElementById("notesListView").style.display  = "block";
-  document.getElementById("notesEditorView").style.display = "none";
-}
-
-function buildNotesSubjectList(){
-  const container = document.getElementById("notesSubjectList");
-  container.innerHTML = "";
-  [5,6,7,8].forEach(std=>{
-    const wrap = document.createElement("div");
-    wrap.style.marginBottom = "1rem";
-    const header = document.createElement("div");
-    header.className = "notes-std-header";
-    header.textContent = `Standard ${std}`;
-    const list = document.createElement("div");
-    list.className = "notes-list-wrap";
-    NOTE_SUBJECTS[std].forEach(subject=>{
-      const key   = notesStorageKey(std, subject);
-      const saved = localStorage.getItem(key)||"";
-      const item  = document.createElement("div");
-      item.className = "notes-item";
-      item.innerHTML = `
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span class="notes-item-dot ${saved?"has-note":""}"></span>
-          <span class="notes-item-label">Standard ${std} ${subject}</span>
-        </div>
-        <span class="notes-item-arrow">›</span>`;
-      item.addEventListener("click",()=> openNoteEditor(std, subject, key));
-      list.appendChild(item);
-    });
-    wrap.appendChild(header);
-    wrap.appendChild(list);
-    container.appendChild(wrap);
-  });
-}
-
-function openNoteEditor(std, subject, key){
-  _currentNoteKey = key;
-  document.getElementById("noteEditorTitle").textContent = `Standard ${std} — ${subject}`;
-  document.getElementById("notesArea").value = localStorage.getItem(key)||"";
-  document.getElementById("notesSaved").textContent = "";
-  document.getElementById("notesListView").style.display   = "none";
-  document.getElementById("notesEditorView").style.display = "block";
-}
-
-function closeNoteEditor(){
-  if(window._noteEditorFromResources){
-    closeNoteEditorOverride();
-    return;
-  }
-  _currentNoteKey = null;
-  buildNotesSubjectList();
-  document.getElementById("notesListView").style.display   = "block";
-  document.getElementById("notesEditorView").style.display = "none";
-}
-
-function clearCurrentNote(){
-  if(!confirm("Clear this note?")) return;
-  if(_currentNoteKey) localStorage.removeItem(_currentNoteKey);
-  document.getElementById("notesArea").value = "";
-  document.getElementById("notesSaved").textContent = "Cleared";
-}
-
-// Auto-save notes as user types
-document.addEventListener("DOMContentLoaded",()=>{
-  const area = document.getElementById("notesArea");
-  if(area){
-    area.addEventListener("input",()=>{
-      if(!_currentNoteKey) return;
-      clearTimeout(_noteSaveTimer);
-      _noteSaveTimer = setTimeout(()=>{
-        localStorage.setItem(_currentNoteKey, area.value);
-        document.getElementById("notesSaved").textContent = "✅ Saved";
-        setTimeout(()=>{ document.getElementById("notesSaved").textContent=""; },2000);
-      }, 600);
-    });
-  }
-});
-
-window.closeNoteEditor=closeNoteEditor;window.clearCurrentNote=clearCurrentNote;
-
 // ── Settings page (subject totals inline, no modal) ───────────────────────
 function buildSettingsPageRows(){
   const container = document.getElementById("settingsRowsPage");
@@ -2247,554 +2008,75 @@ function buildSettingsPageRows(){
   buildPassingTotalRows();
 }
 
-// ── Forum ─────────────────────────────────────────────────────────────────
-const FORUM_KEY = "ea33_forum_posts";
-const AVATAR_COLORS = ["#1D9E75","#D85A30","#0C447C","#BA7517","#72243E","#085041","#633806"];
+// ── Notes ─────────────────────────────────────────────────────────────────
+const NOTE_SUBJECTS = {
+  5:["Agriculture","Life Skills","Social Studies","Primary Science","Religious Education"],
+  6:["Agriculture","Life Skills","Social Studies","Primary Science","Religious Education"],
+  7:["Agriculture","Life Skills","Social Studies","Primary Science","Religious Education"],
+  8:["Agriculture","Life Skills","Social Studies","Primary Science","Religious Education"],
+};
+let _currentNoteKey = null;
+let _noteSaveTimer  = null;
 
-function getForumPosts(){ return JSON.parse(localStorage.getItem(FORUM_KEY)||"[]"); }
-function saveForumPosts(posts){ localStorage.setItem(FORUM_KEY, JSON.stringify(posts)); }
-
-function avatarColor(name){
-  let h=0; for(let c of name) h+=c.charCodeAt(0);
-  return AVATAR_COLORS[h % AVATAR_COLORS.length];
-}
-function initials(name){
-  const parts=name.trim().split(" ");
-  return (parts[0][0]+(parts[1]?parts[1][0]:"")).toUpperCase();
-}
-function timeAgo(ts){
-  const d=Math.floor((Date.now()-ts)/60000);
-  if(d<1) return "Just now";
-  if(d<60) return d+" min ago";
-  if(d<1440) return Math.floor(d/60)+" hr"+(Math.floor(d/60)>1?"s":"")+" ago";
-  return Math.floor(d/1440)+" day"+(Math.floor(d/1440)>1?"s":"")+" ago";
+function noteStorageKey(std, subject){
+  return "ea33_note_" + std + "_" + subject.replace(/\s+/g,"_");
 }
 
-let _forumTab = "latest";
-let _forumSearch = "";
-
-function setForumTab(tab){
-  _forumTab = tab;
-  ["ftLatest","ftPopular","ftMine"].forEach(id=>{
-    const el=document.getElementById(id); if(el) el.classList.remove("active");
-  });
-  const map={latest:"ftLatest",popular:"ftPopular",mine:"ftMine"};
-  const el=document.getElementById(map[tab]); if(el) el.classList.add("active");
-  renderForum();
-}
-
-function filterForum(){
-  _forumSearch = (document.getElementById("forumSearch")||{}).value||"";
-  renderForum();
-}
-
-function renderForum(){
-  const container = document.getElementById("forumList");
+function renderNotesList(){
+  const container = document.getElementById("notesListContainer");
   if(!container) return;
-  let posts = getForumPosts();
-  const q = _forumSearch.toLowerCase();
-  if(q) posts = posts.filter(p=>(p.title+p.body+p.author).toLowerCase().includes(q));
-  if(_forumTab==="popular") posts = [...posts].sort((a,b)=>(b.likes||0)-(a.likes||0));
-  else if(_forumTab==="mine") posts = posts.filter(p=>p.isOwn);
-  else posts = [...posts].sort((a,b)=>b.ts-a.ts);
-
-  if(posts.length===0){
-    container.innerHTML=`<div style="text-align:center;padding:3rem 1rem;color:var(--muted);font-size:0.9rem;">${_forumTab==="mine"?"You haven't posted yet.":"No discussions found."}</div>`;
-    return;
-  }
-  container.innerHTML = posts.map(p=>`
-    <div class="forum-card">
-      <div class="forum-card-header">
-        <div class="forum-author-wrap">
-          <div class="forum-avatar" style="background:${avatarColor(p.author)}">${initials(p.author)}</div>
-          <div>
-            <div class="forum-author">${escapeHtml(p.author)}</div>
-            <div class="forum-time">${timeAgo(p.ts)}</div>
-          </div>
+  container.innerHTML = "";
+  [5,6,7,8].forEach(std=>{
+    const wrap = document.createElement("div");
+    wrap.style.marginBottom = "1rem";
+    const header = document.createElement("div");
+    header.className = "notes-std-header";
+    header.textContent = `Standard ${std}`;
+    const list = document.createElement("div");
+    list.className = "notes-list-wrap";
+    NOTE_SUBJECTS[std].forEach(subject=>{
+      const key   = noteStorageKey(std, subject);
+      const saved = localStorage.getItem(key)||"";
+      const item  = document.createElement("div");
+      item.className = "notes-item";
+      item.innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="notes-item-dot ${saved?"has-note":""}"></span>
+          <span class="notes-item-label">Standard ${std} ${subject}</span>
         </div>
-        <span class="forum-category">${escapeHtml(p.category)}</span>
-      </div>
-      <div class="forum-title">${escapeHtml(p.title)}</div>
-      <div class="forum-excerpt">${escapeHtml(p.body.length>120?p.body.slice(0,120)+"...":p.body)}</div>
-      <div class="forum-footer">
-        <div class="forum-stats">
-          <span>👍 ${p.likes||0}</span>
-          <span>↩ ${p.replies||0} repl${p.replies===1?"y":"ies"}</span>
-        </div>
-        <span class="forum-view" onclick="likePost('${p.id}')">Like &nbsp;·&nbsp; View →</span>
-      </div>
-    </div>`).join("");
-}
-
-function likePost(id){
-  const posts=getForumPosts();
-  const p=posts.find(x=>x.id===id);
-  if(p){ p.likes=(p.likes||0)+1; saveForumPosts(posts); renderForum(); }
-}
-
-function openNewPost(){
-  document.getElementById("newPostModal").style.display="flex";
-}
-function closeNewPost(){
-  document.getElementById("newPostModal").style.display="none";
-}
-function submitPost(){
-  const author   = (document.getElementById("postAuthor").value||"").trim();
-  const category = document.getElementById("postCategory").value;
-  const title    = (document.getElementById("postTitle").value||"").trim();
-  const body     = (document.getElementById("postBody").value||"").trim();
-  if(!author){alert("Please enter your name.");return;}
-  if(!title) {alert("Please enter a title.");return;}
-  if(!body)  {alert("Please write something.");return;}
-  const posts=getForumPosts();
-  posts.unshift({id:Date.now().toString(),author,category,title,body,ts:Date.now(),likes:0,replies:0,isOwn:true});
-  saveForumPosts(posts);
-  document.getElementById("postAuthor").value="";
-  document.getElementById("postTitle").value="";
-  document.getElementById("postBody").value="";
-  closeNewPost();
-  setForumTab("latest");
-  renderForum();
-}
-window.setForumTab=setForumTab;window.filterForum=filterForum;
-window.openNewPost=openNewPost;window.closeNewPost=closeNewPost;window.submitPost=submitPost;
-window.likePost=likePost;
-
-// Seed sample posts if empty
-(function seedForum(){
-  if(getForumPosts().length>0) return;
-  const samples=[
-    {id:"s1",author:"Chisomo Banda",category:"Mathematics",title:"How do I teach fractions to Standard 4 pupils effectively?",body:"I have been struggling to make fractions engaging. Any activities or visual aids that have worked for you?",ts:Date.now()-7200000,likes:14,replies:7,isOwn:false},
-    {id:"s2",author:"Yankho Mwale",category:"Classroom Mgmt",title:"Best practices for managing a large class of 60+ students",body:"Our school has very large classes. I would like to hear strategies that other teachers use to keep learners engaged.",ts:Date.now()-18000000,likes:22,replies:12,isOwn:false},
-    {id:"s3",author:"Agnes Phiri",category:"Assessment",title:"How often should we give continuous assessment tests?",body:"I am trying to plan my assessment schedule for the term. What frequency works best for Standard 3?",ts:Date.now()-86400000,likes:9,replies:4,isOwn:false},
-  ];
-  saveForumPosts(samples);
-})();
-
-// ── News ──────────────────────────────────────────────────────────────────
-// Fallback data in case JSON files fail to load
-const ANNOUNCEMENTS_FALLBACK = [
-  {id:"a1",title:"MSCE 2025 Registration Deadline — April 30th",date:"Apr 20, 2025"},
-  {id:"a2",title:"Teachers' In-Service Training: May 12–16, Lilongwe",date:"Apr 18, 2025"},
-  {id:"a3",title:"New CPD Module Available: Inclusive Education",date:"Apr 15, 2025"},
-];
-const NEWS_FALLBACK = [
-  {id:"n1",tag:"Policy",title:"Ministry of Education Launches New Curriculum Framework for 2025",excerpt:"The Malawi Ministry of Education has unveiled a revised national curriculum designed to improve learning outcomes across all primary and secondary schools.",date:"Apr 18, 2025",url:""},
-  {id:"n2",tag:"Assessment",title:"National Primary School Assessment Results Released",excerpt:"The results of the 2024 national primary school assessments have been published, showing improvements in literacy across the southern region.",date:"Mar 5, 2025",url:""},
-];
-
-// Runtime cache for fetched data
-let ANNOUNCEMENTS_DATA = null;
-let NEWS_DATA          = null;
-
-async function fetchNewsData(){
-  try {
-    const [annRes, newsRes] = await Promise.all([
-      fetch("./announcements.json"),
-      fetch("./latestNews.json")
-    ]);
-    ANNOUNCEMENTS_DATA = annRes.ok  ? await annRes.json()  : ANNOUNCEMENTS_FALLBACK;
-    NEWS_DATA          = newsRes.ok ? await newsRes.json() : NEWS_FALLBACK;
-  } catch(e){
-    ANNOUNCEMENTS_DATA = ANNOUNCEMENTS_FALLBACK;
-    NEWS_DATA          = NEWS_FALLBACK;
-  }
-}
-
-async function renderNews(){
-  // Show loading state
-  const aContainer = document.getElementById("announcementsList");
-  const nContainer = document.getElementById("newsList");
-  if(aContainer) aContainer.innerHTML = `<div style="padding:1rem;color:var(--muted);font-size:0.85rem;">Loading...</div>`;
-  if(nContainer) nContainer.innerHTML = `<div style="padding:1rem;color:var(--muted);font-size:0.85rem;">Loading...</div>`;
-
-  // Fetch fresh data from JSON files every time the page opens
-  await fetchNewsData();
-
-  // Render Announcements
-  if(aContainer){
-    if(!ANNOUNCEMENTS_DATA || ANNOUNCEMENTS_DATA.length===0){
-      aContainer.innerHTML = `<div style="padding:1rem;color:var(--muted);font-size:0.85rem;">No announcements.</div>`;
-    } else {
-      aContainer.innerHTML = ANNOUNCEMENTS_DATA.map(a=>`
-        <div class="announcement-card">
-          <div class="announcement-bar"></div>
-          <div class="announcement-body">
-            <div class="announcement-title">${escapeHtml(a.title)}</div>
-            <div class="announcement-date">${escapeHtml(a.date)}</div>
-          </div>
-          <span class="announcement-arrow">›</span>
-        </div>`).join("");
-    }
-  }
-
-  // Render Latest News
-  if(nContainer){
-    if(!NEWS_DATA || NEWS_DATA.length===0){
-      nContainer.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--muted);">No news available.</div>`;
-    } else {
-      nContainer.innerHTML = NEWS_DATA.map(n=>`
-        <div class="news-card" ${n.url?`onclick="window.open('${n.url}','_blank')" style="cursor:pointer;"`:""}>
-          <div class="news-img">
-            <span class="news-tag">${escapeHtml(n.tag)}</span>
-          </div>
-          <div class="news-body">
-            <div class="news-title">${escapeHtml(n.title)}</div>
-            <div class="news-excerpt">${escapeHtml(n.excerpt)}</div>
-            <div class="news-footer">
-              <span class="news-date">📅 ${escapeHtml(n.date)}</span>
-              ${n.url?`<span class="news-read">Read More →</span>`:`<span></span>`}
-            </div>
-          </div>
-        </div>`).join("");
-    }
-  }
-
-  // Trigger notifications for any new announcements
-  sendAnnouncementNotifications();
-}
-
-// ── Resources ─────────────────────────────────────────────────────────────
-const RES_CATEGORIES = ["All","Lesson Plan","Notes","Syllabuses","Teachers Guides","Learners Books","Past Papers","Schemes of Work"];
-
-const RESOURCES_DATA = [
-  {id:"r1", cat:"Notes",          ext:"PDF",  icon:"📄", title:"Standard 4 Mathematics — Fractions & Decimals Notes",          level:"Standard 4",  size:"1.2 MB",  url:"#"},
-  {id:"r2", cat:"Notes",          ext:"PDF",  icon:"📄", title:"English Language — Comprehension Passages for Standards 5–8",   level:"Standard 5–8", size:"2.8 MB", url:"#"},
-  {id:"r3", cat:"Teachers Guides",ext:"DOCX", icon:"📝", title:"Basic Science — Human Body Systems Lesson Plan",                level:"Standard 6",  size:"540 KB",  url:"#"},
-  {id:"r4", cat:"Learners Books", ext:"PPT",  icon:"📊", title:"Social Studies — Geography of Malawi Slideshow",               level:"Standard 7",  size:"3.5 MB",  url:"#"},
-  {id:"r5", cat:"Syllabuses",     ext:"PDF",  icon:"📄", title:"Primary School Mathematics Syllabus 2024",                     level:"All Standards",size:"890 KB",  url:"#"},
-  {id:"r6", cat:"Syllabuses",     ext:"PDF",  icon:"📄", title:"Chichewa Language Syllabus — Updated Edition",                 level:"All Standards",size:"760 KB",  url:"#"},
-  {id:"r7", cat:"Past Papers",    ext:"PDF",  icon:"📄", title:"Standard 8 PSLCE Past Papers 2023",                           level:"Standard 8",  size:"1.8 MB",  url:"#"},
-  {id:"r8", cat:"Past Papers",    ext:"PDF",  icon:"📄", title:"Standard 4 End of Year Examinations 2023",                    level:"Standard 4",  size:"1.1 MB",  url:"#"},
-  {id:"r9", cat:"Schemes of Work",ext:"DOCX", icon:"📝", title:"Standard 3 Term 1 Scheme of Work — All Subjects",             level:"Standard 3",  size:"320 KB",  url:"#"},
-  {id:"r10",cat:"Schemes of Work",ext:"DOCX", icon:"📝", title:"Standard 6 Term 2 Scheme of Work",                            level:"Standard 6",  size:"295 KB",  url:"#"},
-  {id:"r11",cat:"Teachers Guides",ext:"PDF",  icon:"📄", title:"Primary School Teacher's Guide — Classroom Management",       level:"All Standards",size:"2.1 MB",  url:"#"},
-  {id:"r12",cat:"Learners Books", ext:"PDF",  icon:"📄", title:"Standard 5 Science Learner's Book",                           level:"Standard 5",  size:"4.2 MB",  url:"#"},
-];
-
-const EXT_ICONS = { PDF:"📄", DOCX:"📝", PPT:"📊", XLS:"📊", DOC:"📝" };
-const EXT_COLORS= { PDF:"#E8F5EE", DOCX:"#EAF0FB", PPT:"#FEF3E8", XLS:"#E8F5EE" };
-
-let _resCat    = "All";
-let _resSearch = "";
-
-function initResources(){
-  const tabs = document.getElementById("resTabs");
-  if(!tabs) return;
-  tabs.innerHTML = RES_CATEGORIES.map(c=>`
-    <button class="res-tab ${c==="All"?"active":""}" onclick="setResCat('${c}')">
-      <span class="res-check">✓</span>${c}
-    </button>`).join("");
-  renderResources();
-}
-
-function setResCat(cat){
-  _resCat = cat;
-  document.querySelectorAll(".res-tab").forEach(b=>{
-    b.classList.toggle("active", b.textContent.trim().replace("✓","").trim()===cat);
-  });
-  renderResources();
-}
-
-function filterResources(){
-  _resSearch = (document.getElementById("resSearch")||{}).value||"";
-  renderResources();
-}
-window.filterResources=filterResources;
-
-function renderResources(){
-  const container = document.getElementById("resourcesList");
-  if(!container) return;
-
-  // ── LESSON PLAN tab — show the "Build your lesson" form ───────────────
-  if(_resCat === "Lesson Plan"){
-    renderLessonPlanForm();
-    return;
-  }
-
-  // ── NOTES tab — show the interactive subject notepad list ─────────────
-  if(_resCat === "Notes"){
-    const q = _resSearch.toLowerCase();
-    const NOTE_SUBJECTS_RES = {
-      5:["Agriculture","Life Skills","Social Studies","Primary Science","Religious Education"],
-      6:["Agriculture","Life Skills","Social Studies","Primary Science","Religious Education"],
-      7:["Agriculture","Life Skills","Social Studies","Primary Science","Religious Education"],
-      8:["Agriculture","Life Skills","Social Studies","Primary Science","Religious Education"],
-    };
-    // Build flat list of all subject notes
-    let noteItems = [];
-    [5,6,7,8].forEach(std=>{
-      NOTE_SUBJECTS_RES[std].forEach(subject=>{
-        noteItems.push({std, subject, label:`Standard ${std} ${subject}`});
-      });
+        <span class="notes-item-arrow">›</span>`;
+      item.addEventListener("click",()=> openNoteEditor(std, subject, key));
+      list.appendChild(item);
     });
-    if(q) noteItems = noteItems.filter(x=>x.label.toLowerCase().includes(q));
-
-    if(noteItems.length===0){
-      container.innerHTML=`<div style="text-align:center;padding:3rem;color:var(--muted);">No notes found.</div>`;
-      return;
-    }
-    container.innerHTML = `<div class="notes-list-wrap" style="margin-top:0.5rem;">` +
-      noteItems.map(item=>{
-        const key   = "ea33_note_" + item.std + "_" + item.subject.replace(/\s+/g,"_");
-        const saved = localStorage.getItem(key)||"";
-        return `
-        <div class="notes-item" onclick="openResNote(${item.std},'${item.subject}','${key}')">
-          <div style="display:flex;align-items:center;gap:10px;">
-            <span class="notes-item-dot ${saved?"has-note":""}"></span>
-            <span class="notes-item-label">${item.label}</span>
-          </div>
-          <span class="notes-item-arrow">›</span>
-        </div>`;
-      }).join("") + `</div>`;
-    return;
-  }
-
-  // ── All other tabs — show file resource cards ─────────────────────────
-  const q = _resSearch.toLowerCase();
-  let items = RESOURCES_DATA;
-  if(_resCat !== "All") items = items.filter(r=>r.cat===_resCat);
-  if(q) items = items.filter(r=>(r.title+r.cat+r.level).toLowerCase().includes(q));
-
-  if(items.length===0){
-    container.innerHTML=`<div style="text-align:center;padding:3rem;color:var(--muted);font-size:0.9rem;">No resources found.</div>`;
-    return;
-  }
-  container.innerHTML = items.map(r=>{
-    const bg = EXT_COLORS[r.ext] || "#E8F5EE";
-    return `
-    <div class="res-card">
-      <div class="res-icon" style="background:${bg}">
-        <span>${EXT_ICONS[r.ext]||"📄"}</span>
-        <span class="res-ext">${r.ext}</span>
-      </div>
-      <div class="res-body">
-        <span class="res-cat">${r.cat}</span>
-        <div class="res-title">${r.title}</div>
-        <div class="res-meta">${r.level} &nbsp;▪&nbsp; ${r.size}</div>
-      </div>
-      <button class="res-dl" onclick="downloadResource('${r.id}')" title="Download">⬇</button>
-    </div>`;
-  }).join("");
+    wrap.appendChild(header);
+    wrap.appendChild(list);
+    container.appendChild(wrap);
+  });
 }
+window.renderNotesList = renderNotesList;
 
-// ── Lesson Plan builder ──────────────────────────────────────────────────
-function getLessonSubjects(cls){
-  if(cls<=4) return getSubjects(cls).map(s=>s.label);
-  return ["English","Chichewa","Mathematics","Agriculture","Life Skills","Social Studies","Primary Science","Religious Education"];
-}
-
-function renderLessonPlanForm(){
-  const container = document.getElementById("resourcesList");
-  container.innerHTML = `
-    <div class="lp-form">
-      <h3>Build your lesson</h3>
-      <label for="lpClass">Class</label>
-      <select id="lpClass" onchange="updateLessonSubjects()"></select>
-      <label for="lpSubject">Subject</label>
-      <select id="lpSubject"></select>
-      <label for="lpTopic">Topic</label>
-      <input type="text" id="lpTopic" placeholder="e.g., Greetings">
-      <label for="lpDate">Date</label>
-      <input type="date" id="lpDate">
-      <label for="lpTime">Start Time</label>
-      <input type="time" id="lpTime">
-      <label for="lpCriteria">Success Criteria (optional)</label>
-      <textarea id="lpCriteria" rows="3" placeholder="If empty, AI will create 3-4 aligned success criteria."></textarea>
-      <button class="btn-primary" style="width:100%;" onclick="buildLesson()">OK</button>
-      <div id="lessonPlanResult"></div>
-    </div>`;
-
-  const classSel = document.getElementById("lpClass");
-  classSel.innerHTML = [1,2,3,4,5,6,7,8].map(c=>`<option value="${c}">Standard ${c}</option>`).join("");
-  classSel.value = currentClass();
-  updateLessonSubjects();
-  document.getElementById("lpDate").value = new Date().toISOString().slice(0,10);
-}
-window.renderLessonPlanForm = renderLessonPlanForm;
-
-function updateLessonSubjects(){
-  const cls  = parseInt(document.getElementById("lpClass").value,10);
-  const subs = getLessonSubjects(cls);
-  document.getElementById("lpSubject").innerHTML = subs.map(s=>`<option>${s}</option>`).join("");
-}
-window.updateLessonSubjects = updateLessonSubjects;
-
-async function buildLesson(){
-  const cls      = document.getElementById("lpClass").value;
-  const subject  = document.getElementById("lpSubject").value;
-  const topic    = document.getElementById("lpTopic").value.trim();
-  const date     = document.getElementById("lpDate").value;
-  const time     = document.getElementById("lpTime").value;
-  const criteriaRaw = document.getElementById("lpCriteria").value.trim();
-  const resultEl = document.getElementById("lessonPlanResult");
-
-  if(!topic){ alert("Please enter a topic."); return; }
-
-  let criteria = criteriaRaw
-    ? criteriaRaw.split("\n").map(s=>s.trim()).filter(Boolean)
-    : null;
-
-  if(!criteria){
-    resultEl.innerHTML = `<div style="padding:1rem;color:var(--muted);font-size:0.85rem;"><span class="spinner"></span> Generating success criteria...</div>`;
-    try {
-      const prompt = `Create 3-4 concise, measurable lesson success criteria for a Standard ${cls} ${subject} lesson on the topic "${topic}". Return ONLY a valid JSON array of strings, no markdown, no explanation.`;
-      const resp = await fetch("https://api.anthropic.com/v1/messages", {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-          "anthropic-version":"2023-06-01",
-          "anthropic-dangerous-direct-browser-access":"true"
-        },
-        body: JSON.stringify({
-          model:"claude-sonnet-4-6",
-          max_tokens:400,
-          messages:[{role:"user", content:prompt}]
-        })
-      });
-      const data = await resp.json();
-      if(data.error) throw new Error(data.error.message);
-      const text  = data.content.filter(b=>b.type==="text").map(b=>b.text).join("");
-      const clean = text.replace(/^```(?:json)?\s*/i,"").replace(/\s*```$/,"").trim();
-      criteria = JSON.parse(clean);
-      if(!Array.isArray(criteria) || criteria.length===0) throw new Error("empty");
-    } catch(e){
-      criteria = ["Could not auto-generate success criteria — please add your own and try again."];
-    }
-  }
-
-  renderLessonResult({cls, subject, topic, date, time, criteria});
-}
-window.buildLesson = buildLesson;
-
-function renderLessonResult({cls, subject, topic, date, time, criteria}){
-  const resultEl = document.getElementById("lessonPlanResult");
-  const dateStr  = date ? new Date(date+"T00:00:00").toLocaleDateString() : "—";
-  resultEl.innerHTML = `
-    <div class="lesson-plan-card">
-      <h4>Standard ${cls} — ${escapeHtml(subject)}</h4>
-      <p style="margin:0 0 4px;"><strong>Topic:</strong> ${escapeHtml(topic)}</p>
-      <p style="margin:0 0 10px;"><strong>Date:</strong> ${dateStr}${time?(" · "+time):""}</p>
-      <p style="margin:0 0 4px;"><strong>Success Criteria:</strong></p>
-      <ul style="margin:0;padding-left:1.2rem;">
-        ${criteria.map(c=>`<li>${escapeHtml(c)}</li>`).join("")}
-      </ul>
-      <button class="btn-secondary" style="margin-top:1rem;width:100%;" onclick="renderLessonPlanForm()">Build Another Lesson</button>
-    </div>`;
-}
-
-// Open a note from the Resources Notes list
-function openResNote(std, subject, key){
+function openNoteEditor(std, subject, key){
   _currentNoteKey = key;
   document.getElementById("noteEditorTitle").textContent = `Standard ${std} — ${subject}`;
   document.getElementById("notesArea").value = localStorage.getItem(key)||"";
   document.getElementById("notesSaved").textContent = "";
-
-  // Show the note editor over the resources page
-  const editorEl = document.getElementById("notesEditorView");
-  const resPage   = document.getElementById("pageResources");
-  if(editorEl && resPage){
-    editorEl.style.display = "block";
-    editorEl.style.position = "fixed";
-    editorEl.style.inset = "0";
-    editorEl.style.background = "var(--bg)";
-    editorEl.style.zIndex = "600";
-    editorEl.style.padding = "70px 1rem 80px";
-    editorEl.style.overflowY = "auto";
-    // Override close button to go back to resources
-    window._noteEditorFromResources = true;
-  }
+  document.getElementById("noteEditorModal").classList.add("open");
 }
 
-function closeNoteEditorOverride(){
-  const editorEl = document.getElementById("notesEditorView");
-  if(editorEl){ editorEl.style.display = "none"; editorEl.style.position = ""; editorEl.style.inset = ""; editorEl.style.zIndex = ""; }
-  window._noteEditorFromResources = false;
-  renderResources(); // refresh dots
-}
-window.openResNote = openResNote;
-
-function downloadResource(id){
-  const r = RESOURCES_DATA.find(x=>x.id===id);
-  if(!r) return;
-  // In production these would be real URLs; for now show a message
-  alert(`📥 "${r.title}"\n\nDownload link will be available once real files are hosted. File size: ${r.size}`);
+function closeNoteEditor(){
+  document.getElementById("noteEditorModal").classList.remove("open");
+  _currentNoteKey = null;
+  renderNotesList(); // refresh dots
 }
 
-window.setResCat=setResCat;window.filterResources=filterResources;window.downloadResource=downloadResource;
-
-// ── Push Notifications ────────────────────────────────────────────────────
-const NOTIF_KEY = "ea33_notified_announcements";
-
-async function requestNotificationPermission(){
-  if(!("Notification" in window)) return false;
-  if(Notification.permission === "granted") return true;
-  if(Notification.permission === "denied")  return false;
-  const result = await Notification.requestPermission();
-  return result === "granted";
+function clearCurrentNote(){
+  if(!confirm("Clear this note?")) return;
+  if(_currentNoteKey) localStorage.removeItem(_currentNoteKey);
+  document.getElementById("notesArea").value = "";
+  document.getElementById("notesSaved").textContent = "Cleared";
 }
-
-async function sendAnnouncementNotifications(){
-  if(!("serviceWorker" in navigator)) return;
-  const reg = await navigator.serviceWorker.ready.catch(()=>null);
-  if(!reg) return;
-  const granted = await requestNotificationPermission();
-  if(!granted) return;
-
-  const data     = ANNOUNCEMENTS_DATA || ANNOUNCEMENTS_FALLBACK;
-  const notified = JSON.parse(localStorage.getItem(NOTIF_KEY)||"[]");
-  const fresh    = data.filter(a => !notified.includes(a.id));
-  if(fresh.length === 0) return;
-
-  fresh.forEach((a, i) => {
-    setTimeout(() => {
-      reg.active && reg.active.postMessage({
-        type:  "SHOW_NOTIFICATION",
-        title: "📢 Easy Assess — Announcement",
-        body:   a.title,
-        tag:   "ann-" + a.id,
-      });
-    }, i * 1200);
-  });
-
-  const updated = [...new Set([...notified, ...fresh.map(a=>a.id)])];
-  localStorage.setItem(NOTIF_KEY, JSON.stringify(updated));
-}
-
-// Show a notification banner inside the app to request permission
-function showNotifBanner(){
-  if(!("Notification" in window)) return;
-  if(Notification.permission !== "default") return;
-  const banner = document.getElementById("notifBanner");
-  if(banner) banner.style.display = "flex";
-}
-
-function dismissNotifBanner(){
-  const banner = document.getElementById("notifBanner");
-  if(banner) banner.style.display = "none";
-  localStorage.setItem("ea33_notif_dismissed","1");
-}
-
-async function enableNotifications(){
-  dismissNotifBanner();
-  const granted = await requestNotificationPermission();
-  if(granted){
-    sendAnnouncementNotifications();
-    // Show a thank-you notification immediately
-    const reg = await navigator.serviceWorker.ready.catch(()=>null);
-    if(reg && reg.active){
-      reg.active.postMessage({
-        type:"SHOW_NOTIFICATION",
-        title:"Easy Assess 33 — Notifications On ✅",
-        body:"You'll now receive announcement notifications.",
-        tag:"ea33-welcome",
-      });
-    }
-  }
-}
-
-window.dismissNotifBanner = dismissNotifBanner;
-window.enableNotifications = enableNotifications;
+window.closeNoteEditor=closeNoteEditor;window.clearCurrentNote=clearCurrentNote;
+// (Auto-save on typing is wired to #notesArea in the main init block below.)
 
 // ── Profile ───────────────────────────────────────────────────────────────
 const PROFILE_KEY = "ea33_profile";
@@ -2814,13 +2096,13 @@ function buildProfilePage(){
   if(distEl) distEl.textContent = p.district || "Lilongwe District";
   if(avEl)   avEl.textContent   = p.name ? p.name.trim().split(" ").map(w=>w[0]).join("").slice(0,2).toUpperCase() : "👤";
 
-  // Posts and likes from forum
-  const posts = (JSON.parse(localStorage.getItem("ea33_forum_posts")||"[]")).filter(x=>x.isOwn);
-  const likes = posts.reduce((t,x)=>t+(x.likes||0),0);
-  const postsEl = document.getElementById("profilePosts");
-  const likesEl = document.getElementById("profileLikes");
-  if(postsEl) postsEl.textContent = posts.length;
-  if(likesEl) likesEl.textContent = likes;
+  // Classes/students stats
+  const classesWithStudents = [1,2,3,4,5,6,7,8].filter(c=>getList(c).length>0).length;
+  const totalStudents = [1,2,3,4,5,6,7,8].reduce((t,c)=>t+getList(c).length,0);
+  const classesEl  = document.getElementById("profileClasses");
+  const studentsEl = document.getElementById("profileStudents");
+  if(classesEl)  classesEl.textContent  = classesWithStudents;
+  if(studentsEl) studentsEl.textContent = totalStudents;
 }
 
 function openEditProfile(){
@@ -2887,10 +2169,6 @@ render();
 updateExcelBtn();
 updateBadge();
 
-// Notifications — show banner if not yet dismissed, send new announcements if already permitted
-if(!localStorage.getItem("ea33_notif_dismissed")) showNotifBanner();
-if(Notification.permission === "granted") sendAnnouncementNotifications();
-
 let _pendingNewSW = null;
 
 function showUpdateDialog(){
@@ -2936,15 +2214,6 @@ if("serviceWorker" in navigator){
   }
 }
 </script>
-<!-- Notification permission banner -->
-<div id="notifBanner" style="display:none;position:fixed;bottom:70px;left:0;right:0;z-index:500;background:#0F6E56;color:#fff;padding:12px 16px;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:0 -2px 12px rgba(0,0,0,0.15);">
-  <span style="font-size:1.2rem;">🔔</span>
-  <span style="flex:1;font-size:0.85rem;font-weight:500;">Get notified about new announcements</span>
-  <div style="display:flex;gap:8px;">
-    <button onclick="dismissNotifBanner()" style="background:rgba(255,255,255,0.2);border:none;border-radius:6px;color:#fff;padding:6px 12px;font-size:0.8rem;cursor:pointer;">Not now</button>
-    <button onclick="enableNotifications()" style="background:#fff;border:none;border-radius:6px;color:#0F6E56;padding:6px 12px;font-size:0.8rem;font-weight:700;cursor:pointer;">Enable</button>
-  </div>
-</div>
 
 <!-- Update dialog (Al Jazeera style) -->
 <div id="updateDialog">
@@ -2979,27 +2248,15 @@ if("serviceWorker" in navigator){
     </button>
   </div>
   <div class="nav-item-wrap">
-    <button class="nav-item" id="navForum" onclick="switchPage('forum')">
-      <span class="nav-icon">💬</span>
-      <span>Forum</span>
-    </button>
-  </div>
-  <div class="nav-item-wrap">
-    <button class="nav-item" id="navResources" onclick="switchPage('resources')">
+    <button class="nav-item" id="navNotes" onclick="switchPage('notes')">
       <span class="nav-icon">📚</span>
-      <span>Resources</span>
+      <span>Notes</span>
     </button>
   </div>
   <div class="nav-item-wrap">
-    <button class="nav-item" id="navNews" onclick="switchPage('news')">
-      <span class="nav-icon">📰</span>
-      <span>News</span>
-    </button>
-  </div>
-  <div class="nav-item-wrap">
-    <button class="nav-item" id="navProfile" onclick="switchPage('profile')">
-      <span class="nav-icon">👤</span>
-      <span>Profile</span>
+    <button class="nav-item" id="navProfile" onclick="switchPage('settings')">
+      <span class="nav-icon">⚙️</span>
+      <span>Settings</span>
     </button>
   </div>
 </nav>
