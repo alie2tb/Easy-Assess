@@ -188,6 +188,9 @@
   .notes-item-dot{width:8px;height:8px;border-radius:50%;background:var(--primary);opacity:0;transition:opacity 0.2s;}
   .notes-item-dot.has-note{opacity:1;}
   .notes-item-arrow{color:var(--muted);font-size:0.9rem;}
+  .notes-item-pdf{background:#E8F5EE;border:none;border-radius:8px;width:32px;height:32px;font-size:1rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .notes-item-pdf:hover{background:#d5eee1;}
+  html.dark .notes-item-pdf{background:#1e332b;}
   .notes-list-wrap{background:#fff;border-radius:12px;border:1px solid var(--border);overflow:hidden;margin-bottom:1rem;}
   .notes-std-header{padding:8px 16px;background:var(--grey-100,#f5f6f8);font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid var(--border);}
   /* note editor overlay */
@@ -2015,6 +2018,10 @@ const NOTE_SUBJECTS = {
   7:["Agriculture","Life Skills","Social Studies","Primary Science","Religious Education"],
   8:["Agriculture","Life Skills","Social Studies","Primary Science","Religious Education"],
 };
+// Bundled reference PDFs, keyed "std_Subject" (spaces -> underscores), served alongside index.html
+const NOTE_PDFS = {
+  "5_Agriculture": "Std_5_Agriculture.pdf",
+};
 let _currentNoteKey = null;
 let _noteSaveTimer  = null;
 
@@ -2035,17 +2042,28 @@ function renderNotesList(){
     const list = document.createElement("div");
     list.className = "notes-list-wrap";
     NOTE_SUBJECTS[std].forEach(subject=>{
-      const key   = noteStorageKey(std, subject);
-      const saved = localStorage.getItem(key)||"";
-      const item  = document.createElement("div");
+      const key      = noteStorageKey(std, subject);
+      const saved    = localStorage.getItem(key)||"";
+      const pdfFile  = NOTE_PDFS[std + "_" + subject.replace(/\s+/g,"_")];
+      const item     = document.createElement("div");
       item.className = "notes-item";
       item.innerHTML = `
         <div style="display:flex;align-items:center;gap:10px;">
           <span class="notes-item-dot ${saved?"has-note":""}"></span>
           <span class="notes-item-label">Standard ${std} ${subject}</span>
         </div>
-        <span class="notes-item-arrow">›</span>`;
+        <div style="display:flex;align-items:center;gap:10px;">
+          ${pdfFile ? `<button class="notes-item-pdf" title="Open reference PDF">📄</button>` : ""}
+          <span class="notes-item-arrow">›</span>
+        </div>`;
       item.addEventListener("click",()=> openNoteEditor(std, subject, key));
+      if(pdfFile){
+        const pdfBtn = item.querySelector(".notes-item-pdf");
+        pdfBtn.addEventListener("click",(e)=>{
+          e.stopPropagation();
+          window.open("./" + pdfFile, "_blank");
+        });
+      }
       list.appendChild(item);
     });
     wrap.appendChild(header);

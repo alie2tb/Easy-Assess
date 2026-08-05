@@ -1,11 +1,12 @@
-const CACHE_NAME = "score-manager-v40";
+const CACHE_NAME = "score-manager-v41";
 
 const STATIC_ASSETS = [
   "./",
   "./index.html",
   "./manifest.json",
   "./icon-192.png",
-  "./icon-512.png"
+  "./icon-512.png",
+  "./Std_5_Agriculture.pdf"
 ];
 
 const CDN_ASSETS = [
