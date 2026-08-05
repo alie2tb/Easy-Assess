@@ -2053,16 +2053,19 @@ function renderNotesList(){
           <span class="notes-item-label">Standard ${std} ${subject}</span>
         </div>
         <div style="display:flex;align-items:center;gap:10px;">
-          ${pdfFile ? `<button class="notes-item-pdf" title="Open reference PDF">📄</button>` : ""}
+          ${pdfFile ? `<button class="notes-item-pdf" title="Add/edit your own notes">✏️</button>` : ""}
           <span class="notes-item-arrow">›</span>
         </div>`;
-      item.addEventListener("click",()=> openNoteEditor(std, subject, key));
       if(pdfFile){
-        const pdfBtn = item.querySelector(".notes-item-pdf");
-        pdfBtn.addEventListener("click",(e)=>{
+        // Primary tap on the row opens the bundled reference PDF
+        item.addEventListener("click",()=> window.open("./" + pdfFile, "_blank"));
+        const editBtn = item.querySelector(".notes-item-pdf");
+        editBtn.addEventListener("click",(e)=>{
           e.stopPropagation();
-          window.open("./" + pdfFile, "_blank");
+          openNoteEditor(std, subject, key);
         });
+      } else {
+        item.addEventListener("click",()=> openNoteEditor(std, subject, key));
       }
       list.appendChild(item);
     });
