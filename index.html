@@ -193,6 +193,15 @@
   html.dark .notes-item-pdf{background:#1e332b;}
   .notes-list-wrap{background:#fff;border-radius:12px;border:1px solid var(--border);overflow:hidden;margin-bottom:1rem;}
   .notes-std-header{padding:8px 16px;background:var(--grey-100,#f5f6f8);font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid var(--border);}
+  /* resources search + tabs */
+  .res-search-wrap{display:flex;align-items:center;gap:10px;background:#f0f0ee;border-radius:999px;padding:10px 16px;margin:0.8rem 0 1rem;}
+  .res-search-icon{font-size:1rem;color:var(--muted);}
+  .res-search{background:none;border:none;outline:none;font-size:0.95rem;color:var(--text);width:100%;font-family:inherit;}
+  html.dark .res-search-wrap{background:#2A2A2A;}
+  .res-tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:1rem;}
+  .res-tab{flex:1;background:none;border:none;padding:10px 4px;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;letter-spacing:0.04em;}
+  .res-tab.active{color:var(--primary-dark);border-bottom-color:var(--primary);}
+  html.dark .res-tab{color:var(--muted);}
   /* note editor overlay */
   #noteEditorModal{display:none;position:fixed;inset:0;z-index:8880;background:#fff;flex-direction:column;}
   #noteEditorModal.open{display:flex;}
@@ -418,9 +427,21 @@
 
 </div><!-- end pageList -->
 
-<!-- PAGE 5: NOTES -->
-<div class="page" id="pageNotes">
+<!-- PAGE 5: RESOURCES -->
+<div class="page" id="pageResources">
+  <!-- Search bar -->
+  <div class="res-search-wrap">
+    <span class="res-search-icon">🔍</span>
+    <input type="text" id="resourcesSearch" class="res-search" placeholder="Search resources..." oninput="filterResourcesTab()">
+  </div>
+  <!-- Tabs -->
+  <div class="res-tabs">
+    <button class="res-tab active" id="resTabNotes"      onclick="setResourceTab('notes')">NOTES</button>
+    <button class="res-tab"        id="resTabSyllabuses" onclick="setResourceTab('syllabuses')">SYLLABUSES</button>
+  </div>
+  <!-- Tab content -->
   <div id="notesListContainer"></div>
+  <div id="syllabusesListContainer" style="display:none;"></div>
 </div>
 
 <!-- PAGE 5: SETTINGS -->
@@ -937,20 +958,20 @@ function buildClassGrid(){
 }
 
 function switchPage(page){
-  const allPages = ["pageClasses","pageAdd","pageList","pageNotes","pageProfile","pageSettings"];
+  const allPages = ["pageClasses","pageAdd","pageList","pageResources","pageProfile","pageSettings"];
   allPages.forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove("active"); });
 
   const pageMap = {
     classes:"pageClasses", add:"pageAdd", list:"pageList",
-    notes:"pageNotes",
+    resources:"pageResources",
     profile:"pageProfile", settings:"pageSettings"
   };
   const target = document.getElementById(pageMap[page]);
   if(target) target.classList.add("active");
 
   // Bottom nav — profile nav tab is now labelled "Settings" and highlights for both settings and profile pages
-  const navMap = {classes:"navClasses", notes:"navNotes", settings:"navProfile", profile:"navProfile"};
-  ["navClasses","navNotes","navProfile"].forEach(id=>{
+  const navMap = {classes:"navClasses", resources:"navResources", settings:"navProfile", profile:"navProfile"};
+  ["navClasses","navResources","navProfile"].forEach(id=>{
     const el=document.getElementById(id); if(el) el.classList.remove("active");
   });
   const activeNav = navMap[page];
@@ -963,7 +984,7 @@ function switchPage(page){
   const titles = {
     classes:"Easy Assess", add:`Standard ${_currentClass} — Add Student`,
     list:`Standard ${_currentClass} — Students`,
-    notes:"Notes",
+    resources:"Resources",
     profile:"My Profile", settings:"Settings"
   };
   const titleEl = document.getElementById("topTitle");
@@ -980,7 +1001,7 @@ function switchPage(page){
   }
   if(page==="profile")   buildProfilePage();
   if(page==="list")      render();
-  if(page==="notes")     renderNotesList();
+  if(page==="resources") initResourcesPage();
 }
 
 function goBack(){
@@ -2052,18 +2073,62 @@ const NOTE_PDFS = {
   "8_Science":            "Std 8 Science.pdf",
   "8_Social_Studies":     "Std 8 Social Studies.pdf",
 };
+// Bundled syllabus PDFs, one per standard
+const SYLLABUS_PDFS = {
+  1:"Standard 1 Syllabus.pdf", 2:"Standard 2 Syllabus.pdf",
+  3:"Standard 3 Syllabus.pdf", 4:"Standard 4 Syllabus.pdf",
+  5:"Standard 5 Syllabus.pdf", 6:"Standard 6 Syllabus.pdf",
+  7:"Standard 7 Syllabus.pdf", 8:"Standard 8 Syllabus.pdf",
+};
 let _currentNoteKey = null;
 let _noteSaveTimer  = null;
+let _resourceTab    = "notes";
+let _resourceSearch = "";
 
 function noteStorageKey(std, subject){
   return "ea33_note_" + std + "_" + subject.replace(/\s+/g,"_");
 }
 
+function initResourcesPage(){
+  _resourceTab = "notes";
+  _resourceSearch = "";
+  const search = document.getElementById("resourcesSearch");
+  if(search) search.value = "";
+  document.getElementById("resTabNotes").classList.add("active");
+  document.getElementById("resTabSyllabuses").classList.remove("active");
+  document.getElementById("notesListContainer").style.display = "block";
+  document.getElementById("syllabusesListContainer").style.display = "none";
+  renderNotesList();
+  renderSyllabusesList();
+}
+window.initResourcesPage = initResourcesPage;
+
+function setResourceTab(tab){
+  _resourceTab = tab;
+  document.getElementById("resTabNotes").classList.toggle("active", tab==="notes");
+  document.getElementById("resTabSyllabuses").classList.toggle("active", tab==="syllabuses");
+  document.getElementById("notesListContainer").style.display      = tab==="notes"      ? "block" : "none";
+  document.getElementById("syllabusesListContainer").style.display = tab==="syllabuses" ? "block" : "none";
+}
+window.setResourceTab = setResourceTab;
+
+function filterResourcesTab(){
+  _resourceSearch = (document.getElementById("resourcesSearch")||{}).value||"";
+  renderNotesList();
+  renderSyllabusesList();
+}
+window.filterResourcesTab = filterResourcesTab;
+
 function renderNotesList(){
   const container = document.getElementById("notesListContainer");
   if(!container) return;
+  const q = _resourceSearch.toLowerCase();
   container.innerHTML = "";
   [5,6,7,8].forEach(std=>{
+    const subjects = NOTE_SUBJECTS[std].filter(subject=>
+      !q || `standard ${std} ${subject}`.toLowerCase().includes(q)
+    );
+    if(subjects.length===0) return;
     const wrap = document.createElement("div");
     wrap.style.marginBottom = "1rem";
     const header = document.createElement("div");
@@ -2071,7 +2136,7 @@ function renderNotesList(){
     header.textContent = `Standard ${std}`;
     const list = document.createElement("div");
     list.className = "notes-list-wrap";
-    NOTE_SUBJECTS[std].forEach(subject=>{
+    subjects.forEach(subject=>{
       const key      = noteStorageKey(std, subject);
       const saved    = localStorage.getItem(key)||"";
       const pdfFile  = NOTE_PDFS[std + "_" + subject.replace(/\s+/g,"_")];
@@ -2103,8 +2168,41 @@ function renderNotesList(){
     wrap.appendChild(list);
     container.appendChild(wrap);
   });
+  if(!container.innerHTML){
+    container.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--muted);">No notes found.</div>`;
+  }
 }
 window.renderNotesList = renderNotesList;
+
+function renderSyllabusesList(){
+  const container = document.getElementById("syllabusesListContainer");
+  if(!container) return;
+  const q = _resourceSearch.toLowerCase();
+  const stds = [1,2,3,4,5,6,7,8].filter(std=>
+    !q || `standard ${std} syllabus`.toLowerCase().includes(q)
+  );
+  if(stds.length===0){
+    container.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--muted);">No syllabuses found.</div>`;
+    return;
+  }
+  const list = document.createElement("div");
+  list.className = "notes-list-wrap";
+  stds.forEach(std=>{
+    const pdfFile = SYLLABUS_PDFS[std];
+    const item = document.createElement("div");
+    item.className = "notes-item";
+    item.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="notes-item-label">Standard ${std} Syllabus</span>
+      </div>
+      <span class="notes-item-arrow">›</span>`;
+    item.addEventListener("click",()=> window.open("./" + pdfFile, "_blank"));
+    list.appendChild(item);
+  });
+  container.innerHTML = "";
+  container.appendChild(list);
+}
+window.renderSyllabusesList = renderSyllabusesList;
 
 function openNoteEditor(std, subject, key){
   _currentNoteKey = key;
@@ -2299,9 +2397,9 @@ if("serviceWorker" in navigator){
     </button>
   </div>
   <div class="nav-item-wrap">
-    <button class="nav-item" id="navNotes" onclick="switchPage('notes')">
+    <button class="nav-item" id="navResources" onclick="switchPage('resources')">
       <span class="nav-icon">📚</span>
-      <span>Notes</span>
+      <span>Resources</span>
     </button>
   </div>
   <div class="nav-item-wrap">

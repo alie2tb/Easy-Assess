@@ -1,4 +1,4 @@
-const CACHE_NAME = "score-manager-v43";
+const CACHE_NAME = "score-manager-v44";
 
 const STATIC_ASSETS = [
   "./",
@@ -38,7 +38,15 @@ const PDF_ASSETS = [
   "./Std 8 Life Skills.pdf",
   "./Std 8 Religious Education.pdf",
   "./Std 8 Science.pdf",
-  "./Std 8 Social Studies.pdf"
+  "./Std 8 Social Studies.pdf",
+  "./Standard 1 Syllabus.pdf",
+  "./Standard 2 Syllabus.pdf",
+  "./Standard 3 Syllabus.pdf",
+  "./Standard 4 Syllabus.pdf",
+  "./Standard 5 Syllabus.pdf",
+  "./Standard 6 Syllabus.pdf",
+  "./Standard 7 Syllabus.pdf",
+  "./Standard 8 Syllabus.pdf"
 ];
 
 const CDN_ASSETS = [
