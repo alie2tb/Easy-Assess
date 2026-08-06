@@ -1,12 +1,44 @@
-const CACHE_NAME = "score-manager-v42";
+const CACHE_NAME = "score-manager-v43";
 
 const STATIC_ASSETS = [
   "./",
   "./index.html",
   "./manifest.json",
   "./icon-192.png",
-  "./icon-512.png",
-  "./Std_5_Agriculture.pdf"
+  "./icon-512.png"
+];
+
+// Reference PDFs for the Notes tab — cached best-effort so a missing/renamed
+// file can't break the install step for the rest of the app.
+const PDF_ASSETS = [
+  "./Std_5_Agriculture.pdf",
+  "./Std 5 Bible Knowledge.pdf",
+  "./Std 5 Expressive Arts.pdf",
+  "./Std 5 Life Skills.pdf",
+  "./Std 5 Religious Education.pdf",
+  "./Std 5 Science.pdf",
+  "./Std 5 Social Studies.pdf",
+  "./Std 6 Agriculture.pdf",
+  "./Std 6 Bible Knowledge.pdf",
+  "./Std 6 Expressive Arts.pdf",
+  "./Std 6 Life Skills.pdf",
+  "./Std 6 Religious Education.pdf",
+  "./Std 6 Science.pdf",
+  "./Std 6 Social Studies.pdf",
+  "./Std 7 Agriculture.pdf",
+  "./Std 7 Bible Knowledge.pdf",
+  "./Std 7 Expressive Arts.pdf",
+  "./Std 7 Life Skills.pdf",
+  "./Std 7 Religious Education.pdf",
+  "./Std 7 Science.pdf",
+  "./Std 7 Social Studies.pdf",
+  "./Std 8 Agriculture.pdf",
+  "./Std 8 Bible Knowledge.pdf",
+  "./Std 8 Expressive Arts.pdf",
+  "./Std 8 Life Skills.pdf",
+  "./Std 8 Religious Education.pdf",
+  "./Std 8 Science.pdf",
+  "./Std 8 Social Studies.pdf"
 ];
 
 const CDN_ASSETS = [
@@ -21,7 +53,10 @@ self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache =>
       cache.addAll(STATIC_ASSETS).then(() =>
-        Promise.allSettled(CDN_ASSETS.map(url => cache.add(url).catch(()=>{})))
+        Promise.allSettled([
+          ...CDN_ASSETS.map(url => cache.add(url).catch(()=>{})),
+          ...PDF_ASSETS.map(url => cache.add(url).catch(()=>{}))
+        ])
       )
     )
   );
