@@ -198,8 +198,9 @@
   .res-search-icon{font-size:1rem;color:var(--muted);}
   .res-search{background:none;border:none;outline:none;font-size:0.95rem;color:var(--text);width:100%;font-family:inherit;}
   html.dark .res-search-wrap{background:#2A2A2A;}
-  .res-tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:1rem;}
-  .res-tab{flex:1;background:none;border:none;padding:10px 4px;font-size:0.8rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;letter-spacing:0.04em;}
+  .res-tabs-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-bottom:2px solid var(--border);margin-bottom:1rem;}
+  .res-tabs{display:flex;white-space:nowrap;width:max-content;min-width:100%;}
+  .res-tab{flex:0 0 auto;background:none;border:none;padding:10px 14px;font-size:0.76rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;letter-spacing:0.03em;white-space:nowrap;}
   .res-tab.active{color:var(--primary-dark);border-bottom-color:var(--primary);}
   html.dark .res-tab{color:var(--muted);}
   /* note editor overlay */
@@ -435,13 +436,13 @@
     <input type="text" id="resourcesSearch" class="res-search" placeholder="Search resources..." oninput="filterResourcesTab()">
   </div>
   <!-- Tabs -->
-  <div class="res-tabs">
-    <button class="res-tab active" id="resTabNotes"      onclick="setResourceTab('notes')">NOTES</button>
-    <button class="res-tab"        id="resTabSyllabuses" onclick="setResourceTab('syllabuses')">SYLLABUSES</button>
+  <div class="res-tabs-wrap">
+    <div class="res-tabs" id="resTabs"></div>
   </div>
   <!-- Tab content -->
   <div id="notesListContainer"></div>
   <div id="syllabusesListContainer" style="display:none;"></div>
+  <div id="comingSoonContainer" style="display:none;"></div>
 </div>
 
 <!-- PAGE 5: SETTINGS -->
@@ -2089,33 +2090,64 @@ function noteStorageKey(std, subject){
   return "ea33_note_" + std + "_" + subject.replace(/\s+/g,"_");
 }
 
+const RESOURCE_TABS = [
+  {key:"notes",          label:"NOTES"},
+  {key:"syllabuses",     label:"SYLLABUSES"},
+  {key:"pastpapers",     label:"PAST PAPERS"},
+  {key:"teachersguides", label:"TEACHERS GUIDES"},
+  {key:"learnersbooks",  label:"LEARNERS BOOKS"},
+  {key:"schemes",        label:"SCHEMES"},
+  {key:"lessonplans",    label:"LESSON PLANS"},
+];
+
 function initResourcesPage(){
   _resourceTab = "notes";
   _resourceSearch = "";
   const search = document.getElementById("resourcesSearch");
   if(search) search.value = "";
-  document.getElementById("resTabNotes").classList.add("active");
-  document.getElementById("resTabSyllabuses").classList.remove("active");
-  document.getElementById("notesListContainer").style.display = "block";
-  document.getElementById("syllabusesListContainer").style.display = "none";
-  renderNotesList();
-  renderSyllabusesList();
+
+  const tabsEl = document.getElementById("resTabs");
+  tabsEl.innerHTML = RESOURCE_TABS.map(t=>
+    `<button class="res-tab" id="resTab_${t.key}" onclick="setResourceTab('${t.key}')">${t.label}</button>`
+  ).join("");
+
+  setResourceTab("notes");
 }
 window.initResourcesPage = initResourcesPage;
 
 function setResourceTab(tab){
   _resourceTab = tab;
-  document.getElementById("resTabNotes").classList.toggle("active", tab==="notes");
-  document.getElementById("resTabSyllabuses").classList.toggle("active", tab==="syllabuses");
+  RESOURCE_TABS.forEach(t=>{
+    const btn = document.getElementById("resTab_"+t.key);
+    if(btn) btn.classList.toggle("active", t.key===tab);
+  });
   document.getElementById("notesListContainer").style.display      = tab==="notes"      ? "block" : "none";
   document.getElementById("syllabusesListContainer").style.display = tab==="syllabuses" ? "block" : "none";
+  document.getElementById("comingSoonContainer").style.display     = (tab!=="notes" && tab!=="syllabuses") ? "block" : "none";
+
+  if(tab==="notes")           renderNotesList();
+  else if(tab==="syllabuses") renderSyllabusesList();
+  else                        renderComingSoon(tab);
 }
 window.setResourceTab = setResourceTab;
 
+function renderComingSoon(tab){
+  const container = document.getElementById("comingSoonContainer");
+  const label = (RESOURCE_TABS.find(t=>t.key===tab)||{}).label || "";
+  container.innerHTML = `
+    <div style="text-align:center;padding:3.5rem 1.5rem;color:var(--muted);">
+      <div style="font-size:2.4rem;margin-bottom:0.8rem;">🚧</div>
+      <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;">${label}</div>
+      <div style="font-size:0.85rem;">This section will be available in the near future.</div>
+    </div>`;
+}
+window.renderComingSoon = renderComingSoon;
+
 function filterResourcesTab(){
   _resourceSearch = (document.getElementById("resourcesSearch")||{}).value||"";
-  renderNotesList();
-  renderSyllabusesList();
+  if(_resourceTab==="notes")           renderNotesList();
+  else if(_resourceTab==="syllabuses") renderSyllabusesList();
+  // Coming-soon tabs have no content to search yet.
 }
 window.filterResourcesTab = filterResourcesTab;
 
