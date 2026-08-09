@@ -137,6 +137,16 @@
   .g3{background:#E6F1FB;color:#0C447C;}
   .g2{background:#FAEEDA;color:#633806;}
   .g1{background:#FAECE7;color:#4A1B0C;}
+  /* MSCE 1–9 grade badges: 1-2 Distinction, 3-6 Credit, 7-8 Pass, 9 Fail */
+  .mg1,.mg2{background:#E1F5EE;color:#085041;}
+  .mg3,.mg4,.mg5,.mg6{background:#E6F1FB;color:#0C447C;}
+  .mg7,.mg8{background:#FAEEDA;color:#633806;}
+  .mg9{background:#FAECE7;color:#4A1B0C;}
+  /* JCE letter grade badges: A/B Excellent-VeryGood, C Good, D Average, F Fail */
+  .jgA,.jgB{background:#E1F5EE;color:#085041;}
+  .jgC{background:#E6F1FB;color:#0C447C;}
+  .jgD{background:#FAEEDA;color:#633806;}
+  .jgF{background:#FAECE7;color:#4A1B0C;}
   .report-footer{text-align:center;font-size:0.75rem;color:#888;border-top:1px solid rgba(0,0,0,0.08);padding-top:0.8rem;}
   .report-total-row td{font-weight:600;background:#f0faf6;}
   .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:1rem;}
@@ -193,6 +203,29 @@
   html.dark .notes-item-pdf{background:#1e332b;}
   .notes-list-wrap{background:#fff;border-radius:12px;border:1px solid var(--border);overflow:hidden;margin-bottom:1rem;}
   .notes-std-header{padding:8px 16px;background:var(--grey-100,#f5f6f8);font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid var(--border);}
+  /* exam subject selection */
+  .exam-subject-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#fff;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.15s;}
+  .exam-subject-item:last-child{border-bottom:none;}
+  .exam-subject-item:hover{background:#f0faf6;}
+  .exam-subject-item span{font-size:0.95rem;color:var(--text);}
+  .exam-subject-item input[type="checkbox"]{width:20px;height:20px;accent-color:var(--primary);pointer-events:none;flex-shrink:0;}
+  html.dark .exam-subject-item{background:var(--card);}
+  /* lesson plan form */
+  .lp-form{background:#fff;border-radius:16px;padding:1.3rem;border:1px solid var(--border);}
+  .lp-form h3{margin:0 0 1.2rem;font-size:1.1rem;font-weight:700;color:var(--text);}
+  .lp-form label{display:block;font-size:0.85rem;font-weight:700;color:var(--text);margin:0 0 6px;}
+  .lp-form select,.lp-form input,.lp-form textarea{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:12px;font-size:0.95rem;font-family:inherit;margin-bottom:1.1rem;background:#fff;color:var(--text);}
+  .lp-form select:focus,.lp-form input:focus,.lp-form textarea:focus{outline:none;border-color:var(--primary);}
+  .lp-form textarea{resize:vertical;min-height:70px;}
+  .lp-form ::placeholder{color:#9a9a97;}
+  html.dark .lp-form{background:var(--card);}
+  html.dark .lp-form select,html.dark .lp-form input,html.dark .lp-form textarea{background:var(--card);color:var(--text);}
+  #lessonPlanResult{margin-top:1rem;}
+  .lesson-plan-card{background:#fff;border-radius:16px;padding:1.2rem;border:1px solid var(--border);}
+  .lesson-plan-card h4{margin:0 0 0.8rem;font-size:1.02rem;font-weight:700;color:var(--primary-dark);}
+  .lesson-plan-card p{font-size:0.88rem;color:var(--text);line-height:1.5;}
+  .lesson-plan-card li{font-size:0.88rem;color:var(--text);line-height:1.5;}
+  html.dark .lesson-plan-card{background:var(--card);}
   /* resources search + tabs */
   .res-search-wrap{display:flex;align-items:center;gap:10px;background:#f0f0ee;border-radius:999px;padding:10px 16px;margin:0.8rem 0 1rem;}
   .res-search-icon{font-size:1rem;color:var(--muted);}
@@ -271,6 +304,8 @@
   /* class picker */
   .class-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   .class-card{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:1.2rem 1rem;cursor:pointer;text-align:center;transition:border-color 0.2s,box-shadow 0.2s,transform 0.15s;position:relative;overflow:hidden;}
+  .class-card.exam-card{grid-column:1 / -1;border-color:#0C447C;background:linear-gradient(135deg,#EAF0FB,#ffffff);}
+  html.dark .class-card.exam-card{background:linear-gradient(135deg,#1a2333,var(--card));}
   .class-card:hover{border-color:var(--primary);box-shadow:0 4px 16px rgba(29,158,117,0.12);transform:translateY(-2px);}
   .class-card.has-data{border-color:var(--primary);}
   .class-card .cls-icon{font-size:2rem;margin-bottom:0.5rem;display:block;}
@@ -309,6 +344,14 @@
     <p style="font-size:0.82rem;color:var(--muted);margin:0 0 1rem;">Select a class to begin assessment</p>
     <div class="class-grid" id="classGrid"></div>
   </div>
+</div>
+
+<!-- PAGE 1b: EXAM SUBJECT SELECTION (Junior Certificate / MSCE) -->
+<div class="page" id="pageExamSubjects">
+  <h3 id="examSubjectsTitle" style="margin:0.4rem 0 0.3rem;font-size:1.05rem;font-weight:700;color:var(--text);"></h3>
+  <p style="margin:0 0 1rem;font-size:0.82rem;color:var(--muted);">Select the subjects you want to assess, then tap Next.</p>
+  <div id="examSubjectsList" class="notes-list-wrap"></div>
+  <button class="btn-primary" style="width:100%;margin-top:1.2rem;" onclick="confirmExamSubjects()">Next</button>
 </div>
 
 <!-- PAGE 2: ADD STUDENT -->
@@ -443,6 +486,37 @@
   <div id="notesListContainer"></div>
   <div id="syllabusesListContainer" style="display:none;"></div>
   <div id="comingSoonContainer" style="display:none;"></div>
+</div>
+
+<!-- PAGE 5b: TOOLS -->
+<div class="page" id="pageTools">
+  <p style="font-size:0.82rem;color:var(--muted);margin:0.4rem 0 1rem;">Helpful tools for planning your teaching</p>
+  <div class="class-grid">
+    <div class="class-card tool-card" onclick="switchPage('lessonplan')">
+      <span class="cls-icon">📝</span>
+      <div class="cls-name">Lesson Plan</div>
+      <div class="cls-count">Build a lesson with AI</div>
+    </div>
+    <div class="class-card tool-card" onclick="switchPage('schemes')">
+      <span class="cls-icon">🗂️</span>
+      <div class="cls-name">Schemes of Work</div>
+      <div class="cls-count">Coming soon</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 5c: LESSON PLAN BUILDER -->
+<div class="page" id="pageLessonPlan">
+  <div id="lessonPlanContainer"></div>
+</div>
+
+<!-- PAGE 5d: SCHEMES OF WORK -->
+<div class="page" id="pageSchemes">
+  <div style="text-align:center;padding:3.5rem 1.5rem;color:var(--muted);">
+    <div style="font-size:2.4rem;margin-bottom:0.8rem;">🚧</div>
+    <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;">Schemes of Work</div>
+    <div style="font-size:0.85rem;">This section will be available in the near future.</div>
+  </div>
 </div>
 
 <!-- PAGE 5: SETTINGS -->
@@ -793,7 +867,42 @@ const STD58=[
 ];
 [5,6,7,8].forEach(n=>BASE_SUBJECTS[n]=STD58);
 
+// ── Junior Certificate / MSCE (secondary school) ────────────────────────────
+const EXAM_SUBJECT_CATALOG = [
+  {label:"English",key:"e1",max:100}, {label:"Chichewa",key:"e2",max:100},
+  {label:"Mathematics",key:"e3",max:100}, {label:"Additional Mathematics",key:"e4",max:100},
+  {label:"Biology",key:"e5",max:100}, {label:"Physical Science",key:"e6",max:100},
+  {label:"Physics",key:"e7",max:100}, {label:"Chemistry",key:"e8",max:100},
+  {label:"Geography",key:"e9",max:100}, {label:"History",key:"e10",max:100},
+  {label:"Bible Knowledge",key:"e11",max:100}, {label:"Social & Development Studies",key:"e12",max:100},
+  {label:"Life Skills",key:"e13",max:100}, {label:"Agriculture",key:"e14",max:100},
+  {label:"Home Economics",key:"e15",max:100}, {label:"Woodwork",key:"e16",max:100},
+  {label:"Metalwork",key:"e17",max:100}, {label:"Technical Drawing",key:"e18",max:100},
+  {label:"Fashion & Fabrics",key:"e19",max:100}, {label:"Art & Design",key:"e20",max:100},
+  {label:"Commerce",key:"e21",max:100}, {label:"Accounting",key:"e22",max:100},
+  {label:"Economics",key:"e23",max:100}, {label:"French",key:"e24",max:100},
+  {label:"Computer Studies",key:"e25",max:100},
+];
+const EXAM_SUBJECTS_KEY_PREFIX = "ea33_exam_subjects_";
+function isExamLevel(cls){ return cls==="JC" || cls==="MSCE"; }
+function classLabel(cls){
+  if(cls==="JC")   return "Junior Certificate";
+  if(cls==="MSCE") return "MSCE";
+  return "Standard " + cls;
+}
+
+function getExamSelectedSubjects(level){
+  return JSON.parse(localStorage.getItem(EXAM_SUBJECTS_KEY_PREFIX+level)||"[]");
+}
+function saveExamSelectedSubjects(level, keys){
+  localStorage.setItem(EXAM_SUBJECTS_KEY_PREFIX+level, JSON.stringify(keys));
+}
+
 function getSubjects(cls){
+  if(isExamLevel(cls)){
+    const keys = getExamSelectedSubjects(cls);
+    return EXAM_SUBJECT_CATALOG.filter(s=>keys.includes(s.key));
+  }
   const base = BASE_SUBJECTS[cls]||BASE_SUBJECTS[1];
   if(cls>=1 && cls<=3){
     return base.map(sub=>({...sub, max: subjectTotals[cls][sub.key]||100}));
@@ -809,8 +918,35 @@ let passingTotals = JSON.parse(localStorage.getItem(PASS_KEY)||"{}");
 });
 function savePassingTotals(){ localStorage.setItem(PASS_KEY, JSON.stringify(passingTotals)); }
 
-function getPassFail(total, cls){
-  return total >= passingTotals[cls] ? "PASS" : "FAIL";
+function getPassFail(total, cls, student, subs){
+  if(cls==="JC" && student && subs)   return jceQualifies(student, subs)  ? "PASS" : "FAIL";
+  if(cls==="MSCE" && student && subs) return msceQualifies(student, subs) ? "PASS" : "FAIL";
+  let threshold = passingTotals[cls];
+  if(threshold==null){
+    threshold = Math.round(getMaxTotal(getSubjects(cls))*0.5);
+  }
+  return total >= threshold ? "PASS" : "FAIL";
+}
+
+// JCE: pass at least 6 subjects, one of which must be English
+function jceQualifies(student, subs){
+  const englishSub = subs.find(sub=>/english/i.test(sub.label));
+  const englishPassed = englishSub ? getJceGrade(student[englishSub.key]||0) !== "F" : false;
+  const passedCount = subs.filter(sub=>getJceGrade(student[sub.key]||0) !== "F").length;
+  return passedCount>=6 && englishPassed;
+}
+
+// MSCE: pass 6 subjects (incl. English) with >=1 credit/distinction,
+// OR pass 5 subjects (incl. English) with >=3 credits/distinctions.
+// Grades 1-8 = pass; grades 1-6 = credit/distinction; grade 9 = fail.
+function msceQualifies(student, subs){
+  const englishSub = subs.find(sub=>/english/i.test(sub.label));
+  const englishPassed = englishSub ? getMsceGrade(student[englishSub.key]||0) <= 8 : false;
+  const passedCount = subs.filter(sub=>getMsceGrade(student[sub.key]||0) <= 8).length;
+  const creditCount = subs.filter(sub=>getMsceGrade(student[sub.key]||0) <= 6).length;
+  const ruleA = passedCount>=6 && englishPassed && creditCount>=1;
+  const ruleB = passedCount>=5 && englishPassed && creditCount>=3;
+  return ruleA || ruleB;
 }
 
 function buildPassingTotalRows(){
@@ -920,6 +1056,28 @@ function getGradeScaled(score,max){
   const scaled=score*(400/max);
   if(scaled>=320)return 4;if(scaled>=240)return 3;if(scaled>=160)return 2;return 1;
 }
+// MSCE (Malawi School Certificate of Education) grading scale, 1 (best) – 9 (fail)
+function getMsceGrade(score){
+  if(score>=80) return 1;
+  if(score>=70) return 2;
+  if(score>=65) return 3;
+  if(score>=60) return 4;
+  if(score>=55) return 5;
+  if(score>=50) return 6;
+  if(score>=45) return 7;
+  if(score>=40) return 8;
+  return 9;
+}
+const MSCE_GRADE_LABELS = {1:"Distinction",2:"Distinction",3:"Credit",4:"Credit",5:"Credit",6:"Credit",7:"Pass",8:"Pass",9:"Fail"};
+// JCE (Junior Certificate of Education) grading scale, letter grades A (best) – F (fail)
+function getJceGrade(score){
+  if(score>=80) return "A";
+  if(score>=70) return "B";
+  if(score>=60) return "C";
+  if(score>=50) return "D";
+  return "F";
+}
+const JCE_GRADE_LABELS = {A:"Excellent",B:"Very Good",C:"Good",D:"Average",F:"Fail"};
 function escapeHtml(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML;}
 
 // ── Storage ───────────────────────────────────────────────────────────────
@@ -956,36 +1114,111 @@ function buildClassGrid(){
     });
     grid.appendChild(card);
   });
+
+  // Secondary school exam levels
+  [{key:"JC",label:"JUNIOR CERTIFICATE",icon:"🎓"},{key:"MSCE",label:"MSCE",icon:"🎓"}].forEach(exam=>{
+    const count = getList(exam.key).length;
+    const card  = document.createElement("div");
+    card.className = "class-card exam-card" + (count>0?" has-data":"");
+    card.innerHTML = `
+      <span class="cls-icon">${exam.icon}</span>
+      <div class="cls-name">${exam.label}</div>
+      <div class="cls-count">${count>0?count+" student"+(count>1?"s":""):"No students yet"}</div>
+      ${count>0?`<span class="cls-badge">${count}</span>`:""}`;
+    card.addEventListener("click",()=> openExamSubjectSelect(exam.key));
+    grid.appendChild(card);
+  });
 }
 
+// ── Exam subject selection (Junior Certificate / MSCE) ──────────────────────
+let _examLevel    = null;
+let _examSelected = new Set();
+
+function openExamSubjectSelect(level){
+  _examLevel    = level;
+  const saved = getExamSelectedSubjects(level);
+  if(saved.length === 0){
+    // First time opening this exam level — default English checked,
+    // since both JCE and MSCE require a pass in English.
+    const englishKey = (EXAM_SUBJECT_CATALOG.find(s=>/english/i.test(s.label))||{}).key;
+    _examSelected = new Set(englishKey ? [englishKey] : []);
+  } else {
+    _examSelected = new Set(saved);
+  }
+  document.getElementById("examSubjectsTitle").textContent = classLabel(level) + " — Select Subjects";
+  renderExamSubjectsList();
+  switchPage("examSubjects");
+}
+window.openExamSubjectSelect = openExamSubjectSelect;
+
+function renderExamSubjectsList(){
+  const container = document.getElementById("examSubjectsList");
+  container.innerHTML = EXAM_SUBJECT_CATALOG.map(s=>`
+    <div class="exam-subject-item" onclick="toggleExamSubject('${s.key}')">
+      <span>${s.label}</span>
+      <input type="checkbox" id="exsub_${s.key}" ${_examSelected.has(s.key)?"checked":""}>
+    </div>`).join("");
+}
+
+function toggleExamSubject(key){
+  if(_examSelected.has(key)) _examSelected.delete(key); else _examSelected.add(key);
+  const cb = document.getElementById("exsub_"+key);
+  if(cb) cb.checked = _examSelected.has(key);
+}
+window.toggleExamSubject = toggleExamSubject;
+
+function confirmExamSubjects(){
+  if(_examSelected.size===0){ alert("Please select at least one subject."); return; }
+  if(_examSelected.size < 6){
+    const proceed = confirm(`You've selected only ${_examSelected.size} subject(s). At least 6 subjects are typically required to pass ${classLabel(_examLevel)}. Continue anyway?`);
+    if(!proceed) return;
+  }
+  saveExamSelectedSubjects(_examLevel, [..._examSelected]);
+
+  _currentClass = _examLevel;
+  const subs = getSubjects(_currentClass);
+  if(passingTotals[_currentClass]==null){
+    passingTotals[_currentClass] = Math.round(getMaxTotal(subs)*0.5);
+    savePassingTotals();
+  }
+  buildSubjectFields();
+  render();
+  updateExcelBtn();
+  updateBadge();
+  switchPage("list");
+}
+window.confirmExamSubjects = confirmExamSubjects;
+
 function switchPage(page){
-  const allPages = ["pageClasses","pageAdd","pageList","pageResources","pageProfile","pageSettings"];
+  const allPages = ["pageClasses","pageExamSubjects","pageAdd","pageList","pageResources","pageTools","pageLessonPlan","pageSchemes","pageProfile","pageSettings"];
   allPages.forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove("active"); });
 
   const pageMap = {
-    classes:"pageClasses", add:"pageAdd", list:"pageList",
-    resources:"pageResources",
+    classes:"pageClasses", examSubjects:"pageExamSubjects", add:"pageAdd", list:"pageList",
+    resources:"pageResources", tools:"pageTools", lessonplan:"pageLessonPlan", schemes:"pageSchemes",
     profile:"pageProfile", settings:"pageSettings"
   };
   const target = document.getElementById(pageMap[page]);
   if(target) target.classList.add("active");
 
   // Bottom nav — profile nav tab is now labelled "Settings" and highlights for both settings and profile pages
-  const navMap = {classes:"navClasses", resources:"navResources", settings:"navProfile", profile:"navProfile"};
-  ["navClasses","navResources","navProfile"].forEach(id=>{
+  const navMap = {classes:"navClasses", resources:"navResources", tools:"navTools", settings:"navProfile", profile:"navProfile"};
+  ["navClasses","navResources","navTools","navProfile"].forEach(id=>{
     const el=document.getElementById(id); if(el) el.classList.remove("active");
   });
   const activeNav = navMap[page];
   if(activeNav){ const el=document.getElementById(activeNav); if(el) el.classList.add("active"); }
 
-  // Back button: show on add, list, and profile (sub-page of settings)
+  // Back button: show on examSubjects, add, list, profile (sub-page of settings), and the two tool sub-pages
   const backBtn = document.getElementById("backBtn");
-  if(backBtn) backBtn.style.display=(page==="add"||page==="list"||page==="profile")?"inline-block":"none";
+  if(backBtn) backBtn.style.display=(page==="examSubjects"||page==="add"||page==="list"||page==="profile"||page==="lessonplan"||page==="schemes")?"inline-block":"none";
 
   const titles = {
-    classes:"Easy Assess", add:`Standard ${_currentClass} — Add Student`,
-    list:`Standard ${_currentClass} — Students`,
-    resources:"Resources",
+    classes:"Easy Assess", examSubjects:"Select Subjects",
+    add:`${classLabel(_currentClass)} — Add Student`,
+    list:`${classLabel(_currentClass)} — Students`,
+    resources:"Resources", tools:"Tools",
+    lessonplan:"Lesson Plan", schemes:"Schemes of Work",
     profile:"My Profile", settings:"Settings"
   };
   const titleEl = document.getElementById("topTitle");
@@ -1000,18 +1233,24 @@ function switchPage(page){
     const toggle = document.getElementById("darkModeToggle");
     if(toggle) toggle.checked = document.documentElement.classList.contains("dark");
   }
-  if(page==="profile")   buildProfilePage();
-  if(page==="list")      render();
-  if(page==="resources") initResourcesPage();
+  if(page==="profile")     buildProfilePage();
+  if(page==="list")        render();
+  if(page==="resources")   initResourcesPage();
+  if(page==="lessonplan")  renderLessonPlanForm();
 }
 
 function goBack(){
-  const profileActive  = document.getElementById("pageProfile").classList.contains("active");
-  const listActive     = document.getElementById("pageList").classList.contains("active");
-  const addActive      = document.getElementById("pageAdd").classList.contains("active");
+  const profileActive      = document.getElementById("pageProfile").classList.contains("active");
+  const listActive         = document.getElementById("pageList").classList.contains("active");
+  const addActive          = document.getElementById("pageAdd").classList.contains("active");
+  const examSubjectsActive = document.getElementById("pageExamSubjects").classList.contains("active");
+  const lessonPlanActive   = document.getElementById("pageLessonPlan").classList.contains("active");
+  const schemesActive      = document.getElementById("pageSchemes").classList.contains("active");
   if(profileActive)  switchPage("settings");   // Profile is sub-page of Settings
   else if(listActive) switchPage("add");
   else if(addActive)  switchPage("classes");
+  else if(examSubjectsActive) switchPage("classes");
+  else if(lessonPlanActive || schemesActive) switchPage("tools");
 }
 window.switchPage=switchPage;window.goBack=goBack;
 
@@ -1097,7 +1336,7 @@ function render(){
     const total    = s._total;
     const maxTotal = getMaxTotal(subs);
     const {level,remark}=getLevelAndRemark(total,maxTotal);
-    const passFail = getPassFail(total, cls);
+    const passFail = getPassFail(total, cls, s, subs);
     const passColor = passFail==="PASS" ? "#085041" : "#D85A30";
     const passBg    = passFail==="PASS" ? "#E1F5EE"  : "#FAECE7";
     const pos = s._pos;
@@ -1200,7 +1439,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
     closeMenu();
     const cls=currentClass();
     if(getList(cls).length===0){alert("No students to delete.");return;}
-    if(!confirm(`Delete ALL students in Standard ${cls}?`)) return;
+    if(!confirm(`Delete ALL students in ${classLabel(cls)}?`)) return;
     saveList(cls,[]);resetForm();render();buildClassGrid();
   });
 
@@ -1228,8 +1467,8 @@ document.addEventListener("DOMContentLoaded", ()=>{
     const ws=XLSX.utils.aoa_to_sheet(wsData);
     ws["!cols"]=[{wch:4},{wch:22},{wch:5},...subs.map(()=>({wch:14})),{wch:8}];
     const wb=XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb,ws,`Standard ${cls}`);
-    XLSX.writeFile(wb,`standard-${cls}-scores.xlsx`);
+    XLSX.utils.book_append_sheet(wb,ws,classLabel(cls).slice(0,31));
+    XLSX.writeFile(wb,`${isExamLevel(cls)?cls:"standard-"+cls}-scores.xlsx`);
   });
 
   const summaryBtn = document.getElementById("summaryBtn");
@@ -1316,7 +1555,7 @@ function showReport(id){
   const uniqueTotals = [...new Set(allList.map(x=>calcTotal(x,subs)))].sort((a,b)=>b-a);
   const pos = uniqueTotals.indexOf(total) + 1;
 
-  document.getElementById("rClass").textContent=`Standard ${cls} — Academic Report`;
+  document.getElementById("rClass").textContent=`${classLabel(cls)} — Academic Report`;
   document.getElementById("rName").textContent=s.name;
   document.getElementById("rSex").textContent=s.sex==="Male"?"M":"F";
   document.getElementById("rPosition").textContent=`${pos} of ${allList.length}`;
@@ -1325,15 +1564,28 @@ function showReport(id){
   document.getElementById("rTotalFoot").textContent=`${total} / ${maxTotal}`;
   document.getElementById("rLevel").textContent=level;
   document.getElementById("rRemark").textContent=remark;
-  const pf=getPassFail(total,cls);
+  const pf=getPassFail(total,cls,s,subs);
   const pfEl=document.getElementById("rPassFail");
   if(pfEl){pfEl.textContent=pf;pfEl.style.color=pf==="PASS"?"#085041":"#D85A30";}
   const tbody=document.getElementById("rSubjects");
   tbody.innerHTML="";
   subs.forEach(sub=>{
-    const score=s[sub.key]||0,g=getGradeScaled(score,sub.max);
+    const score=s[sub.key]||0;
+    let g, gradeClass, gradeTitle="";
+    if(cls==="MSCE"){
+      g = getMsceGrade(score);
+      gradeClass = "mg"+g;
+      gradeTitle = MSCE_GRADE_LABELS[g];
+    } else if(cls==="JC"){
+      g = getJceGrade(score);
+      gradeClass = "jg"+g;
+      gradeTitle = JCE_GRADE_LABELS[g];
+    } else {
+      g = getGradeScaled(score,sub.max);
+      gradeClass = "g"+g;
+    }
     const tr=document.createElement("tr");
-    tr.innerHTML=`<td>${sub.label}</td><td>${score}</td><td><span class="grade-badge g${g}">${g}</span></td>`;
+    tr.innerHTML=`<td>${sub.label}</td><td>${score}</td><td><span class="grade-badge ${gradeClass}" ${gradeTitle?`title="${gradeTitle}"`:""}>${g}</span></td>`;
     tbody.appendChild(tr);
   });
   document.getElementById("reportModal").classList.add("open");
@@ -1375,6 +1627,10 @@ function printReport(){
     .grade-badge{display:inline-block;padding:2px 10px;border-radius:999px;font-weight:600;font-size:12px;}
     .g4{background:#E1F5EE;color:#085041;}.g3{background:#E6F1FB;color:#0C447C;}
     .g2{background:#FAEEDA;color:#633806;}.g1{background:#FAECE7;color:#4A1B0C;}
+    .mg1,.mg2{background:#E1F5EE;color:#085041;}.mg3,.mg4,.mg5,.mg6{background:#E6F1FB;color:#0C447C;}
+    .mg7,.mg8{background:#FAEEDA;color:#633806;}.mg9{background:#FAECE7;color:#4A1B0C;}
+    .jgA,.jgB{background:#E1F5EE;color:#085041;}.jgC{background:#E6F1FB;color:#0C447C;}
+    .jgD{background:#FAEEDA;color:#633806;}.jgF{background:#FAECE7;color:#4A1B0C;}
   </style></head><body>${box.innerHTML}
   <script>document.querySelector('.modal-actions').remove();<\/script>
   </body></html>`);
@@ -1414,8 +1670,8 @@ function generatePdf(){
 
   const boysSat  = list.filter(s=>s.sex==="Male");
   const girlsSat = list.filter(s=>s.sex==="Female");
-  const boysPass  = boysSat.filter(s=>getPassFail(calcTotal(s,subs),cls)==="PASS").length;
-  const girlsPass = girlsSat.filter(s=>getPassFail(calcTotal(s,subs),cls)==="PASS").length;
+  const boysPass  = boysSat.filter(s=>getPassFail(calcTotal(s,subs),cls,s,subs)==="PASS").length;
+  const girlsPass = girlsSat.filter(s=>getPassFail(calcTotal(s,subs),cls,s,subs)==="PASS").length;
   const boysFail  = boysSat.length - boysPass;
   const girlsFail = girlsSat.length - girlsPass;
 
@@ -1437,7 +1693,8 @@ function generatePdf(){
 
   // Standard / Term / Year line
   doc.setFontSize(12);doc.setFont(undefined,"bold");
-  doc.text(`Standard: ${cls}   Term: ${getCurrentTerm()}   Year: ${new Date().getFullYear()}`,105,y,{align:"center"});
+  const classLine = isExamLevel(cls) ? classLabel(cls) : `Standard: ${cls}`;
+  doc.text(`${classLine}   Term: ${getCurrentTerm()}   Year: ${new Date().getFullYear()}`,105,y,{align:"center"});
   y+=8;
 
   const plainStyles={fontSize:9,cellPadding:2.5,textColor:[0,0,0],lineColor:[0,0,0],lineWidth:0.2,halign:"center"};
@@ -1486,7 +1743,7 @@ function generatePdf(){
     const total = calcTotal(s,subs);
     const pos   = uniqueTotals.indexOf(total)+1;
     const {level} = getLevelAndRemark(total,maxTotal);
-    const pf    = getPassFail(total,cls);
+    const pf    = getPassFail(total,cls,s,subs);
     return [pos, s.name, s.sex==="Male"?"M":"F", ...subs.map(sub=>s[sub.key]||0), total, level, pf];
   });
 
@@ -1497,7 +1754,7 @@ function generatePdf(){
     columnStyles:{1:{halign:"left"}}
   });
 
-  const filename=(schoolName?schoolName.replace(/\s+/g,"-")+"-":"")+testName.replace(/\s+/g,"-")+"-standard-"+cls+"-report.pdf";
+  const filename=(schoolName?schoolName.replace(/\s+/g,"-")+"-":"")+testName.replace(/\s+/g,"-")+"-"+(isExamLevel(cls)?cls:"standard-"+cls)+"-report.pdf";
   doc.save(filename);
 }
 
@@ -1542,7 +1799,7 @@ async function extractFromImage(base64){
   setStatus('<span class="spinner"></span> Reading your paper with AI...');
   document.getElementById("scanReviewWrap").style.display = "none";
 
-  const prompt = `You are reading a handwritten school mark sheet for Standard ${cls}.
+  const prompt = `You are reading a handwritten school mark sheet for ${classLabel(cls)}.
 The subjects for this class are: ${subLabels}.
 The subject score keys to use in JSON are: ${keys.join(", ")} (in the same order as the subjects above).
 
@@ -1657,7 +1914,7 @@ function saveScanned(){
   clearScan();
   setMode("manual");
   switchPage("list");
-  alert(`${added} student(s) saved to Standard ${cls}.`);
+  alert(`${added} student(s) saved to ${classLabel(cls)}.`);
 }
 
 function clearScan(){
@@ -1796,7 +2053,7 @@ function generateSchoolReportsPdf(cls, subs, list, school, totalInClass, nextTer
     const total   = calcTotal(s,subs);
     const {level} = getLevelAndRemark(total,maxTotal);
     const pos     = uniqueTotals.indexOf(total) + 1;
-    const pf      = getPassFail(total, cls);
+    const pf      = getPassFail(total, cls, s, subs);
 
     // ── School name & report title ──
     if(school){
@@ -1805,7 +2062,7 @@ function generateSchoolReportsPdf(cls, subs, list, school, totalInClass, nextTer
       y+=6;
     }
     doc.setFontSize(10);doc.setFont(undefined,"bold");
-    doc.text(`STANDARD ${cls} REPORT CARD`,105,y,{align:"center"});
+    doc.text(`${classLabel(cls).toUpperCase()} REPORT CARD`,105,y,{align:"center"});
     y+=6;
 
     // ── Name / meta line ──
@@ -1856,7 +2113,7 @@ function generateSchoolReportsPdf(cls, subs, list, school, totalInClass, nextTer
     doc.text("Head Teacher's Remarks: _________________________   Signature: _________",margin,y);
   });
 
-  const fname=(school?school.replace(/\s+/g,"-")+"-":"")+"std"+cls+"-report-cards.pdf";
+  const fname=(school?school.replace(/\s+/g,"-")+"-":"")+(isExamLevel(cls)?cls:"std"+cls)+"-report-cards.pdf";
   doc.save(fname);
 }
 
@@ -1934,7 +2191,7 @@ function openSummary(){
   const list=getList(cls);
   if(list.length===0){alert("No students to summarise.");return;}
   const maxTotal=getMaxTotal(subs);
-  document.getElementById("summarySubtitle").textContent=`Standard ${cls} · ${list.length} student(s)`;
+  document.getElementById("summarySubtitle").textContent=`${classLabel(cls)} · ${list.length} student(s)`;
   const levels=[4,3,2,1];
   const genders=["Male","Female"];
   let html=`<table style="width:100%;border-collapse:collapse;font-size:0.85rem;margin-bottom:1rem;">
@@ -2236,6 +2493,120 @@ function renderSyllabusesList(){
 }
 window.renderSyllabusesList = renderSyllabusesList;
 
+// ── Lesson Plan builder (Tools) ──────────────────────────────────────────────
+function getLessonSubjects(cls){
+  if(isExamLevel(cls)) return getSubjects(cls).map(s=>s.label);
+  if(cls<=4) return getSubjects(cls).map(s=>s.label);
+  return ["English","Chichewa","Mathematics","Agriculture","Life Skills","Social Studies","Primary Science","Religious Education"];
+}
+
+function renderLessonPlanForm(){
+  const container = document.getElementById("lessonPlanContainer");
+  if(!container) return;
+  container.innerHTML = `
+    <div class="lp-form">
+      <h3>Build your lesson</h3>
+      <label for="lpClass">Class</label>
+      <select id="lpClass" onchange="updateLessonSubjects()"></select>
+      <label for="lpSubject">Subject</label>
+      <select id="lpSubject"></select>
+      <label for="lpTopic">Topic</label>
+      <input type="text" id="lpTopic" placeholder="e.g., Greetings">
+      <label for="lpDate">Date</label>
+      <input type="date" id="lpDate">
+      <label for="lpTime">Start Time</label>
+      <input type="time" id="lpTime">
+      <label for="lpCriteria">Success Criteria (optional)</label>
+      <textarea id="lpCriteria" rows="3" placeholder="If empty, AI will create 3-4 aligned success criteria."></textarea>
+      <button class="btn-primary" style="width:100%;" onclick="buildLesson()">OK</button>
+      <div id="lessonPlanResult"></div>
+    </div>`;
+
+  const classSel = document.getElementById("lpClass");
+  classSel.innerHTML = [1,2,3,4,5,6,7,8].map(c=>`<option value="${c}">Standard ${c}</option>`).join("")
+    + `<option value="JC">Junior Certificate</option><option value="MSCE">MSCE</option>`;
+  classSel.value = currentClass();
+  updateLessonSubjects();
+  document.getElementById("lpDate").value = new Date().toISOString().slice(0,10);
+}
+window.renderLessonPlanForm = renderLessonPlanForm;
+
+function updateLessonSubjects(){
+  const raw = document.getElementById("lpClass").value;
+  const cls = isExamLevel(raw) ? raw : parseInt(raw,10);
+  const subs = getLessonSubjects(cls);
+  document.getElementById("lpSubject").innerHTML = subs.length
+    ? subs.map(s=>`<option>${s}</option>`).join("")
+    : `<option disabled selected>No subjects selected for this exam yet</option>`;
+}
+window.updateLessonSubjects = updateLessonSubjects;
+
+async function buildLesson(){
+  const raw     = document.getElementById("lpClass").value;
+  const cls     = isExamLevel(raw) ? raw : parseInt(raw,10);
+  const clsLbl  = classLabel(cls);
+  const subject = document.getElementById("lpSubject").value;
+  const topic   = document.getElementById("lpTopic").value.trim();
+  const date    = document.getElementById("lpDate").value;
+  const time    = document.getElementById("lpTime").value;
+  const criteriaRaw = document.getElementById("lpCriteria").value.trim();
+  const resultEl = document.getElementById("lessonPlanResult");
+
+  if(!topic){ alert("Please enter a topic."); return; }
+  if(!subject){ alert("Please select a subject."); return; }
+
+  let criteria = criteriaRaw
+    ? criteriaRaw.split("\n").map(s=>s.trim()).filter(Boolean)
+    : null;
+
+  if(!criteria){
+    resultEl.innerHTML = `<div style="padding:1rem;color:var(--muted);font-size:0.85rem;"><span class="spinner"></span> Generating success criteria...</div>`;
+    try {
+      const prompt = `Create 3-4 concise, measurable lesson success criteria for a ${clsLbl} ${subject} lesson on the topic "${topic}". Return ONLY a valid JSON array of strings, no markdown, no explanation.`;
+      const resp = await fetch("https://api.anthropic.com/v1/messages", {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+          "anthropic-version":"2023-06-01",
+          "anthropic-dangerous-direct-browser-access":"true"
+        },
+        body: JSON.stringify({
+          model:"claude-sonnet-4-6",
+          max_tokens:400,
+          messages:[{role:"user", content:prompt}]
+        })
+      });
+      const data = await resp.json();
+      if(data.error) throw new Error(data.error.message);
+      const text  = data.content.filter(b=>b.type==="text").map(b=>b.text).join("");
+      const clean = text.replace(/^```(?:json)?\s*/i,"").replace(/\s*```$/,"").trim();
+      criteria = JSON.parse(clean);
+      if(!Array.isArray(criteria) || criteria.length===0) throw new Error("empty");
+    } catch(e){
+      criteria = ["Could not auto-generate success criteria — please add your own and try again."];
+    }
+  }
+
+  renderLessonResult({clsLbl, subject, topic, date, time, criteria});
+}
+window.buildLesson = buildLesson;
+
+function renderLessonResult({clsLbl, subject, topic, date, time, criteria}){
+  const resultEl = document.getElementById("lessonPlanResult");
+  const dateStr  = date ? new Date(date+"T00:00:00").toLocaleDateString() : "—";
+  resultEl.innerHTML = `
+    <div class="lesson-plan-card">
+      <h4>${clsLbl} — ${escapeHtml(subject)}</h4>
+      <p style="margin:0 0 4px;"><strong>Topic:</strong> ${escapeHtml(topic)}</p>
+      <p style="margin:0 0 10px;"><strong>Date:</strong> ${dateStr}${time?(" · "+time):""}</p>
+      <p style="margin:0 0 4px;"><strong>Success Criteria:</strong></p>
+      <ul style="margin:0;padding-left:1.2rem;">
+        ${criteria.map(c=>`<li>${escapeHtml(c)}</li>`).join("")}
+      </ul>
+      <button class="btn-secondary" style="margin-top:1rem;width:100%;" onclick="renderLessonPlanForm()">Build Another Lesson</button>
+    </div>`;
+}
+
 function openNoteEditor(std, subject, key){
   _currentNoteKey = key;
   document.getElementById("noteEditorTitle").textContent = `Standard ${std} — ${subject}`;
@@ -2432,6 +2803,12 @@ if("serviceWorker" in navigator){
     <button class="nav-item" id="navResources" onclick="switchPage('resources')">
       <span class="nav-icon">📚</span>
       <span>Resources</span>
+    </button>
+  </div>
+  <div class="nav-item-wrap">
+    <button class="nav-item" id="navTools" onclick="switchPage('tools')">
+      <span class="nav-icon">🛠️</span>
+      <span>Tools</span>
     </button>
   </div>
   <div class="nav-item-wrap">
