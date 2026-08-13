@@ -306,6 +306,7 @@
   .class-card{background:#fff;border:1.5px solid var(--border);border-radius:14px;padding:1.2rem 1rem;cursor:pointer;text-align:center;transition:border-color 0.2s,box-shadow 0.2s,transform 0.15s;position:relative;overflow:hidden;}
   .class-card.exam-card{border-color:#0C447C;background:linear-gradient(135deg,#EAF0FB,#ffffff);}
   html.dark .class-card.exam-card{background:linear-gradient(135deg,#1a2333,var(--card));}
+  .class-card.full-width-card{grid-column:1 / -1;}
   .class-card:hover{border-color:var(--primary);box-shadow:0 4px 16px rgba(29,158,117,0.12);transform:translateY(-2px);}
   .class-card.has-data{border-color:var(--primary);}
   .class-card .cls-icon{font-size:2rem;margin-bottom:0.5rem;display:block;}
@@ -998,6 +999,13 @@ function getMaxTotal(subs,cls){
   if(isExamLevel(cls)) return 600; // best 6 subjects (incl. English) x 100
   return subs.reduce((t,s)=>t+s.max,0);
 }
+// What to show under "TOTAL" for exam levels: the average of the best 6
+// subjects (out of 100), not their sum. Ranking/pass-fail still use the sum
+// internally (order is identical either way since it's divided by a constant).
+function displayTotal(total,cls){
+  if(isExamLevel(cls)) return Math.round((total/6)*10)/10;
+  return total;
+}
 
 // ── Grading based on Easy Assess 31 manual ───────────────────────────────
 function getLevelAndRemark(total, maxTotal){
@@ -1109,7 +1117,7 @@ function buildClassGrid(){
   const grid = document.getElementById("classGrid");
   grid.innerHTML = "";
 
-  [1,2,3,4,5,6,7,8].forEach(cls=>{
+  [1,2,3,4].forEach(cls=>{
     const count = getList(cls).length;
     const card  = document.createElement("div");
     card.className = "class-card" + (count>0?" has-data":"");
@@ -1128,6 +1136,28 @@ function buildClassGrid(){
     });
     grid.appendChild(card);
   });
+
+  // Standard 5 — shown full-width as "Senior Classes"
+  {
+    const cls   = 5;
+    const count = getList(cls).length;
+    const card  = document.createElement("div");
+    card.className = "class-card exam-card full-width-card" + (count>0?" has-data":"");
+    card.innerHTML = `
+      <span class="cls-icon">📚</span>
+      <div class="cls-name">SENIOR CLASSES</div>
+      <div class="cls-count">${count>0?count+" student"+(count>1?"s":""):"No students yet"}</div>
+      ${count>0?`<span class="cls-badge">${count}</span>`:""}`;
+    card.addEventListener("click",()=>{
+      _currentClass = cls;
+      buildSubjectFields();
+      render();
+      updateExcelBtn();
+      updateBadge();
+      switchPage("list");
+    });
+    grid.appendChild(card);
+  }
 
   // Secondary school exam levels
   [{key:"JC",label:"JUNIOR CERTIFICATE",icon:"🎓"},{key:"MSCE",label:"MSCE",icon:"🎓"}].forEach(exam=>{
@@ -1358,11 +1388,12 @@ function render(){
     const pos = s._pos;
 
     // "Grade" column: MSCE uses the overall 1-9 scale, JC uses the overall A-F
-    // scale (both based on this student's calculated total out of 600),
+    // scale (both based on this student's average of their best 6 subjects),
     // everyone else keeps the existing 1-4 level.
+    const totalDisplay = displayTotal(total,cls);
     let gradeDisplay;
-    if(cls==="MSCE")      gradeDisplay = getMsceGrade(Math.round(total/6));
-    else if(cls==="JC")   gradeDisplay = getJceGrade(Math.round(total/6));
+    if(cls==="MSCE")      gradeDisplay = getMsceGrade(totalDisplay);
+    else if(cls==="JC")   gradeDisplay = getJceGrade(totalDisplay);
     else                  gradeDisplay = getLevelAndRemark(total,maxTotal).level;
 
     const tr=document.createElement("tr");
@@ -1372,7 +1403,7 @@ function render(){
       <td style="color:var(--muted);font-weight:600;">${pos}</td>
       <td>${escapeHtml(s.name)}</td>
       <td><span class="pill ${s.sex==="Male"?"male":"female"}">${s.sex==="Male"?"M":"F"}</span></td>
-      <td class="total">${total}</td>
+      <td class="total">${totalDisplay}</td>
       <td style="font-weight:600;color:var(--primary-dark);">${gradeDisplay}</td>
       <td><span style="padding:2px 10px;border-radius:999px;font-size:0.78rem;font-weight:700;background:${passBg};color:${passColor};">${passFail}</span></td>`;
     tr.addEventListener("click", ()=>showReport(s.id));
@@ -1487,7 +1518,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
     if(list.length===0){alert("No students to export.");return;}
     const header=["#","Name","Sex",...subs.map(s=>s.label),"Total"];
     const rows=list.sort((a,b)=>calcTotal(b,subs,cls)-calcTotal(a,subs,cls))
-      .map((s,i)=>[i+1,s.name,s.sex==="Male"?"M":"F",...subs.map(sub=>s[sub.key]||0),calcTotal(s,subs,cls)]);
+      .map((s,i)=>[i+1,s.name,s.sex==="Male"?"M":"F",...subs.map(sub=>s[sub.key]||0),displayTotal(calcTotal(s,subs,cls),cls)]);
     const wsData=[header,...rows];
     const ws=XLSX.utils.aoa_to_sheet(wsData);
     ws["!cols"]=[{wch:4},{wch:22},{wch:5},...subs.map(()=>({wch:14})),{wch:8}];
@@ -1585,8 +1616,10 @@ function showReport(id){
   document.getElementById("rSex").textContent=s.sex==="Male"?"M":"F";
   document.getElementById("rPosition").textContent=`${pos} of ${allList.length}`;
   document.getElementById("rDate").textContent=new Date().toLocaleDateString();
-  document.getElementById("rTotal").textContent=`${total} / ${maxTotal}`;
-  document.getElementById("rTotalFoot").textContent=`${total} / ${maxTotal}`;
+  const totalDisp = displayTotal(total,cls);
+  const totalText = isExamLevel(cls) ? `${totalDisp} / 100 (avg. of best 6)` : `${total} / ${maxTotal}`;
+  document.getElementById("rTotal").textContent=totalText;
+  document.getElementById("rTotalFoot").textContent=totalText;
   document.getElementById("rLevel").textContent=level;
   document.getElementById("rRemark").textContent=remark;
   const pf=getPassFail(total,cls,s,subs);
@@ -1773,7 +1806,7 @@ function generatePdf(){
     const pos   = uniqueTotals.indexOf(total)+1;
     const {level} = getLevelAndRemark(total,maxTotal);
     const pf    = getPassFail(total,cls,s,subs);
-    return [pos, s.name, s.sex==="Male"?"M":"F", ...subs.map(sub=>s[sub.key]||0), total, level, pf];
+    return [pos, s.name, s.sex==="Male"?"M":"F", ...subs.map(sub=>s[sub.key]||0), displayTotal(total,cls), level, pf];
   });
 
   doc.autoTable({
@@ -2108,7 +2141,7 @@ function generateSchoolReportsPdf(cls, subs, list, school, totalInClass, nextTer
       const grade = getGradeScaled(score,sub.max);
       return [sub.label, sub.max, score, grade, GRADE_REMARK[grade]];
     });
-    tableBody.push(["TOTAL MARKS", maxTotal, total, level, pf==="PASS"?"Pass":"Fail"]);
+    tableBody.push(["TOTAL MARKS", isExamLevel(cls)?100:maxTotal, displayTotal(total,cls), level, pf==="PASS"?"Pass":"Fail"]);
 
     doc.autoTable({
       head:tableHead, body:tableBody, startY:y,
