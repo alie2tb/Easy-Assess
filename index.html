@@ -149,6 +149,13 @@
   .jgF{background:#FAECE7;color:#4A1B0C;}
   .report-footer{text-align:center;font-size:0.75rem;color:#888;border-top:1px solid rgba(0,0,0,0.08);padding-top:0.8rem;}
   .report-total-row td{font-weight:600;background:#f0faf6;}
+  html.dark .report-info span{color:var(--muted);}
+  html.dark .report-info strong{color:var(--text);}
+  html.dark .report-header p{color:var(--text);}
+  html.dark .report-table td{border-bottom-color:var(--border);}
+  html.dark .report-table tr:nth-child(even) td{background:rgba(255,255,255,0.05);}
+  html.dark .report-total-row td{background:rgba(255,255,255,0.08);}
+  html.dark .report-footer{color:var(--muted);border-top-color:var(--border);}
   .modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:1rem;}
   .spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.4);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;margin-right:6px;}
   .counter-pill{display:inline-flex;align-items:center;gap:5px;padding:5px 14px;border-radius:999px;font-size:0.85rem;}
@@ -688,10 +695,10 @@
       <div><span>Result:</span><br><strong id="rPassFail"></strong></div>
     </div>
     <table class="report-table">
-      <thead><tr><th>Subject</th><th>Score</th><th>Grade</th></tr></thead>
+      <thead><tr id="rSubjectsHead"><th>Subject</th><th>Score</th><th>Grade</th></tr></thead>
       <tbody id="rSubjects"></tbody>
       <tfoot>
-        <tr class="report-total-row">
+        <tr class="report-total-row" id="rTotalRow">
           <td>Total</td><td id="rTotalFoot"></td><td></td>
         </tr>
       </tfoot>
@@ -1160,7 +1167,7 @@ function buildClassGrid(){
   }
 
   // Secondary school exam levels
-  [{key:"JC",label:"JUNIOR CERTIFICATE",icon:"🎓"},{key:"MSCE",label:"MSCE",icon:"🎓"}].forEach(exam=>{
+  [{key:"JC",label:"JCE",icon:"🎓"},{key:"MSCE",label:"MSCE",icon:"🎓"}].forEach(exam=>{
     const count = getList(exam.key).length;
     const card  = document.createElement("div");
     card.className = "class-card exam-card" + (count>0?" has-data":"");
@@ -1627,6 +1634,19 @@ function showReport(id){
   if(pfEl){pfEl.textContent=pf;pfEl.style.color=pf==="PASS"?"#085041":"#D85A30";}
   const tbody=document.getElementById("rSubjects");
   tbody.innerHTML="";
+
+  const showSubjectPosition = isExamLevel(cls);
+  const headRow  = document.getElementById("rSubjectsHead");
+  const totalRow = document.getElementById("rTotalRow");
+  if(headRow)  headRow.innerHTML  = showSubjectPosition
+    ? `<th>Subject</th><th>Score</th><th>Grade</th><th>Position</th>`
+    : `<th>Subject</th><th>Score</th><th>Grade</th>`;
+  if(totalRow) totalRow.innerHTML = showSubjectPosition
+    ? `<td>Total</td><td id="rTotalFoot"></td><td></td><td></td>`
+    : `<td>Total</td><td id="rTotalFoot"></td><td></td>`;
+  // Rebuilding the row above recreated #rTotalFoot, so re-apply its text
+  document.getElementById("rTotalFoot").textContent=totalText;
+
   subs.forEach(sub=>{
     const score=s[sub.key]||0;
     let g, gradeClass, gradeTitle="";
@@ -1642,8 +1662,15 @@ function showReport(id){
       g = getGradeScaled(score,sub.max);
       gradeClass = "g"+g;
     }
+    let positionCell = "";
+    if(showSubjectPosition){
+      // Dense ranking on this subject's score across every student in the class
+      const subjectScores = [...new Set(allList.map(x=>Number(x[sub.key])||0))].sort((a,b)=>b-a);
+      const subjectPos = subjectScores.indexOf(score) + 1;
+      positionCell = `<td>${subjectPos} of ${allList.length}</td>`;
+    }
     const tr=document.createElement("tr");
-    tr.innerHTML=`<td>${sub.label}</td><td>${score}</td><td><span class="grade-badge ${gradeClass}" ${gradeTitle?`title="${gradeTitle}"`:""}>${g}</span></td>`;
+    tr.innerHTML=`<td>${sub.label}</td><td>${score}</td><td><span class="grade-badge ${gradeClass}" ${gradeTitle?`title="${gradeTitle}"`:""}>${g}</span></td>${positionCell}`;
     tbody.appendChild(tr);
   });
   document.getElementById("reportModal").classList.add("open");
