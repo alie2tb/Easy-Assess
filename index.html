@@ -164,7 +164,7 @@
   .counter-pill.total-c{background:#E1F5EE;color:#085041;}
   @keyframes spin{to{transform:rotate(360deg);}}
   /* settings */
-  .gear-btn{background:none;border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:1.1rem;color:var(--muted);transition:border-color 0.2s,color 0.2s;}
+  .gear-btn{background:none;border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:1.1rem;color:var(--muted);transition:border-color 0.2s,color 0.2s;display:inline-flex;align-items:center;justify-content:center;}
   .gear-btn:hover{border-color:var(--primary);color:var(--primary);}
   /* share modal */
   #shareModal{display:none;position:fixed;inset:0;z-index:8892;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;padding:1rem;}
@@ -172,6 +172,12 @@
   #shareBox{background:#fff;border-radius:14px;width:100%;max-width:380px;padding:1.5rem;text-align:center;}
   #shareBox h3{font-size:1rem;font-weight:600;margin:0 0 0.3rem;}
   #shareBox p{font-size:0.82rem;color:var(--muted);margin:0 0 1.2rem;line-height:1.6;}
+  #infoModal{display:none;position:fixed;inset:0;z-index:8893;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;padding:1rem;}
+  #infoModal.open{display:flex;}
+  #infoBox{background:#fff;border-radius:14px;width:100%;max-width:400px;max-height:80vh;overflow-y:auto;padding:1.5rem;}
+  #infoBox h3{font-size:1.05rem;font-weight:700;margin:0 0 0.9rem;color:var(--text);}
+  #infoBox p{font-size:0.85rem;color:var(--text);line-height:1.6;margin:0 0 0.7rem;text-align:left;}
+  html.dark #infoBox{background:var(--card);color:var(--text);}
   #shareUrl{width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:0.82rem;background:var(--bg);color:var(--text);margin-bottom:1rem;text-align:center;}
   .share-btns{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem;}
   .share-btn{display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border-radius:10px;font-size:0.9rem;font-weight:500;cursor:pointer;border:none;transition:opacity 0.2s;}
@@ -343,7 +349,18 @@
 <div class="top-bar">
   <button class="gear-btn" id="backBtn" onclick="goBack()" style="display:none;">&#8592;</button>
   <h1 id="topTitle">Easy Assess 33</h1>
-  <button class="gear-btn" onclick="shareApp()" title="Share this app">&#128279;</button>
+  <button class="gear-btn" onclick="shareApp()" title="Share this app">
+    <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+  </button>
+  <div style="position:relative;">
+    <button class="gear-btn" id="appMenuBtn" onclick="toggleAppMenu()" title="Options" style="font-size:1.3rem;padding:5px 10px;">⋮</button>
+    <div id="appOverflowMenu" style="display:none;position:absolute;right:0;top:110%;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.15);min-width:180px;z-index:900;overflow:hidden;">
+      <button class="menu-item" onclick="openHelp()">❓ Help</button>
+      <button class="menu-item" onclick="openAbout()">ℹ️ About</button>
+      <button class="menu-item" onclick="closeAppMenu();switchPage('settings')">⚙️ Settings</button>
+      <button class="menu-item" onclick="openAcknowledgements()">🙏 Acknowledgements</button>
+    </div>
+  </div>
 </div>
 
 <!-- PAGE 1: CLASS PICKER -->
@@ -727,6 +744,15 @@
     </div>
     <div id="copyFeedback"></div>
     <button class="btn-secondary btn-small" onclick="closeShare()" style="width:100%;">Close</button>
+  </div>
+</div>
+
+<!-- Info modal (Help / About / Acknowledgements) -->
+<div id="infoModal">
+  <div id="infoBox">
+    <h3 id="infoModalTitle"></h3>
+    <div id="infoModalBody"></div>
+    <button class="btn-primary" style="width:100%;margin-top:1.2rem;" onclick="closeInfoModal()">Close</button>
   </div>
 </div>
 
@@ -1348,6 +1374,62 @@ document.addEventListener("click", e=>{
   if(!btn.contains(e.target) && !menu.contains(e.target)) closeMenu();
 });
 window.toggleMenu=toggleMenu;
+
+// ── Global app options menu (top-bar ⋮) ──────────────────────────────────
+function toggleAppMenu(){
+  const m = document.getElementById("appOverflowMenu");
+  m.style.display = m.style.display==="block" ? "none" : "block";
+}
+function closeAppMenu(){
+  const m = document.getElementById("appOverflowMenu");
+  if(m) m.style.display="none";
+}
+document.addEventListener("click", e=>{
+  const btn  = document.getElementById("appMenuBtn");
+  const menu = document.getElementById("appOverflowMenu");
+  if(btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) closeAppMenu();
+});
+window.toggleAppMenu=toggleAppMenu;window.closeAppMenu=closeAppMenu;
+
+function showInfoModal(title, bodyHtml){
+  document.getElementById("infoModalTitle").textContent = title;
+  document.getElementById("infoModalBody").innerHTML = bodyHtml;
+  document.getElementById("infoModal").classList.add("open");
+}
+function closeInfoModal(){
+  document.getElementById("infoModal").classList.remove("open");
+}
+window.showInfoModal=showInfoModal;window.closeInfoModal=closeInfoModal;
+
+function openHelp(){
+  closeAppMenu();
+  showInfoModal("❓ Help", `
+    <p><strong>Getting started</strong></p>
+    <p>Tap a class card on the Assess tab to open its student list. Use the + button to add students and enter their scores.</p>
+    <p><strong>Junior Certificate &amp; MSCE</strong></p>
+    <p>The first time you open JCE or MSCE, you'll choose which subjects to assess — English plus at least 5 others is required. Once students are added, tapping the card goes straight to the list.</p>
+    <p><strong>Resources &amp; Tools</strong></p>
+    <p>Find notes and syllabuses under Resources, and the Lesson Plan builder under Tools.</p>
+    <p><strong>Need more help?</strong></p>
+    <p>Contact the developer via WhatsApp from the Profile menu.</p>
+  `);
+}
+function openAbout(){
+  closeAppMenu();
+  showInfoModal("ℹ️ About", `
+    <p><strong>Easy Assess 33</strong></p>
+    <p>A student assessment and score-management app for Malawian teachers, covering Standards 1–8, Junior Certificate, and MSCE.</p>
+    <p>Developed by Juma Ali.</p>
+  `);
+}
+function openAcknowledgements(){
+  closeAppMenu();
+  showInfoModal("🙏 Acknowledgements", `
+    <p>Thank you to the teachers who tested and gave feedback on this app.</p>
+    <p>Grading criteria based on Malawi National Examinations Board (MANEB) standards for PSLCE, JCE, and MSCE.</p>
+  `);
+}
+window.openHelp=openHelp;window.openAbout=openAbout;window.openAcknowledgements=openAcknowledgements;
 
 // ── Splash screen ─────────────────────────────────────────────────────────
 // (Custom splash removed — the OS/browser's native PWA splash screen,
