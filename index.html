@@ -357,8 +357,7 @@
     <div id="appOverflowMenu" style="display:none;position:absolute;right:0;top:110%;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.15);min-width:180px;z-index:900;overflow:hidden;">
       <button class="menu-item" onclick="openHelp()">❓ Help</button>
       <button class="menu-item" onclick="openAbout()">ℹ️ About</button>
-      <button class="menu-item" onclick="closeAppMenu();switchPage('settings')">⚙️ Settings</button>
-      <button class="menu-item" onclick="openAcknowledgements()">🙏 Acknowledgements</button>
+      <button class="menu-item" onclick="closeAppMenu();_settingsReturnPage=getCurrentPageKey();switchPage('settings')">⚙️ Settings</button>
     </div>
   </div>
 </div>
@@ -747,7 +746,7 @@
   </div>
 </div>
 
-<!-- Info modal (Help / About / Acknowledgements) -->
+<!-- Info modal (Help / About) -->
 <div id="infoModal">
   <div id="infoBox">
     <h3 id="infoModalTitle"></h3>
@@ -1297,17 +1296,17 @@ function switchPage(page){
   const target = document.getElementById(pageMap[page]);
   if(target) target.classList.add("active");
 
-  // Bottom nav — profile nav tab is now labelled "Settings" and highlights for both settings and profile pages
-  const navMap = {classes:"navClasses", resources:"navResources", tools:"navTools", settings:"navProfile", profile:"navProfile"};
-  ["navClasses","navResources","navTools","navProfile"].forEach(id=>{
+  // Bottom nav (Settings/Profile are no longer bottom-nav tabs — reached via the ⋮ menu instead)
+  const navMap = {classes:"navClasses", resources:"navResources", tools:"navTools"};
+  ["navClasses","navResources","navTools"].forEach(id=>{
     const el=document.getElementById(id); if(el) el.classList.remove("active");
   });
   const activeNav = navMap[page];
   if(activeNav){ const el=document.getElementById(activeNav); if(el) el.classList.add("active"); }
 
-  // Back button: show on examSubjects, add, list, profile (sub-page of settings), and the two tool sub-pages
+  // Back button: show on examSubjects, add, list, settings, profile (sub-page of settings), and the two tool sub-pages
   const backBtn = document.getElementById("backBtn");
-  if(backBtn) backBtn.style.display=(page==="examSubjects"||page==="add"||page==="list"||page==="profile"||page==="lessonplan"||page==="schemes")?"inline-block":"none";
+  if(backBtn) backBtn.style.display=(page==="examSubjects"||page==="add"||page==="list"||page==="settings"||page==="profile"||page==="lessonplan"||page==="schemes")?"inline-block":"none";
 
   const titles = {
     classes:"Easy Assess", examSubjects:"Select Subjects",
@@ -1335,14 +1334,29 @@ function switchPage(page){
   if(page==="lessonplan")  renderLessonPlanForm();
 }
 
+let _settingsReturnPage = "classes";
+function getCurrentPageKey(){
+  const map = {pageClasses:"classes", pageExamSubjects:"examSubjects", pageAdd:"add", pageList:"list",
+    pageResources:"resources", pageTools:"tools", pageLessonPlan:"lessonplan", pageSchemes:"schemes",
+    pageProfile:"profile", pageSettings:"settings"};
+  for(const domId in map){
+    const el = document.getElementById(domId);
+    if(el && el.classList.contains("active")) return map[domId];
+  }
+  return "classes";
+}
+window.getCurrentPageKey = getCurrentPageKey;
+
 function goBack(){
   const profileActive      = document.getElementById("pageProfile").classList.contains("active");
+  const settingsActive     = document.getElementById("pageSettings").classList.contains("active");
   const listActive         = document.getElementById("pageList").classList.contains("active");
   const addActive          = document.getElementById("pageAdd").classList.contains("active");
   const examSubjectsActive = document.getElementById("pageExamSubjects").classList.contains("active");
   const lessonPlanActive   = document.getElementById("pageLessonPlan").classList.contains("active");
   const schemesActive      = document.getElementById("pageSchemes").classList.contains("active");
   if(profileActive)  switchPage("settings");   // Profile is sub-page of Settings
+  else if(settingsActive) switchPage(_settingsReturnPage);
   else if(listActive) switchPage("add");
   else if(addActive)  switchPage("classes");
   else if(examSubjectsActive) switchPage("classes");
@@ -1422,14 +1436,7 @@ function openAbout(){
     <p>Developed by Juma Ali.</p>
   `);
 }
-function openAcknowledgements(){
-  closeAppMenu();
-  showInfoModal("🙏 Acknowledgements", `
-    <p>Thank you to the teachers who tested and gave feedback on this app.</p>
-    <p>Grading criteria based on Malawi National Examinations Board (MANEB) standards for PSLCE, JCE, and MSCE.</p>
-  `);
-}
-window.openHelp=openHelp;window.openAbout=openAbout;window.openAcknowledgements=openAcknowledgements;
+window.openHelp=openHelp;window.openAbout=openAbout;
 
 // ── Splash screen ─────────────────────────────────────────────────────────
 // (Custom splash removed — the OS/browser's native PWA splash screen,
@@ -2999,12 +3006,6 @@ if("serviceWorker" in navigator){
     <button class="nav-item" id="navTools" onclick="switchPage('tools')">
       <span class="nav-icon">🛠️</span>
       <span>Tools</span>
-    </button>
-  </div>
-  <div class="nav-item-wrap">
-    <button class="nav-item" id="navProfile" onclick="switchPage('settings')">
-      <span class="nav-icon">⚙️</span>
-      <span>Settings</span>
     </button>
   </div>
 </nav>
