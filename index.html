@@ -1176,7 +1176,19 @@ function buildClassGrid(){
       <div class="cls-name">${exam.label}</div>
       <div class="cls-count">${count>0?count+" student"+(count>1?"s":""):"No students yet"}</div>
       ${count>0?`<span class="cls-badge">${count}</span>`:""}`;
-    card.addEventListener("click",()=> openExamSubjectSelect(exam.key));
+    card.addEventListener("click",()=>{
+      if(count > 0){
+        // Already has students — go straight to the list, like other classes
+        _currentClass = exam.key;
+        buildSubjectFields();
+        render();
+        updateExcelBtn();
+        updateBadge();
+        switchPage("list");
+      } else {
+        openExamSubjectSelect(exam.key);
+      }
+    });
     grid.appendChild(card);
   });
 }
@@ -1219,11 +1231,18 @@ function toggleExamSubject(key){
 window.toggleExamSubject = toggleExamSubject;
 
 function confirmExamSubjects(){
-  if(_examSelected.size===0){ alert("Please select at least one subject."); return; }
-  if(_examSelected.size < 6){
-    const proceed = confirm(`You've selected only ${_examSelected.size} subject(s). At least 6 subjects are typically required to pass ${classLabel(_examLevel)}. Continue anyway?`);
-    if(!proceed) return;
+  const englishKey = (EXAM_SUBJECT_CATALOG.find(s=>/english/i.test(s.label))||{}).key;
+  const englishSelected = englishKey && _examSelected.has(englishKey);
+
+  if(!englishSelected){
+    alert("English must be selected, along with at least 5 other subjects, to continue.");
+    return;
   }
+  if(_examSelected.size < 6){
+    alert(`Please select at least 5 more subjects along with English (${_examSelected.size} of 6 selected so far).`);
+    return;
+  }
+
   saveExamSelectedSubjects(_examLevel, [..._examSelected]);
 
   _currentClass = _examLevel;
