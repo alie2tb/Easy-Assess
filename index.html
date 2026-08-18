@@ -29,6 +29,7 @@
   html.dark #updateDialogBox{background:var(--card);}
   html.dark #updateDialogFooter{border-color:var(--border);}
   html.dark .upd-btn.later{background:var(--card);color:var(--muted);}
+  html.dark .btn-secondary{background:#3A3A38;color:var(--text);}
   html.dark .mode-tab{background:var(--card);color:var(--muted);}
   html.dark .mode-tab.active{background:var(--primary);color:#fff;}
   html.dark .notes-item{background:var(--card);}
@@ -531,7 +532,11 @@
 
 <!-- PAGE 5c: LESSON PLAN BUILDER -->
 <div class="page" id="pageLessonPlan">
-  <div id="lessonPlanContainer"></div>
+  <div style="text-align:center;padding:3.5rem 1.5rem;color:var(--muted);">
+    <div style="font-size:2.4rem;margin-bottom:0.8rem;">🚧</div>
+    <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;">Lesson Plan</div>
+    <div style="font-size:0.85rem;">CURRENTLY NOT AVAILABLE</div>
+  </div>
 </div>
 
 <!-- PAGE 5d: SCHEMES OF WORK -->
@@ -662,21 +667,6 @@
     <p style="font-size:0.82rem;color:var(--muted);margin:0 0 1rem;line-height:1.6;">Set the minimum total marks a learner must reach to PASS. Learners with a total equal to or above this figure show <strong>PASS</strong> in the student list.</p>
     <div id="passingTotalRows"></div>
   </div>
-
-  <div class="card" style="margin-top:0.5rem;">
-    <p class="form-title">🔗 Share App</p>
-    <p style="font-size:0.82rem;color:var(--muted);margin:0 0 0.8rem;">Share Easy Assess with colleagues so they can install it on their devices.</p>
-    <button class="btn-primary" style="width:100%;" onclick="shareApp()">Share Easy Assess</button>
-  </div>
-  <div class="card" style="margin-top:0.5rem;">
-    <p class="form-title">ℹ️ About</p>
-    <p style="font-size:0.85rem;color:var(--muted);line-height:1.7;margin:0;">
-      <strong style="color:var(--text);">Easy Assess</strong><br>
-      Developed by <strong style="color:var(--primary-dark);">Juma Ali</strong><br>
-      📞 +265 995 818 600<br><br>
-      A Progressive Web App for primary school teachers in Malawi. Works offline. Installable on any device.
-    </p>
-  </div>
 </div>
 
 <!-- Settings modal -->
@@ -706,7 +696,7 @@
       <div><span>Position:</span><br><strong id="rPosition"></strong></div>
       <div><span>Date:</span><br><strong id="rDate"></strong></div>
       <div><span>Total Score:</span><br><strong id="rTotal"></strong></div>
-      <div><span>Level:</span><br><strong id="rLevel"></strong></div>
+      <div><span id="rLevelLabel">Level:</span><br><strong id="rLevel"></strong></div>
       <div><span>Remarks:</span><br><strong id="rRemark"></strong></div>
       <div><span>Result:</span><br><strong id="rPassFail"></strong></div>
     </div>
@@ -1331,7 +1321,6 @@ function switchPage(page){
   if(page==="profile")     buildProfilePage();
   if(page==="list")        render();
   if(page==="resources")   initResourcesPage();
-  if(page==="lessonplan")  renderLessonPlanForm();
 }
 
 let _settingsReturnPage = "classes";
@@ -1434,6 +1423,7 @@ function openAbout(){
     <p><strong>Easy Assess 33</strong></p>
     <p>A student assessment and score-management app for Malawian teachers, covering Standards 1–8, Junior Certificate, and MSCE.</p>
     <p>Developed by Juma Ali.</p>
+    <p>📞 0995 818 600 &nbsp;|&nbsp; 0888 592 312</p>
   `);
 }
 window.openHelp=openHelp;window.openAbout=openAbout;
@@ -1735,9 +1725,27 @@ function showReport(id){
   const totalText = isExamLevel(cls) ? `${totalDisp} / 100 (avg. of best 6)` : `${total} / ${maxTotal}`;
   document.getElementById("rTotal").textContent=totalText;
   document.getElementById("rTotalFoot").textContent=totalText;
-  document.getElementById("rLevel").textContent=level;
-  document.getElementById("rRemark").textContent=remark;
+
   const pf=getPassFail(total,cls,s,subs);
+
+  // "Grade"/"Level" and "Remarks" — for JC/MSCE these match exactly what the
+  // student list shows (grade scale value + PASS/FAIL); other classes keep
+  // the existing Level (1-4) and qualitative remark.
+  const levelLabelEl = document.getElementById("rLevelLabel");
+  let gradeValue, remarkValue;
+  if(cls==="MSCE"){
+    gradeValue = getMsceGrade(totalDisp);
+    remarkValue = pf;
+  } else if(cls==="JC"){
+    gradeValue = getJceGrade(totalDisp);
+    remarkValue = pf;
+  } else {
+    gradeValue = level;
+    remarkValue = remark;
+  }
+  if(levelLabelEl) levelLabelEl.textContent = isExamLevel(cls) ? "Grade:" : "Level:";
+  document.getElementById("rLevel").textContent=gradeValue;
+  document.getElementById("rRemark").textContent=remarkValue;
   const pfEl=document.getElementById("rPassFail");
   if(pfEl){pfEl.textContent=pf;pfEl.style.color=pf==="PASS"?"#085041":"#D85A30";}
   const tbody=document.getElementById("rSubjects");
