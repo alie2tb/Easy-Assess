@@ -2405,20 +2405,32 @@ function openSummary(){
   if(list.length===0){alert("No students to summarise.");return;}
   const maxTotal=getMaxTotal(subs,cls);
   document.getElementById("summarySubtitle").textContent=`${classLabel(cls)} · ${list.length} student(s)`;
-  const levels=[4,3,2,1];
-  const genders=["Male","Female"];
+
+  const isExam = isExamLevel(cls);
+  // JCE: A (best) → F (fail). MSCE: 1 (best) → 9 (fail). Everyone else: Level 4 → 1.
+  const bands = cls==="JC" ? ["A","B","C","D","F"]
+              : cls==="MSCE" ? [1,2,3,4,5,6,7,8,9]
+              : [4,3,2,1];
+  const bandLabel = b => isExam ? `Grade ${b}` : `Level ${b}`;
+  const studentBand = s=>{
+    const total = calcTotal(s,subs,cls);
+    if(cls==="JC")   return getJceGrade(displayTotal(total,cls));
+    if(cls==="MSCE") return getMsceGrade(displayTotal(total,cls));
+    return getLevelAndRemark(total,maxTotal).level;
+  };
+
   let html=`<table style="width:100%;border-collapse:collapse;font-size:0.85rem;margin-bottom:1rem;">
     <thead><tr style="background:#0F6E56;color:#fff;">
-      <th style="padding:6px 8px;text-align:left;">Level</th>
+      <th style="padding:6px 8px;text-align:left;">${isExam?"Grade":"Level"}</th>
       <th style="padding:6px 8px;">Boys</th>
       <th style="padding:6px 8px;">Girls</th>
       <th style="padding:6px 8px;">Total</th>
     </tr></thead><tbody>`;
-  levels.forEach(lv=>{
-    const boys=list.filter(s=>{const{level}=getLevelAndRemark(calcTotal(s,subs,cls),maxTotal);return level===lv&&s.sex==="Male";}).length;
-    const girls=list.filter(s=>{const{level}=getLevelAndRemark(calcTotal(s,subs,cls),maxTotal);return level===lv&&s.sex==="Female";}).length;
+  bands.forEach(band=>{
+    const boys=list.filter(s=>studentBand(s)===band && s.sex==="Male").length;
+    const girls=list.filter(s=>studentBand(s)===band && s.sex==="Female").length;
     html+=`<tr style="border-bottom:1px solid var(--border);">
-      <td style="padding:6px 8px;font-weight:600;">Level ${lv}</td>
+      <td style="padding:6px 8px;font-weight:600;">${bandLabel(band)}</td>
       <td style="padding:6px 8px;text-align:center;">${boys}</td>
       <td style="padding:6px 8px;text-align:center;">${girls}</td>
       <td style="padding:6px 8px;text-align:center;font-weight:600;">${boys+girls}</td>
@@ -2432,6 +2444,44 @@ function openSummary(){
     <td style="padding:6px 8px;text-align:center;">${totalGirls}</td>
     <td style="padding:6px 8px;text-align:center;">${list.length}</td>
   </tr></tbody></table>`;
+
+  // ── Pass/Fail pie chart — Boys vs Girls ──
+  const boysPass  = list.filter(s=>s.sex==="Male"   && getPassFail(calcTotal(s,subs,cls),cls,s,subs)==="PASS").length;
+  const boysFail  = list.filter(s=>s.sex==="Male"   && getPassFail(calcTotal(s,subs,cls),cls,s,subs)==="FAIL").length;
+  const girlsPass = list.filter(s=>s.sex==="Female" && getPassFail(calcTotal(s,subs,cls),cls,s,subs)==="PASS").length;
+  const girlsFail = list.filter(s=>s.sex==="Female" && getPassFail(calcTotal(s,subs,cls),cls,s,subs)==="FAIL").length;
+  const pieTotal  = boysPass+boysFail+girlsPass+girlsFail;
+
+  const segments = [
+    {label:"Boys Pass",  value:boysPass,  color:"#1D9E75"},
+    {label:"Boys Fail",  value:boysFail,  color:"#D85A30"},
+    {label:"Girls Pass", value:girlsPass, color:"#0C447C"},
+    {label:"Girls Fail", value:girlsFail, color:"#BA7517"},
+  ];
+  let cumulative = 0;
+  const gradientParts = segments.map(seg=>{
+    const pct = pieTotal>0 ? (seg.value/pieTotal*100) : 0;
+    const start = cumulative;
+    cumulative += pct;
+    return `${seg.color} ${start}% ${cumulative}%`;
+  }).join(", ");
+
+  html += `
+    <div style="margin-top:0.5rem;">
+      <div style="font-weight:700;font-size:0.9rem;margin-bottom:0.9rem;color:var(--text);">Pass / Fail — Boys vs Girls</div>
+      <div style="display:flex;align-items:center;gap:1.2rem;flex-wrap:wrap;">
+        <div style="width:140px;height:140px;min-width:140px;border-radius:50%;background:conic-gradient(${gradientParts});box-shadow:0 0 0 1px var(--border) inset;"></div>
+        <div style="flex:1;min-width:150px;font-size:0.82rem;">
+          ${segments.map(seg=>`
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;">
+              <span style="width:12px;height:12px;border-radius:3px;background:${seg.color};flex-shrink:0;"></span>
+              <span style="flex:1;color:var(--text);">${seg.label}</span>
+              <span style="font-weight:600;color:var(--text);">${seg.value} (${pieTotal>0?Math.round(seg.value/pieTotal*100):0}%)</span>
+            </div>`).join("")}
+        </div>
+      </div>
+    </div>`;
+
   document.getElementById("summaryContent").innerHTML=html;
   document.getElementById("summaryModal").style.display="flex";
 }
