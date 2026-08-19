@@ -1,4 +1,4 @@
-const CACHE_NAME = "score-manager-v67";
+const CACHE_NAME = "score-manager-v68";
 
 const STATIC_ASSETS = [
   "./",
@@ -84,6 +84,7 @@ self.addEventListener("fetch", event => {
   const url = new URL(event.request.url);
   if(event.request.method !== "GET") return;
   if(url.hostname === "api.anthropic.com") return;
+  if(url.hostname === "www.googletagmanager.com" || url.hostname === "www.google-analytics.com" || url.hostname === "analytics.google.com" || url.hostname === "region1.google-analytics.com") return;
 
   // Cache-first for everything
   event.respondWith(

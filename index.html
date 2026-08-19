@@ -6,6 +6,14 @@
 <meta name="theme-color" content="#1D9E75">
 <title>Easy Assess 33</title>
 <link rel="manifest" href="manifest.json">
+<!-- Google Analytics (GA4) — replace G-XXXXXXXXXX with your own Measurement ID -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){ dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'G-XXXXXXXXXX');
+</script>
 <style>
   :root{
     --bg:#f5f6f8;--card:#ffffff;--primary:#1D9E75;--primary-dark:#0F6E56;
@@ -2925,6 +2933,30 @@ buildClassGrid();
 render();
 updateExcelBtn();
 updateBadge();
+
+// ── Google Analytics: PWA install tracking ──────────────────────────────
+// Fires once, on first load, so you can see how many sessions are already
+// running as an installed app vs. a regular browser tab.
+if(typeof gtag === "function"){
+  const isStandalone = window.matchMedia("(display-mode: standalone)").matches
+    || window.navigator.standalone === true; // iOS Safari
+  gtag("event", isStandalone ? "launched_as_installed_app" : "launched_in_browser");
+}
+
+// Fires when the browser decides the app is installable and is about to
+// show its own "Add to Home Screen" banner/button.
+window.addEventListener("beforeinstallprompt", (e)=>{
+  if(typeof gtag === "function") gtag("event", "pwa_install_prompt_shown");
+  // Not calling e.preventDefault() here — the browser's native install UI
+  // still shows normally. Remove this comment and call e.preventDefault()
+  // plus store `e` if you later want a custom "Install App" button instead.
+});
+
+// Fires the moment the user actually finishes installing the app —
+// this is the real "installation" signal for follow-up in GA4.
+window.addEventListener("appinstalled", ()=>{
+  if(typeof gtag === "function") gtag("event", "pwa_installed");
+});
 
 let _pendingNewSW = null;
 
