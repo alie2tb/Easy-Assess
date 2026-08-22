@@ -1111,16 +1111,16 @@ function getGradeScaled(score,max){
 // MSCE (Malawi School Certificate of Education) grading scale, 1 (best) – 9 (fail)
 function getMsceGrade(score){
   if(score>=80) return 1;
-  if(score>=70) return 2;
-  if(score>=65) return 3;
-  if(score>=60) return 4;
-  if(score>=55) return 5;
-  if(score>=50) return 6;
-  if(score>=45) return 7;
+  if(score>=75) return 2;
+  if(score>=70) return 3;
+  if(score>=65) return 4;
+  if(score>=60) return 5;
+  if(score>=55) return 6;
+  if(score>=50) return 7;
   if(score>=40) return 8;
   return 9;
 }
-const MSCE_GRADE_LABELS = {1:"Distinction",2:"Distinction",3:"Credit",4:"Credit",5:"Credit",6:"Credit",7:"Pass",8:"Pass",9:"Fail"};
+const MSCE_GRADE_LABELS = {1:"Distinction",2:"Distinction",3:"Strong Credit",4:"Strong Credit",5:"Weak Credit",6:"Weak Credit",7:"Pass",8:"Pass",9:"Fail"};
 // JCE (Junior Certificate of Education) grading scale, letter grades A (best) – F (fail)
 function getJceGrade(score){
   if(score>=75) return "A";
@@ -2352,7 +2352,117 @@ function generateSchoolReportsPdf(cls, subs, list, school, totalInClass, nextTer
     return;
   }
 
-  // ── Standards 1-8 and MSCE: two reports per A4 page ──
+  if(cls === "MSCE"){
+    // ── MSCE: one full page per student, formatted after the school's own report-card template ──
+    const margin = 14;
+    list.forEach((s, idx)=>{
+      if(idx > 0) doc.addPage();
+
+      const total        = calcTotal(s,subs,cls);
+      const totalDisp     = displayTotal(total,cls);
+      const pos           = uniqueTotals.indexOf(total) + 1;
+      const pf            = getPassFail(total, cls, s, subs);
+      const overallPoints = getMsceGrade(totalDisp);
+
+      let y = 16;
+
+      if(school){
+        doc.setFontSize(13);doc.setFont(undefined,"bold");
+        doc.text(school.toUpperCase(),105,y,{align:"center"});
+        y+=7;
+      }
+      doc.setFontSize(14);doc.setFont(undefined,"bold");
+      doc.text("REPORT CARD",105,y,{align:"center"});
+      y+=10;
+
+      // ── Info fields, two columns ──
+      doc.setFontSize(9);
+      doc.setFont(undefined,"bold");doc.text("Name of student:",margin,y);
+      doc.setFont(undefined,"normal");doc.text(s.name,margin+34,y);
+      doc.setFont(undefined,"bold");doc.text("Form: MSCE",148,y);
+      y+=7;
+
+      doc.text("Total number in class:",margin,y);
+      doc.setFont(undefined,"normal");doc.text(String(totalInClass),margin+40,y);
+      doc.setFont(undefined,"bold");doc.text(`Term: ${term}`,148,y);
+      y+=7;
+
+      doc.text("Position in class:",margin,y);
+      doc.setFont(undefined,"normal");doc.text(`${pos} of ${list.length}`,margin+34,y);
+      doc.setFont(undefined,"bold");doc.text(`Year: ${year}`,148,y);
+      y+=8;
+
+      // ── Subject table ──
+      const tableHead=[["Subject","Marks obtained","Points","Position","Comment","Teacher's sign."]];
+      const tableBody = subs.map(sub=>{
+        const score = s[sub.key]||0;
+        const points = getMsceGrade(score);
+        const subjectScores = [...new Set(list.map(x=>Number(x[sub.key])||0))].sort((a,b)=>b-a);
+        const subjectPos = subjectScores.indexOf(score)+1;
+        return [sub.label, score, points, subjectPos, MSCE_GRADE_LABELS[points], ""];
+      });
+      tableBody.push(["Total Marks", total, "", "", "", ""]);
+      tableBody.push(["Average", totalDisp, overallPoints, pos, MSCE_GRADE_LABELS[overallPoints], ""]);
+
+      doc.autoTable({
+        head:tableHead, body:tableBody, startY:y,
+        theme:"grid",
+        styles:{fontSize:8.5,cellPadding:2.3,textColor:[0,0,0],lineColor:[0,0,0],lineWidth:0.2},
+        headStyles:{fillColor:[255,255,255],textColor:[0,0,0],fontStyle:"bold",lineColor:[0,0,0],lineWidth:0.2},
+        columnStyles:{1:{halign:"center"},2:{halign:"center"},3:{halign:"center"}},
+        margin:{left:margin,right:margin},
+        didParseCell:function(data){
+          if(data.section==="body" && data.row.index>=tableBody.length-2){
+            data.cell.styles.fontStyle="bold";
+          }
+        }
+      });
+      y = doc.lastAutoTable.finalY + 9;
+
+      // ── Pass / Fail ──
+      doc.setFontSize(10);doc.setFont(undefined,"bold");
+      doc.text(`Pass ${pf==="PASS"?"\u2713":"____"}`, pageW-72, y);
+      doc.text(`Fail ${pf==="FAIL"?"\u2713":"____"}`, pageW-37, y);
+      y+=10;
+
+      // ── Grading key ──
+      doc.setFontSize(10);doc.setFont(undefined,"bold");
+      doc.text("GRADING KEY",105,y,{align:"center"});
+      y+=4;
+      doc.autoTable({
+        head:[["STATEMENT","PASS","WEAK CREDIT","STRONG CREDIT","DISTINCTION"]],
+        body:[["0 \u2013 39","40 \u2013 49 = 8\n50 \u2013 54 = 7","55 \u2013 59 = 6\n60 \u2013 64 = 5","65 \u2013 69 = 4\n70 \u2013 74 = 3","75 \u2013 79 = 2\n80 \u2013 100 = 1"]],
+        startY:y,
+        theme:"grid",
+        styles:{fontSize:8,cellPadding:2,halign:"center",textColor:[0,0,0],lineColor:[0,0,0],lineWidth:0.2},
+        headStyles:{fillColor:[255,255,255],textColor:[0,0,0],fontStyle:"bold",lineColor:[0,0,0],lineWidth:0.2},
+        margin:{left:margin,right:margin},
+      });
+      y = doc.lastAutoTable.finalY + 9;
+
+      // ── Next term & signatures ──
+      doc.setFontSize(9);doc.setFont(undefined,"normal");
+      doc.text(`Next term begins on: ${nextTermBegins||"________________"}`,margin,y);
+      y+=9;
+      doc.text("Form Teacher's Remarks:",margin,y);
+      y+=6;
+      doc.text("......................................................................................................................",margin,y);
+      y+=6;
+      doc.text("...................................................................................  Sign: ......................",margin,y);
+      y+=9;
+      doc.text("Head Teacher's Remarks:",margin,y);
+      y+=6;
+      doc.text("......................................................................................................................",margin,y);
+      y+=6;
+      doc.text("...................................................................................  Sign: ......................",margin,y);
+    });
+
+    const fname=(school?school.replace(/\s+/g,"-")+"-":"")+"MSCE-report-cards.pdf";
+    doc.save(fname);
+    return;
+  }
+
+  // ── Standards 1-8: two reports per A4 page ──
   const slotH  = pageH / 2;
   const margin = 10;
 
@@ -2398,30 +2508,13 @@ function generateSchoolReportsPdf(cls, subs, list, school, totalInClass, nextTer
     y+=3;
 
     // ── Subject table ──
-    // MSCE matches the on-screen Academic Report's columns (Subject/Score/Grade/Position);
-    // Standards 1-8 keep the existing Subjects/Total/Score/Grade/Remarks layout.
-    let tableHead, tableBody;
-    if(isExamLevel(cls)){
-      const totalDisp = displayTotal(total,cls);
-      tableHead = [["SUBJECT","SCORE","GRADE","POSITION"]];
-      tableBody = subs.map(sub=>{
-        const score = s[sub.key]||0;
-        const grade = getMsceGrade(score);
-        const subjectScores = [...new Set(list.map(x=>Number(x[sub.key])||0))].sort((a,b)=>b-a);
-        const subjectPos = subjectScores.indexOf(score)+1;
-        return [sub.label, score, grade, `${subjectPos} of ${list.length}`];
-      });
-      const overallGrade = getMsceGrade(totalDisp);
-      tableBody.push(["TOTAL", totalDisp, overallGrade, `${pos} of ${list.length}`]);
-    } else {
-      tableHead = [["SUBJECTS","TOTAL","SCORE","GRADE","REMARKS"]];
-      tableBody = subs.map(sub=>{
-        const score = s[sub.key]||0;
-        const grade = getGradeScaled(score,sub.max);
-        return [sub.label, sub.max, score, grade, GRADE_REMARK[grade]];
-      });
-      tableBody.push(["TOTAL MARKS", maxTotal, total, level, pf==="PASS"?"Pass":"Fail"]);
-    }
+    const tableHead = [["SUBJECTS","TOTAL","SCORE","GRADE","REMARKS"]];
+    const tableBody = subs.map(sub=>{
+      const score = s[sub.key]||0;
+      const grade = getGradeScaled(score,sub.max);
+      return [sub.label, sub.max, score, grade, GRADE_REMARK[grade]];
+    });
+    tableBody.push(["TOTAL MARKS", maxTotal, total, level, pf==="PASS"?"Pass":"Fail"]);
 
     doc.autoTable({
       head:tableHead, body:tableBody, startY:y,
