@@ -504,6 +504,61 @@
 
 </div><!-- end pageList -->
 
+<!-- PAGE 4b: RECORDS -->
+<div class="page" id="pageRecords">
+  <p style="font-size:0.82rem;color:var(--muted);margin:0.4rem 0 1rem;">Keep track of learners' health and discipline incidents</p>
+  <div class="class-grid">
+    <div class="class-card" onclick="switchPage('sickrecords')">
+      <span class="cls-icon">🤒</span>
+      <div class="cls-name">Sick Record</div>
+      <div class="cls-count" id="sickRecordCount">No records yet</div>
+    </div>
+    <div class="class-card" onclick="switchPage('punishmentrecords')">
+      <span class="cls-icon">⚠️</span>
+      <div class="cls-name">Punishment Records</div>
+      <div class="cls-count" id="punishmentRecordCount">No records yet</div>
+    </div>
+  </div>
+</div>
+
+<!-- PAGE 4c: SICK RECORD -->
+<div class="page" id="pageSickRecords">
+  <div class="lp-form" style="margin-bottom:1rem;">
+    <h3>Add Sick Record</h3>
+    <label for="sickName">Name</label>
+    <input type="text" id="sickName" placeholder="Student name">
+    <label for="sickSex">Sex</label>
+    <select id="sickSex">
+      <option value="">Select</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+    </select>
+    <label for="sickDisease">Disease</label>
+    <input type="text" id="sickDisease" placeholder="e.g., Malaria, Flu">
+    <button class="btn-primary" style="width:100%;" onclick="addSickRecord()">Add Record</button>
+  </div>
+  <div id="sickRecordsList"></div>
+</div>
+
+<!-- PAGE 4d: PUNISHMENT RECORDS -->
+<div class="page" id="pagePunishmentRecords">
+  <div class="lp-form" style="margin-bottom:1rem;">
+    <h3>Add Punishment Record</h3>
+    <label for="punName">Name</label>
+    <input type="text" id="punName" placeholder="Student name">
+    <label for="punSex">Sex</label>
+    <select id="punSex">
+      <option value="">Select</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+    </select>
+    <label for="punOffence">Offence</label>
+    <input type="text" id="punOffence" placeholder="e.g., Fighting, Late arrival">
+    <button class="btn-primary" style="width:100%;" onclick="addPunishmentRecord()">Add Record</button>
+  </div>
+  <div id="punishmentRecordsList"></div>
+</div>
+
 <!-- PAGE 5: RESOURCES -->
 <div class="page" id="pageResources">
   <!-- Search bar -->
@@ -1283,11 +1338,12 @@ function confirmExamSubjects(){
 window.confirmExamSubjects = confirmExamSubjects;
 
 function switchPage(page){
-  const allPages = ["pageClasses","pageExamSubjects","pageAdd","pageList","pageResources","pageTools","pageLessonPlan","pageSchemes","pageProfile","pageSettings"];
+  const allPages = ["pageClasses","pageExamSubjects","pageAdd","pageList","pageRecords","pageSickRecords","pagePunishmentRecords","pageResources","pageTools","pageLessonPlan","pageSchemes","pageProfile","pageSettings"];
   allPages.forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove("active"); });
 
   const pageMap = {
     classes:"pageClasses", examSubjects:"pageExamSubjects", add:"pageAdd", list:"pageList",
+    records:"pageRecords", sickrecords:"pageSickRecords", punishmentrecords:"pagePunishmentRecords",
     resources:"pageResources", tools:"pageTools", lessonplan:"pageLessonPlan", schemes:"pageSchemes",
     profile:"pageProfile", settings:"pageSettings"
   };
@@ -1295,21 +1351,22 @@ function switchPage(page){
   if(target) target.classList.add("active");
 
   // Bottom nav (Settings/Profile are no longer bottom-nav tabs — reached via the ⋮ menu instead)
-  const navMap = {classes:"navClasses", resources:"navResources", tools:"navTools"};
-  ["navClasses","navResources","navTools"].forEach(id=>{
+  const navMap = {classes:"navClasses", records:"navRecords", resources:"navResources", tools:"navTools"};
+  ["navClasses","navRecords","navResources","navTools"].forEach(id=>{
     const el=document.getElementById(id); if(el) el.classList.remove("active");
   });
   const activeNav = navMap[page];
   if(activeNav){ const el=document.getElementById(activeNav); if(el) el.classList.add("active"); }
 
-  // Back button: show on examSubjects, add, list, settings, profile (sub-page of settings), and the two tool sub-pages
+  // Back button: show on examSubjects, add, list, settings, profile (sub-page of settings), the two tool sub-pages, and the two record sub-pages
   const backBtn = document.getElementById("backBtn");
-  if(backBtn) backBtn.style.display=(page==="examSubjects"||page==="add"||page==="list"||page==="settings"||page==="profile"||page==="lessonplan"||page==="schemes")?"inline-block":"none";
+  if(backBtn) backBtn.style.display=(page==="examSubjects"||page==="add"||page==="list"||page==="settings"||page==="profile"||page==="lessonplan"||page==="schemes"||page==="sickrecords"||page==="punishmentrecords")?"inline-block":"none";
 
   const titles = {
     classes:"Easy Assess", examSubjects:"Select Subjects",
     add:`${classLabel(_currentClass)} — Add Student`,
     list:`${classLabel(_currentClass)} — Students`,
+    records:"Records", sickrecords:"Sick Record", punishmentrecords:"Punishment Records",
     resources:"Resources", tools:"Tools",
     lessonplan:"Lesson Plan", schemes:"Schemes of Work",
     profile:"My Profile", settings:"Settings"
@@ -1329,11 +1386,15 @@ function switchPage(page){
   if(page==="profile")     buildProfilePage();
   if(page==="list")        render();
   if(page==="resources")   initResourcesPage();
+  if(page==="records")     updateRecordsCounts();
+  if(page==="sickrecords")        renderSickRecords();
+  if(page==="punishmentrecords")  renderPunishmentRecords();
 }
 
 let _settingsReturnPage = "classes";
 function getCurrentPageKey(){
   const map = {pageClasses:"classes", pageExamSubjects:"examSubjects", pageAdd:"add", pageList:"list",
+    pageRecords:"records", pageSickRecords:"sickrecords", pagePunishmentRecords:"punishmentrecords",
     pageResources:"resources", pageTools:"tools", pageLessonPlan:"lessonplan", pageSchemes:"schemes",
     pageProfile:"profile", pageSettings:"settings"};
   for(const domId in map){
@@ -1352,12 +1413,15 @@ function goBack(){
   const examSubjectsActive = document.getElementById("pageExamSubjects").classList.contains("active");
   const lessonPlanActive   = document.getElementById("pageLessonPlan").classList.contains("active");
   const schemesActive      = document.getElementById("pageSchemes").classList.contains("active");
+  const sickActive         = document.getElementById("pageSickRecords").classList.contains("active");
+  const punishmentActive   = document.getElementById("pagePunishmentRecords").classList.contains("active");
   if(profileActive)  switchPage("settings");   // Profile is sub-page of Settings
   else if(settingsActive) switchPage(_settingsReturnPage);
   else if(listActive) switchPage("add");
   else if(addActive)  switchPage("classes");
   else if(examSubjectsActive) switchPage("classes");
   else if(lessonPlanActive || schemesActive) switchPage("tools");
+  else if(sickActive || punishmentActive) switchPage("records");
 }
 window.switchPage=switchPage;window.goBack=goBack;
 
@@ -2842,6 +2906,94 @@ const RESOURCE_TABS = [
   {key:"lessonplans",    label:"LESSON PLANS"},
 ];
 
+// ── Records: Sick / Punishment ──────────────────────────────────────────────
+const RECORDS_KEY = {sick:"ea33_sick_records", punishment:"ea33_punishment_records"};
+
+function getRecords(type){
+  return JSON.parse(localStorage.getItem(RECORDS_KEY[type])||"[]");
+}
+function saveRecords(type, arr){
+  localStorage.setItem(RECORDS_KEY[type], JSON.stringify(arr));
+}
+
+function updateRecordsCounts(){
+  const sickCount = getRecords("sick").length;
+  const punCount  = getRecords("punishment").length;
+  const sEl = document.getElementById("sickRecordCount");
+  const pEl = document.getElementById("punishmentRecordCount");
+  if(sEl) sEl.textContent = sickCount>0 ? sickCount+" record"+(sickCount>1?"s":"") : "No records yet";
+  if(pEl) pEl.textContent = punCount>0 ? punCount+" record"+(punCount>1?"s":"") : "No records yet";
+}
+window.updateRecordsCounts = updateRecordsCounts;
+
+function renderRecordsList(type, containerId, fieldKey){
+  const container = document.getElementById(containerId);
+  if(!container) return;
+  const records = getRecords(type);
+  if(records.length===0){
+    container.innerHTML = `<div style="text-align:center;padding:2.5rem 1rem;color:var(--muted);">No records yet.</div>`;
+    return;
+  }
+  container.innerHTML = `<div class="notes-list-wrap">` + records.map(r=>`
+    <div class="notes-item" style="cursor:default;">
+      <div style="min-width:0;">
+        <div class="notes-item-label" style="font-weight:700;">${escapeHtml(r.name)} <span style="font-weight:400;color:var(--muted);">(${r.sex==="Male"?"M":"F"})</span></div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">${escapeHtml(r[fieldKey])} · ${r.date}</div>
+      </div>
+      <button class="notes-item-pdf" title="Delete" onclick="deleteRecord('${type}','${r.id}')">🗑</button>
+    </div>`).join("") + `</div>`;
+}
+
+function renderSickRecords(){ renderRecordsList("sick", "sickRecordsList", "disease"); }
+function renderPunishmentRecords(){ renderRecordsList("punishment", "punishmentRecordsList", "offence"); }
+window.renderSickRecords = renderSickRecords;
+window.renderPunishmentRecords = renderPunishmentRecords;
+
+function addSickRecord(){
+  const name    = document.getElementById("sickName").value.trim();
+  const sex     = document.getElementById("sickSex").value;
+  const disease = document.getElementById("sickDisease").value.trim();
+  if(!name){ alert("Please enter the student's name."); return; }
+  if(!sex){ alert("Please select sex."); return; }
+  if(!disease){ alert("Please enter the disease."); return; }
+  const records = getRecords("sick");
+  records.unshift({id:Date.now().toString(), name, sex, disease, date:new Date().toLocaleDateString()});
+  saveRecords("sick", records);
+  document.getElementById("sickName").value="";
+  document.getElementById("sickSex").value="";
+  document.getElementById("sickDisease").value="";
+  renderSickRecords();
+  updateRecordsCounts();
+}
+window.addSickRecord = addSickRecord;
+
+function addPunishmentRecord(){
+  const name    = document.getElementById("punName").value.trim();
+  const sex     = document.getElementById("punSex").value;
+  const offence = document.getElementById("punOffence").value.trim();
+  if(!name){ alert("Please enter the student's name."); return; }
+  if(!sex){ alert("Please select sex."); return; }
+  if(!offence){ alert("Please enter the offence."); return; }
+  const records = getRecords("punishment");
+  records.unshift({id:Date.now().toString(), name, sex, offence, date:new Date().toLocaleDateString()});
+  saveRecords("punishment", records);
+  document.getElementById("punName").value="";
+  document.getElementById("punSex").value="";
+  document.getElementById("punOffence").value="";
+  renderPunishmentRecords();
+  updateRecordsCounts();
+}
+window.addPunishmentRecord = addPunishmentRecord;
+
+function deleteRecord(type, id){
+  if(!confirm("Delete this record?")) return;
+  const records = getRecords(type).filter(r=>r.id!==id);
+  saveRecords(type, records);
+  if(type==="sick") renderSickRecords(); else renderPunishmentRecords();
+  updateRecordsCounts();
+}
+window.deleteRecord = deleteRecord;
+
 function initResourcesPage(){
   _resourceTab = "notes";
   _resourceSearch = "";
@@ -3306,6 +3458,12 @@ if("serviceWorker" in navigator){
     <button class="nav-item active" id="navClasses" onclick="switchPage('classes')">
       <span class="nav-icon">📋</span>
       <span>Assess</span>
+    </button>
+  </div>
+  <div class="nav-item-wrap">
+    <button class="nav-item" id="navRecords" onclick="switchPage('records')">
+      <span class="nav-icon">🗒️</span>
+      <span>Records</span>
     </button>
   </div>
   <div class="nav-item-wrap">
