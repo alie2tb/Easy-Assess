@@ -222,6 +222,16 @@
   .notes-item-arrow{color:var(--muted);font-size:0.9rem;}
   .notes-item-pdf{background:#E8F5EE;border:none;border-radius:8px;width:32px;height:32px;font-size:1rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
   .notes-item-pdf:hover{background:#d5eee1;}
+  /* attendance register */
+  .att-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#fff;border-bottom:1px solid var(--border);gap:10px;}
+  .att-row:last-child{border-bottom:none;}
+  html.dark .att-row{background:var(--card);}
+  .att-toggle{display:flex;gap:6px;flex-shrink:0;}
+  .att-btn{border:1.5px solid var(--border);background:none;border-radius:8px;padding:6px 12px;font-size:0.76rem;font-weight:600;cursor:pointer;color:var(--muted);white-space:nowrap;}
+  .att-btn.present.active{background:#E1F5EE;border-color:#1D9E75;color:#085041;}
+  .att-btn.absent.active{background:#FAECE7;border-color:#D85A30;color:#4A1B0C;}
+  html.dark .att-btn.present.active{background:#123d31;}
+  html.dark .att-btn.absent.active{background:#3d1f14;}
   html.dark .notes-item-pdf{background:#1e332b;}
   .notes-list-wrap{background:#fff;border-radius:12px;border:1px solid var(--border);overflow:hidden;margin-bottom:1rem;}
   .notes-std-header{padding:8px 16px;background:var(--grey-100,#f5f6f8);font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid var(--border);}
@@ -518,6 +528,11 @@
       <div class="cls-name">Punishment Records</div>
       <div class="cls-count" id="punishmentRecordCount">No records yet</div>
     </div>
+    <div class="class-card full-width-card" onclick="switchPage('attendance')">
+      <span class="cls-icon">📅</span>
+      <div class="cls-name">Attendance Register</div>
+      <div class="cls-count" id="attendanceTodayCount">Mark today's attendance</div>
+    </div>
   </div>
 </div>
 
@@ -557,6 +572,20 @@
     <button class="btn-primary" style="width:100%;" onclick="addPunishmentRecord()">Add Record</button>
   </div>
   <div id="punishmentRecordsList"></div>
+</div>
+
+<!-- PAGE 4e: ATTENDANCE REGISTER -->
+<div class="page" id="pageAttendance">
+  <div class="lp-form" style="margin-bottom:1rem;">
+    <h3>Attendance Register</h3>
+    <label for="attClass">Class</label>
+    <select id="attClass" onchange="loadAttendanceRoll()"></select>
+    <label for="attDate">Date</label>
+    <input type="date" id="attDate" onchange="loadAttendanceRoll()">
+  </div>
+  <div id="attendanceSummary" style="display:none;font-size:0.82rem;color:var(--muted);margin:0 0 0.8rem;"></div>
+  <div id="attendanceRollList"></div>
+  <button class="btn-primary" id="saveAttendanceBtn" style="width:100%;margin-top:1rem;display:none;" onclick="saveAttendanceRoll()">Save Attendance</button>
 </div>
 
 <!-- PAGE 5: RESOURCES -->
@@ -1338,12 +1367,12 @@ function confirmExamSubjects(){
 window.confirmExamSubjects = confirmExamSubjects;
 
 function switchPage(page){
-  const allPages = ["pageClasses","pageExamSubjects","pageAdd","pageList","pageRecords","pageSickRecords","pagePunishmentRecords","pageResources","pageTools","pageLessonPlan","pageSchemes","pageProfile","pageSettings"];
+  const allPages = ["pageClasses","pageExamSubjects","pageAdd","pageList","pageRecords","pageSickRecords","pagePunishmentRecords","pageAttendance","pageResources","pageTools","pageLessonPlan","pageSchemes","pageProfile","pageSettings"];
   allPages.forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove("active"); });
 
   const pageMap = {
     classes:"pageClasses", examSubjects:"pageExamSubjects", add:"pageAdd", list:"pageList",
-    records:"pageRecords", sickrecords:"pageSickRecords", punishmentrecords:"pagePunishmentRecords",
+    records:"pageRecords", sickrecords:"pageSickRecords", punishmentrecords:"pagePunishmentRecords", attendance:"pageAttendance",
     resources:"pageResources", tools:"pageTools", lessonplan:"pageLessonPlan", schemes:"pageSchemes",
     profile:"pageProfile", settings:"pageSettings"
   };
@@ -1358,15 +1387,15 @@ function switchPage(page){
   const activeNav = navMap[page];
   if(activeNav){ const el=document.getElementById(activeNav); if(el) el.classList.add("active"); }
 
-  // Back button: show on examSubjects, add, list, settings, profile (sub-page of settings), the two tool sub-pages, and the two record sub-pages
+  // Back button: show on examSubjects, add, list, settings, profile (sub-page of settings), the two tool sub-pages, and the three record sub-pages
   const backBtn = document.getElementById("backBtn");
-  if(backBtn) backBtn.style.display=(page==="examSubjects"||page==="add"||page==="list"||page==="settings"||page==="profile"||page==="lessonplan"||page==="schemes"||page==="sickrecords"||page==="punishmentrecords")?"inline-block":"none";
+  if(backBtn) backBtn.style.display=(page==="examSubjects"||page==="add"||page==="list"||page==="settings"||page==="profile"||page==="lessonplan"||page==="schemes"||page==="sickrecords"||page==="punishmentrecords"||page==="attendance")?"inline-block":"none";
 
   const titles = {
     classes:"Easy Assess", examSubjects:"Select Subjects",
     add:`${classLabel(_currentClass)} — Add Student`,
     list:`${classLabel(_currentClass)} — Students`,
-    records:"Records", sickrecords:"Sick Record", punishmentrecords:"Punishment Records",
+    records:"Records", sickrecords:"Sick Record", punishmentrecords:"Punishment Records", attendance:"Attendance Register",
     resources:"Resources", tools:"Tools",
     lessonplan:"Lesson Plan", schemes:"Schemes of Work",
     profile:"My Profile", settings:"Settings"
@@ -1389,12 +1418,13 @@ function switchPage(page){
   if(page==="records")     updateRecordsCounts();
   if(page==="sickrecords")        renderSickRecords();
   if(page==="punishmentrecords")  renderPunishmentRecords();
+  if(page==="attendance")         initAttendancePage();
 }
 
 let _settingsReturnPage = "classes";
 function getCurrentPageKey(){
   const map = {pageClasses:"classes", pageExamSubjects:"examSubjects", pageAdd:"add", pageList:"list",
-    pageRecords:"records", pageSickRecords:"sickrecords", pagePunishmentRecords:"punishmentrecords",
+    pageRecords:"records", pageSickRecords:"sickrecords", pagePunishmentRecords:"punishmentrecords", pageAttendance:"attendance",
     pageResources:"resources", pageTools:"tools", pageLessonPlan:"lessonplan", pageSchemes:"schemes",
     pageProfile:"profile", pageSettings:"settings"};
   for(const domId in map){
@@ -1415,13 +1445,14 @@ function goBack(){
   const schemesActive      = document.getElementById("pageSchemes").classList.contains("active");
   const sickActive         = document.getElementById("pageSickRecords").classList.contains("active");
   const punishmentActive   = document.getElementById("pagePunishmentRecords").classList.contains("active");
+  const attendanceActive   = document.getElementById("pageAttendance").classList.contains("active");
   if(profileActive)  switchPage("settings");   // Profile is sub-page of Settings
   else if(settingsActive) switchPage(_settingsReturnPage);
   else if(listActive) switchPage("add");
   else if(addActive)  switchPage("classes");
   else if(examSubjectsActive) switchPage("classes");
   else if(lessonPlanActive || schemesActive) switchPage("tools");
-  else if(sickActive || punishmentActive) switchPage("records");
+  else if(sickActive || punishmentActive || attendanceActive) switchPage("records");
 }
 window.switchPage=switchPage;window.goBack=goBack;
 
@@ -2923,6 +2954,23 @@ function updateRecordsCounts(){
   const pEl = document.getElementById("punishmentRecordCount");
   if(sEl) sEl.textContent = sickCount>0 ? sickCount+" record"+(sickCount>1?"s":"") : "No records yet";
   if(pEl) pEl.textContent = punCount>0 ? punCount+" record"+(punCount>1?"s":"") : "No records yet";
+
+  // Attendance card: aggregate today's Present/Absent across every class, if any was taken
+  const aEl = document.getElementById("attendanceTodayCount");
+  if(aEl){
+    const today = new Date().toISOString().slice(0,10);
+    const data = getAttendanceData();
+    let present=0, absent=0, any=false;
+    Object.values(data).forEach(rec=>{
+      if(rec.date===today){
+        any = true;
+        Object.values(rec.entries).forEach(status=>{
+          if(status==="Present") present++; else if(status==="Absent") absent++;
+        });
+      }
+    });
+    aEl.textContent = any ? `Today: ${present} present, ${absent} absent` : "Mark today's attendance";
+  }
 }
 window.updateRecordsCounts = updateRecordsCounts;
 
@@ -2993,6 +3041,110 @@ function deleteRecord(type, id){
   updateRecordsCounts();
 }
 window.deleteRecord = deleteRecord;
+
+// ── Attendance Register ──────────────────────────────────────────────────
+const ATTENDANCE_KEY = "ea33_attendance"; // { "cls_date": {cls, date, entries:{studentId:"Present"|"Absent"}} }
+
+function getAttendanceData(){
+  return JSON.parse(localStorage.getItem(ATTENDANCE_KEY)||"{}");
+}
+function saveAttendanceData(data){
+  localStorage.setItem(ATTENDANCE_KEY, JSON.stringify(data));
+}
+function attendanceRecordKey(cls,date){ return cls+"_"+date; }
+
+let _attendanceState = {}; // studentId -> "Present"/"Absent", for the currently loaded class + date
+
+function initAttendancePage(){
+  const classSel = document.getElementById("attClass");
+  classSel.innerHTML = [1,2,3,4,5,6,7,8].map(c=>`<option value="${c}">Standard ${c}</option>`).join("")
+    + `<option value="JC">Junior Certificate</option><option value="MSCE">MSCE</option>`;
+  classSel.value = isExamLevel(_currentClass) ? _currentClass : (typeof _currentClass==="number" ? _currentClass : 1);
+
+  const dateInput = document.getElementById("attDate");
+  if(!dateInput.value) dateInput.value = new Date().toISOString().slice(0,10);
+
+  loadAttendanceRoll();
+}
+window.initAttendancePage = initAttendancePage;
+
+function loadAttendanceRoll(){
+  const clsRaw = document.getElementById("attClass").value;
+  const cls  = isExamLevel(clsRaw) ? clsRaw : parseInt(clsRaw,10);
+  const date = document.getElementById("attDate").value;
+  const list = getList(cls);
+  const container = document.getElementById("attendanceRollList");
+  const summaryEl = document.getElementById("attendanceSummary");
+  const saveBtn   = document.getElementById("saveAttendanceBtn");
+
+  if(list.length===0){
+    container.innerHTML = `<div style="text-align:center;padding:2.5rem 1rem;color:var(--muted);">No students in ${classLabel(cls)} yet.</div>`;
+    summaryEl.style.display = "none";
+    saveBtn.style.display   = "none";
+    _attendanceState = {};
+    return;
+  }
+
+  const data  = getAttendanceData();
+  const saved = data[attendanceRecordKey(cls,date)];
+  _attendanceState = {};
+  list.forEach(s=>{
+    _attendanceState[s.id] = (saved && saved.entries[s.id]) || "Present";
+  });
+
+  renderAttendanceRoll(list);
+  saveBtn.style.display = "block";
+}
+window.loadAttendanceRoll = loadAttendanceRoll;
+
+function renderAttendanceRoll(list){
+  const container = document.getElementById("attendanceRollList");
+  container.innerHTML = `<div class="notes-list-wrap">` + list.map(s=>{
+    const status = _attendanceState[s.id];
+    return `
+    <div class="att-row">
+      <div style="min-width:0;">
+        <div style="font-weight:600;color:var(--text);">${escapeHtml(s.name)}</div>
+        <div style="font-size:0.76rem;color:var(--muted);">${s.sex==="Male"?"M":"F"}</div>
+      </div>
+      <div class="att-toggle">
+        <button class="att-btn present ${status==="Present"?"active":""}" onclick="setAttendanceStatus('${s.id}','Present')">Present</button>
+        <button class="att-btn absent ${status==="Absent"?"active":""}" onclick="setAttendanceStatus('${s.id}','Absent')">Absent</button>
+      </div>
+    </div>`;
+  }).join("") + `</div>`;
+  updateAttendanceSummary();
+}
+
+function setAttendanceStatus(studentId, status){
+  _attendanceState[studentId] = status;
+  const clsRaw = document.getElementById("attClass").value;
+  const cls = isExamLevel(clsRaw) ? clsRaw : parseInt(clsRaw,10);
+  renderAttendanceRoll(getList(cls));
+}
+window.setAttendanceStatus = setAttendanceStatus;
+
+function updateAttendanceSummary(){
+  const summaryEl = document.getElementById("attendanceSummary");
+  const values  = Object.values(_attendanceState);
+  const present = values.filter(v=>v==="Present").length;
+  const absent  = values.filter(v=>v==="Absent").length;
+  summaryEl.textContent   = `Present: ${present}   ·   Absent: ${absent}`;
+  summaryEl.style.display = "block";
+}
+
+function saveAttendanceRoll(){
+  const clsRaw = document.getElementById("attClass").value;
+  const cls  = isExamLevel(clsRaw) ? clsRaw : parseInt(clsRaw,10);
+  const date = document.getElementById("attDate").value;
+  if(!date){ alert("Please select a date."); return; }
+  const data = getAttendanceData();
+  data[attendanceRecordKey(cls,date)] = {cls, date, entries:{..._attendanceState}};
+  saveAttendanceData(data);
+  alert(`Attendance saved for ${classLabel(cls)} on ${date}.`);
+  updateRecordsCounts();
+}
+window.saveAttendanceRoll = saveAttendanceRoll;
 
 function initResourcesPage(){
   _resourceTab = "notes";
