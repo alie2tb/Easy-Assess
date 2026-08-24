@@ -605,41 +605,6 @@
   <div id="comingSoonContainer" style="display:none;"></div>
 </div>
 
-<!-- PAGE 5b: TOOLS -->
-<div class="page" id="pageTools">
-  <p style="font-size:0.82rem;color:var(--muted);margin:0.4rem 0 1rem;">Helpful tools for planning your teaching</p>
-  <div class="class-grid">
-    <div class="class-card tool-card" onclick="switchPage('lessonplan')">
-      <span class="cls-icon">📝</span>
-      <div class="cls-name">Lesson Plan</div>
-      <div class="cls-count">Build a lesson with AI</div>
-    </div>
-    <div class="class-card tool-card" onclick="switchPage('schemes')">
-      <span class="cls-icon">🗂️</span>
-      <div class="cls-name">Schemes of Work</div>
-      <div class="cls-count">Coming soon</div>
-    </div>
-  </div>
-</div>
-
-<!-- PAGE 5c: LESSON PLAN BUILDER -->
-<div class="page" id="pageLessonPlan">
-  <div style="text-align:center;padding:3.5rem 1.5rem;color:var(--muted);">
-    <div style="font-size:2.4rem;margin-bottom:0.8rem;">🚧</div>
-    <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;">Lesson Plan</div>
-    <div style="font-size:0.85rem;">CURRENTLY NOT AVAILABLE</div>
-  </div>
-</div>
-
-<!-- PAGE 5d: SCHEMES OF WORK -->
-<div class="page" id="pageSchemes">
-  <div style="text-align:center;padding:3.5rem 1.5rem;color:var(--muted);">
-    <div style="font-size:2.4rem;margin-bottom:0.8rem;">🚧</div>
-    <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;">Schemes of Work</div>
-    <div style="font-size:0.85rem;">This section will be available in the near future.</div>
-  </div>
-</div>
-
 <!-- PAGE 5: SETTINGS -->
 <!-- PAGE 7: PROFILE -->
 <div class="page" id="pageProfile">
@@ -1367,37 +1332,36 @@ function confirmExamSubjects(){
 window.confirmExamSubjects = confirmExamSubjects;
 
 function switchPage(page){
-  const allPages = ["pageClasses","pageExamSubjects","pageAdd","pageList","pageRecords","pageSickRecords","pagePunishmentRecords","pageAttendance","pageResources","pageTools","pageLessonPlan","pageSchemes","pageProfile","pageSettings"];
+  const allPages = ["pageClasses","pageExamSubjects","pageAdd","pageList","pageRecords","pageSickRecords","pagePunishmentRecords","pageAttendance","pageResources","pageProfile","pageSettings"];
   allPages.forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove("active"); });
 
   const pageMap = {
     classes:"pageClasses", examSubjects:"pageExamSubjects", add:"pageAdd", list:"pageList",
     records:"pageRecords", sickrecords:"pageSickRecords", punishmentrecords:"pagePunishmentRecords", attendance:"pageAttendance",
-    resources:"pageResources", tools:"pageTools", lessonplan:"pageLessonPlan", schemes:"pageSchemes",
+    resources:"pageResources",
     profile:"pageProfile", settings:"pageSettings"
   };
   const target = document.getElementById(pageMap[page]);
   if(target) target.classList.add("active");
 
   // Bottom nav (Settings/Profile are no longer bottom-nav tabs — reached via the ⋮ menu instead)
-  const navMap = {classes:"navClasses", records:"navRecords", resources:"navResources", tools:"navTools"};
-  ["navClasses","navRecords","navResources","navTools"].forEach(id=>{
+  const navMap = {classes:"navClasses", records:"navRecords", resources:"navResources"};
+  ["navClasses","navRecords","navResources"].forEach(id=>{
     const el=document.getElementById(id); if(el) el.classList.remove("active");
   });
   const activeNav = navMap[page];
   if(activeNav){ const el=document.getElementById(activeNav); if(el) el.classList.add("active"); }
 
-  // Back button: show on examSubjects, add, list, settings, profile (sub-page of settings), the two tool sub-pages, and the three record sub-pages
+  // Back button: show on examSubjects, add, list, settings, profile (sub-page of settings), and the three record sub-pages
   const backBtn = document.getElementById("backBtn");
-  if(backBtn) backBtn.style.display=(page==="examSubjects"||page==="add"||page==="list"||page==="settings"||page==="profile"||page==="lessonplan"||page==="schemes"||page==="sickrecords"||page==="punishmentrecords"||page==="attendance")?"inline-block":"none";
+  if(backBtn) backBtn.style.display=(page==="examSubjects"||page==="add"||page==="list"||page==="settings"||page==="profile"||page==="sickrecords"||page==="punishmentrecords"||page==="attendance")?"inline-block":"none";
 
   const titles = {
     classes:"Easy Assess", examSubjects:"Select Subjects",
     add:`${classLabel(_currentClass)} — Add Student`,
     list:`${classLabel(_currentClass)} — Students`,
     records:"Records", sickrecords:"Sick Record", punishmentrecords:"Punishment Records", attendance:"Attendance Register",
-    resources:"Resources", tools:"Tools",
-    lessonplan:"Lesson Plan", schemes:"Schemes of Work",
+    resources:"Resources",
     profile:"My Profile", settings:"Settings"
   };
   const titleEl = document.getElementById("topTitle");
@@ -1425,7 +1389,7 @@ let _settingsReturnPage = "classes";
 function getCurrentPageKey(){
   const map = {pageClasses:"classes", pageExamSubjects:"examSubjects", pageAdd:"add", pageList:"list",
     pageRecords:"records", pageSickRecords:"sickrecords", pagePunishmentRecords:"punishmentrecords", pageAttendance:"attendance",
-    pageResources:"resources", pageTools:"tools", pageLessonPlan:"lessonplan", pageSchemes:"schemes",
+    pageResources:"resources",
     pageProfile:"profile", pageSettings:"settings"};
   for(const domId in map){
     const el = document.getElementById(domId);
@@ -1441,8 +1405,6 @@ function goBack(){
   const listActive         = document.getElementById("pageList").classList.contains("active");
   const addActive          = document.getElementById("pageAdd").classList.contains("active");
   const examSubjectsActive = document.getElementById("pageExamSubjects").classList.contains("active");
-  const lessonPlanActive   = document.getElementById("pageLessonPlan").classList.contains("active");
-  const schemesActive      = document.getElementById("pageSchemes").classList.contains("active");
   const sickActive         = document.getElementById("pageSickRecords").classList.contains("active");
   const punishmentActive   = document.getElementById("pagePunishmentRecords").classList.contains("active");
   const attendanceActive   = document.getElementById("pageAttendance").classList.contains("active");
@@ -1451,7 +1413,6 @@ function goBack(){
   else if(listActive) switchPage("add");
   else if(addActive)  switchPage("classes");
   else if(examSubjectsActive) switchPage("classes");
-  else if(lessonPlanActive || schemesActive) switchPage("tools");
   else if(sickActive || punishmentActive || attendanceActive) switchPage("records");
 }
 window.switchPage=switchPage;window.goBack=goBack;
@@ -3622,12 +3583,6 @@ if("serviceWorker" in navigator){
     <button class="nav-item" id="navResources" onclick="switchPage('resources')">
       <span class="nav-icon">📚</span>
       <span>Resources</span>
-    </button>
-  </div>
-  <div class="nav-item-wrap">
-    <button class="nav-item" id="navTools" onclick="switchPage('tools')">
-      <span class="nav-icon">🛠️</span>
-      <span>Tools</span>
     </button>
   </div>
 </nav>
