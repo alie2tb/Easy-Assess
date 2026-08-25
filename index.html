@@ -260,9 +260,6 @@
   .dash-att-pill{flex:1;text-align:center;padding:10px;border-radius:10px;font-weight:700;font-size:0.85rem;}
   .dash-att-pill.present{background:#E1F5EE;color:#085041;}
   .dash-att-pill.absent{background:#FAECE7;color:#4A1B0C;}
-  .dash-links{display:flex;flex-direction:column;gap:8px;}
-  .dash-link-btn{width:100%;padding:11px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-size:0.88rem;font-weight:600;color:var(--text);cursor:pointer;text-align:left;font-family:inherit;}
-  html.dark .dash-link-btn{background:var(--card);}
   .notes-list-wrap{background:#fff;border-radius:12px;border:1px solid var(--border);overflow:hidden;margin-bottom:1rem;}
   .notes-std-header{padding:8px 16px;background:var(--grey-100,#f5f6f8);font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid var(--border);}
   /* exam subject selection */
@@ -1485,9 +1482,10 @@ function renderDashboard(){
   const attData  = getAttendanceData();
   let presentToday=0, absentToday=0, attendanceTaken=false;
   Object.keys(attData).forEach(key=>{
-    if(key.endsWith("_"+today)){
+    const record = attData[key];
+    if(record && record.date === today){
       attendanceTaken = true;
-      Object.values(attData[key]).forEach(status=>{
+      Object.values(record.entries||{}).forEach(status=>{
         if(status==="Present") presentToday++; else if(status==="Absent") absentToday++;
       });
     }
@@ -1528,15 +1526,6 @@ function renderDashboard(){
           <div class="dash-att-pill present">Present: ${presentToday}</div>
           <div class="dash-att-pill absent">Absent: ${absentToday}</div>
         </div>` : `<div class="dash-empty">No attendance recorded yet today.</div>`}
-    </div>
-
-    <div class="dash-section">
-      <div class="dash-section-title">Quick Links</div>
-      <div class="dash-links">
-        <button class="dash-link-btn" onclick="switchPage('classes')">📋 &nbsp;Assess</button>
-        <button class="dash-link-btn" onclick="switchPage('records')">🗒️ &nbsp;Records</button>
-        <button class="dash-link-btn" onclick="switchPage('resources')">📚 &nbsp;Resources</button>
-      </div>
     </div>`;
 }
 window.renderDashboard = renderDashboard;
