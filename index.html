@@ -233,6 +233,36 @@
   html.dark .att-btn.present.active{background:#123d31;}
   html.dark .att-btn.absent.active{background:#3d1f14;}
   html.dark .notes-item-pdf{background:#1e332b;}
+  /* resource PDF card — Preview / Download */
+  .res-pdf-card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:14px 16px;margin-bottom:10px;}
+  .res-pdf-card .res-pdf-title{font-weight:700;font-size:0.92rem;color:var(--text);margin-bottom:8px;}
+  .res-pdf-btns{display:flex;gap:10px;}
+  .res-pdf-btns button{flex:1;padding:9px 0;border-radius:8px;font-size:0.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit;}
+  .res-preview-btn{background:none;border:1.5px solid var(--primary);color:var(--primary-dark);}
+  .res-download-btn{background:var(--primary);border:1.5px solid var(--primary);color:#fff;}
+  .res-download-btn:disabled{opacity:0.6;cursor:default;}
+  .res-progress-wrap{margin-top:10px;display:none;}
+  .res-progress-bar{height:6px;background:var(--border);border-radius:99px;overflow:hidden;}
+  .res-progress-fill{height:100%;width:0%;background:var(--primary);transition:width 0.2s;}
+  .res-progress-label{font-size:0.75rem;color:var(--muted);margin-top:4px;}
+  html.dark .res-pdf-card{background:var(--card);}
+  /* dashboard */
+  .dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.2rem;}
+  .dash-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:1rem;text-align:center;}
+  .dash-card-value{font-size:1.5rem;font-weight:800;color:var(--primary-dark);margin-bottom:4px;}
+  .dash-card-label{font-size:0.72rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.02em;}
+  html.dark .dash-card{background:var(--card);}
+  .dash-section{background:#fff;border:1px solid var(--border);border-radius:14px;padding:1rem;margin-bottom:1rem;}
+  html.dark .dash-section{background:var(--card);}
+  .dash-section-title{font-weight:700;font-size:0.9rem;color:var(--text);margin-bottom:0.8rem;}
+  .dash-empty{font-size:0.82rem;color:var(--muted);}
+  .dash-attendance-row{display:flex;gap:10px;}
+  .dash-att-pill{flex:1;text-align:center;padding:10px;border-radius:10px;font-weight:700;font-size:0.85rem;}
+  .dash-att-pill.present{background:#E1F5EE;color:#085041;}
+  .dash-att-pill.absent{background:#FAECE7;color:#4A1B0C;}
+  .dash-links{display:flex;flex-direction:column;gap:8px;}
+  .dash-link-btn{width:100%;padding:11px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-size:0.88rem;font-weight:600;color:var(--text);cursor:pointer;text-align:left;font-family:inherit;}
+  html.dark .dash-link-btn{background:var(--card);}
   .notes-list-wrap{background:#fff;border-radius:12px;border:1px solid var(--border);overflow:hidden;margin-bottom:1rem;}
   .notes-std-header{padding:8px 16px;background:var(--grey-100,#f5f6f8);font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid var(--border);}
   /* exam subject selection */
@@ -381,8 +411,14 @@
   </div>
 </div>
 
+<!-- PAGE 0: DASHBOARD -->
+<div class="page active" id="pageDashboard">
+  <p style="font-size:0.82rem;color:var(--muted);margin:0.5rem 0 1rem;">Everything at a glance</p>
+  <div id="dashboardContent"></div>
+</div>
+
 <!-- PAGE 1: CLASS PICKER -->
-<div class="page active" id="pageClasses">
+<div class="page" id="pageClasses">
   <div style="padding:0.5rem 0 1rem;">
     <p style="font-size:0.82rem;color:var(--muted);margin:0 0 1rem;">Select a class to begin assessment</p>
     <div class="class-grid" id="classGrid"></div>
@@ -1332,10 +1368,11 @@ function confirmExamSubjects(){
 window.confirmExamSubjects = confirmExamSubjects;
 
 function switchPage(page){
-  const allPages = ["pageClasses","pageExamSubjects","pageAdd","pageList","pageRecords","pageSickRecords","pagePunishmentRecords","pageAttendance","pageResources","pageProfile","pageSettings"];
+  const allPages = ["pageDashboard","pageClasses","pageExamSubjects","pageAdd","pageList","pageRecords","pageSickRecords","pagePunishmentRecords","pageAttendance","pageResources","pageProfile","pageSettings"];
   allPages.forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove("active"); });
 
   const pageMap = {
+    dashboard:"pageDashboard",
     classes:"pageClasses", examSubjects:"pageExamSubjects", add:"pageAdd", list:"pageList",
     records:"pageRecords", sickrecords:"pageSickRecords", punishmentrecords:"pagePunishmentRecords", attendance:"pageAttendance",
     resources:"pageResources",
@@ -1345,8 +1382,8 @@ function switchPage(page){
   if(target) target.classList.add("active");
 
   // Bottom nav (Settings/Profile are no longer bottom-nav tabs — reached via the ⋮ menu instead)
-  const navMap = {classes:"navClasses", records:"navRecords", resources:"navResources"};
-  ["navClasses","navRecords","navResources"].forEach(id=>{
+  const navMap = {dashboard:"navDashboard", classes:"navClasses", records:"navRecords", resources:"navResources"};
+  ["navDashboard","navClasses","navRecords","navResources"].forEach(id=>{
     const el=document.getElementById(id); if(el) el.classList.remove("active");
   });
   const activeNav = navMap[page];
@@ -1357,6 +1394,7 @@ function switchPage(page){
   if(backBtn) backBtn.style.display=(page==="examSubjects"||page==="add"||page==="list"||page==="settings"||page==="profile"||page==="sickrecords"||page==="punishmentrecords"||page==="attendance")?"inline-block":"none";
 
   const titles = {
+    dashboard:"Dashboard",
     classes:"Easy Assess", examSubjects:"Select Subjects",
     add:`${classLabel(_currentClass)} — Add Student`,
     list:`${classLabel(_currentClass)} — Students`,
@@ -1370,6 +1408,7 @@ function switchPage(page){
   const fab = document.getElementById("fabAddStudent");
   if(fab) fab.style.display = page==="list" ? "flex" : "none";
 
+  if(page==="dashboard") renderDashboard();
   if(page==="classes")  buildClassGrid();
   if(page==="settings"){
     buildSettingsPageRows();
@@ -1385,9 +1424,9 @@ function switchPage(page){
   if(page==="attendance")         initAttendancePage();
 }
 
-let _settingsReturnPage = "classes";
+let _settingsReturnPage = "dashboard";
 function getCurrentPageKey(){
-  const map = {pageClasses:"classes", pageExamSubjects:"examSubjects", pageAdd:"add", pageList:"list",
+  const map = {pageDashboard:"dashboard", pageClasses:"classes", pageExamSubjects:"examSubjects", pageAdd:"add", pageList:"list",
     pageRecords:"records", pageSickRecords:"sickrecords", pagePunishmentRecords:"punishmentrecords", pageAttendance:"attendance",
     pageResources:"resources",
     pageProfile:"profile", pageSettings:"settings"};
@@ -1395,7 +1434,7 @@ function getCurrentPageKey(){
     const el = document.getElementById(domId);
     if(el && el.classList.contains("active")) return map[domId];
   }
-  return "classes";
+  return "dashboard";
 }
 window.getCurrentPageKey = getCurrentPageKey;
 
@@ -1416,6 +1455,92 @@ function goBack(){
   else if(sickActive || punishmentActive || attendanceActive) switchPage("records");
 }
 window.switchPage=switchPage;window.goBack=goBack;
+
+// ── Dashboard: summary of every other fragment at a glance ─────────────────
+function renderDashboard(){
+  const container = document.getElementById("dashboardContent");
+  if(!container) return;
+
+  const allClasses = [1,2,3,4,5,6,7,8,"JC","MSCE"];
+  let totalStudents=0, totalBoys=0, totalGirls=0, classesWithData=0, totalPass=0;
+
+  allClasses.forEach(cls=>{
+    const list = getList(cls);
+    if(list.length===0) return;
+    classesWithData++;
+    const subs = getSubjects(cls);
+    list.forEach(s=>{
+      totalStudents++;
+      if(s.sex==="Male") totalBoys++; else if(s.sex==="Female") totalGirls++;
+      const total = calcTotal(s,subs,cls);
+      if(getPassFail(total,cls,s,subs)==="PASS") totalPass++;
+    });
+  });
+  const passRate = totalStudents>0 ? Math.round(totalPass/totalStudents*100) : 0;
+
+  const sickCount = getRecords("sick").length;
+  const punCount  = getRecords("punishment").length;
+
+  const today    = new Date().toISOString().slice(0,10);
+  const attData  = getAttendanceData();
+  let presentToday=0, absentToday=0, attendanceTaken=false;
+  Object.keys(attData).forEach(key=>{
+    if(key.endsWith("_"+today)){
+      attendanceTaken = true;
+      Object.values(attData[key]).forEach(status=>{
+        if(status==="Present") presentToday++; else if(status==="Absent") absentToday++;
+      });
+    }
+  });
+
+  container.innerHTML = `
+    <div class="dash-grid">
+      <div class="dash-card">
+        <div class="dash-card-value">${totalStudents}</div>
+        <div class="dash-card-label">Total Students</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-value">${classesWithData}</div>
+        <div class="dash-card-label">Classes with Data</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-value">${totalBoys} / ${totalGirls}</div>
+        <div class="dash-card-label">Boys / Girls</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-value">${totalStudents>0?passRate+"%":"\u2014"}</div>
+        <div class="dash-card-label">Overall Pass Rate</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-value">${sickCount}</div>
+        <div class="dash-card-label">Sick Records</div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-value">${punCount}</div>
+        <div class="dash-card-label">Punishment Records</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Today's Attendance</div>
+      ${attendanceTaken ? `
+        <div class="dash-attendance-row">
+          <div class="dash-att-pill present">Present: ${presentToday}</div>
+          <div class="dash-att-pill absent">Absent: ${absentToday}</div>
+        </div>` : `<div class="dash-empty">No attendance recorded yet today.</div>`}
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Quick Links</div>
+      <div class="dash-links">
+        <button class="dash-link-btn" onclick="switchPage('classes')">📋 &nbsp;Assess</button>
+        <button class="dash-link-btn" onclick="switchPage('records')">🗒️ &nbsp;Records</button>
+        <button class="dash-link-btn" onclick="switchPage('resources')">📚 &nbsp;Resources</button>
+      </div>
+    </div>`;
+}
+window.renderDashboard = renderDashboard;
+
 
 function updateBadge(){
   const count = getList(_currentClass).length;
@@ -2884,6 +3009,64 @@ let _noteSaveTimer  = null;
 let _resourceTab    = "notes";
 let _resourceSearch = "";
 
+// ── Resource PDF: Preview (open) / Download (with a real progress bar) ──────
+function previewResourcePdf(url){
+  window.open("./" + url, "_blank");
+}
+window.previewResourcePdf = previewResourcePdf;
+
+async function downloadResourcePdf(url, filename, cardId){
+  const btn      = document.getElementById(cardId+"_dlbtn");
+  const wrap     = document.getElementById(cardId+"_progress");
+  const fill     = document.getElementById(cardId+"_fill");
+  const label    = document.getElementById(cardId+"_label");
+  if(!btn || !wrap) return;
+
+  btn.disabled = true;
+  wrap.style.display = "block";
+  fill.style.width = "0%";
+  label.textContent = "Downloading 0%...";
+
+  try{
+    const resp = await fetch("./" + url);
+    if(!resp.ok || !resp.body) throw new Error("Fetch failed");
+    const totalStr = resp.headers.get("Content-Length");
+    const total    = totalStr ? Number(totalStr) : 0;
+    const reader   = resp.body.getReader();
+    const chunks   = [];
+    let received   = 0;
+
+    while(true){
+      const {done, value} = await reader.read();
+      if(done) break;
+      chunks.push(value);
+      received += value.length;
+      if(total){
+        const pct = Math.min(100, Math.round(received/total*100));
+        fill.style.width = pct+"%";
+        label.textContent = `Downloading ${pct}%...`;
+      } else {
+        label.textContent = `Downloading... (${(received/1024).toFixed(0)} KB)`;
+      }
+    }
+
+    const blob    = new Blob(chunks, {type:"application/pdf"});
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = blobUrl; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(blobUrl);
+
+    fill.style.width = "100%";
+    label.textContent = "Downloaded \u2713";
+    setTimeout(()=>{ wrap.style.display="none"; btn.disabled=false; }, 1500);
+  } catch(e){
+    label.textContent = "Download failed \u2014 tap to retry.";
+    btn.disabled = false;
+  }
+}
+window.downloadResourcePdf = downloadResourcePdf;
+
 function noteStorageKey(std, subject){
   return "ea33_note_" + std + "_" + subject.replace(/\s+/g,"_");
 }
@@ -3174,34 +3357,40 @@ function renderNotesList(){
     header.className = "notes-std-header";
     header.textContent = `Standard ${std}`;
     const list = document.createElement("div");
-    list.className = "notes-list-wrap";
     subjects.forEach(subject=>{
       const key      = noteStorageKey(std, subject);
       const saved    = localStorage.getItem(key)||"";
       const pdfFile  = NOTE_PDFS[std + "_" + subject.replace(/\s+/g,"_")];
-      const item     = document.createElement("div");
-      item.className = "notes-item";
-      item.innerHTML = `
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span class="notes-item-dot ${saved?"has-note":""}"></span>
-          <span class="notes-item-label">Standard ${std} ${subject}</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;">
-          ${pdfFile ? `<button class="notes-item-pdf" title="Add/edit your own notes">✏️</button>` : ""}
-          <span class="notes-item-arrow">›</span>
-        </div>`;
+      const label    = `Standard ${std} ${subject}`;
+
       if(pdfFile){
-        // Primary tap on the row opens the bundled reference PDF
-        item.addEventListener("click",()=> window.open("./" + pdfFile, "_blank"));
-        const editBtn = item.querySelector(".notes-item-pdf");
-        editBtn.addEventListener("click",(e)=>{
-          e.stopPropagation();
-          openNoteEditor(std, subject, key);
-        });
+        const cardId = "note_"+std+"_"+subject.replace(/\s+/g,"_");
+        const card = document.createElement("div");
+        card.className = "res-pdf-card";
+        card.innerHTML = `
+          <div class="res-pdf-title">${escapeHtml(label)}</div>
+          <div class="res-pdf-btns">
+            <button class="res-preview-btn" onclick="previewResourcePdf('${pdfFile}')">👁 Preview</button>
+            <button class="res-download-btn" id="${cardId}_dlbtn" onclick="downloadResourcePdf('${pdfFile}','${pdfFile}','${cardId}')">⬇ Download</button>
+            <button class="notes-item-pdf" title="Add/edit your own notes" onclick="openNoteEditor(${std},'${subject}','${key}')">✏️</button>
+          </div>
+          <div class="res-progress-wrap" id="${cardId}_progress">
+            <div class="res-progress-bar"><div class="res-progress-fill" id="${cardId}_fill"></div></div>
+            <div class="res-progress-label" id="${cardId}_label"></div>
+          </div>`;
+        list.appendChild(card);
       } else {
+        const item = document.createElement("div");
+        item.className = "notes-item";
+        item.innerHTML = `
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span class="notes-item-dot ${saved?"has-note":""}"></span>
+            <span class="notes-item-label">${escapeHtml(label)}</span>
+          </div>
+          <span class="notes-item-arrow">›</span>`;
         item.addEventListener("click",()=> openNoteEditor(std, subject, key));
+        list.appendChild(item);
       }
-      list.appendChild(item);
     });
     wrap.appendChild(header);
     wrap.appendChild(list);
@@ -3224,22 +3413,23 @@ function renderSyllabusesList(){
     container.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--muted);">No syllabuses found.</div>`;
     return;
   }
-  const list = document.createElement("div");
-  list.className = "notes-list-wrap";
-  stds.forEach(std=>{
+  container.innerHTML = stds.map(std=>{
     const pdfFile = SYLLABUS_PDFS[std];
-    const item = document.createElement("div");
-    item.className = "notes-item";
-    item.innerHTML = `
-      <div style="display:flex;align-items:center;gap:10px;">
-        <span class="notes-item-label">Standard ${std} Syllabus</span>
-      </div>
-      <span class="notes-item-arrow">›</span>`;
-    item.addEventListener("click",()=> window.open("./" + pdfFile, "_blank"));
-    list.appendChild(item);
-  });
-  container.innerHTML = "";
-  container.appendChild(list);
+    const cardId  = "syll_"+std;
+    const label   = `Standard ${std} Syllabus`;
+    return `
+      <div class="res-pdf-card">
+        <div class="res-pdf-title">${label}</div>
+        <div class="res-pdf-btns">
+          <button class="res-preview-btn" onclick="previewResourcePdf('${pdfFile}')">👁 Preview</button>
+          <button class="res-download-btn" id="${cardId}_dlbtn" onclick="downloadResourcePdf('${pdfFile}','${pdfFile}','${cardId}')">⬇ Download</button>
+        </div>
+        <div class="res-progress-wrap" id="${cardId}_progress">
+          <div class="res-progress-bar"><div class="res-progress-fill" id="${cardId}_fill"></div></div>
+          <div class="res-progress-label" id="${cardId}_label"></div>
+        </div>
+      </div>`;
+  }).join("");
 }
 window.renderSyllabusesList = renderSyllabusesList;
 
@@ -3470,6 +3660,7 @@ buildClassGrid();
 render();
 updateExcelBtn();
 updateBadge();
+renderDashboard();
 
 // ── Google Analytics: PWA install tracking ──────────────────────────────
 // Fires once, on first load, so you can see how many sessions are already
@@ -3568,7 +3759,13 @@ if("serviceWorker" in navigator){
 <!-- Bottom Navigation -->
 <nav class="bottom-nav">
   <div class="nav-item-wrap">
-    <button class="nav-item active" id="navClasses" onclick="switchPage('classes')">
+    <button class="nav-item active" id="navDashboard" onclick="switchPage('dashboard')">
+      <span class="nav-icon">🏠</span>
+      <span>Dashboard</span>
+    </button>
+  </div>
+  <div class="nav-item-wrap">
+    <button class="nav-item" id="navClasses" onclick="switchPage('classes')">
       <span class="nav-icon">📋</span>
       <span>Assess</span>
     </button>
