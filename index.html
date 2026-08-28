@@ -551,6 +551,11 @@
 <div class="page" id="pageRecords">
   <p style="font-size:0.82rem;color:var(--muted);margin:0.4rem 0 1rem;">Keep track of learners' health and discipline incidents</p>
   <div class="class-grid">
+    <div class="class-card" onclick="switchPage('admissionrecords')">
+      <span class="cls-icon">🧾</span>
+      <div class="cls-name">Admission Record</div>
+      <div class="cls-count" id="admissionRecordCount">No records yet</div>
+    </div>
     <div class="class-card" onclick="switchPage('sickrecords')">
       <span class="cls-icon">🤒</span>
       <div class="cls-name">Sick Record</div>
@@ -567,6 +572,69 @@
       <div class="cls-count" id="attendanceTodayCount">Mark today's attendance</div>
     </div>
   </div>
+</div>
+
+<!-- PAGE 4c0: ADMISSION RECORD -->
+<div class="page" id="pageAdmissionRecords">
+  <div class="lp-form" style="margin-bottom:1rem;">
+    <h3>Add Admission Record</h3>
+    <label for="admName">Name</label>
+    <input type="text" id="admName" placeholder="Student name">
+    <label for="admSex">Sex</label>
+    <select id="admSex">
+      <option value="">Select</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+    </select>
+    <label for="admDob">Date of Birth</label>
+    <input type="date" id="admDob" onchange="calcAdmissionAge()">
+    <label for="admAge">Age</label>
+    <input type="text" id="admAge" placeholder="Calculated automatically" readonly disabled>
+    <label>Orphan Status</label>
+    <div style="display:flex;gap:1.2rem;margin-bottom:0.8rem;">
+      <label style="display:flex;align-items:center;gap:6px;font-size:0.9rem;color:var(--text);margin:0;">
+        <input type="checkbox" id="admOrphanSingle" style="width:auto;" onclick="toggleOrphanStatus('single')"> Single
+      </label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:0.9rem;color:var(--text);margin:0;">
+        <input type="checkbox" id="admOrphanDouble" style="width:auto;" onclick="toggleOrphanStatus('double')"> Double
+      </label>
+    </div>
+    <label for="admDisability">Disability</label>
+    <select id="admDisability">
+      <option value="None">None</option>
+      <option value="Visual">Visual</option>
+      <option value="Hearing">Hearing</option>
+      <option value="Physical">Physical</option>
+      <option value="Intellectual">Intellectual</option>
+      <option value="Albinism">Albinism</option>
+      <option value="Multiple">Multiple</option>
+      <option value="Other">Other</option>
+    </select>
+    <label for="admRepeater">Repeater</label>
+    <select id="admRepeater">
+      <option value="No">No</option>
+      <option value="Yes">Yes</option>
+    </select>
+    <label for="admTransferIn">Transfer In</label>
+    <select id="admTransferIn">
+      <option value="No">No</option>
+      <option value="Yes">Yes</option>
+    </select>
+    <label for="admVillage">Village</label>
+    <input type="text" id="admVillage" placeholder="Village">
+    <label for="admDistrict">District of Origin</label>
+    <select id="admDistrict">
+      <option value="">Select district</option>
+    </select>
+    <label for="admDenomination">Denomination</label>
+    <select id="admDenomination">
+      <option value="">Select denomination</option>
+    </select>
+    <label for="admGuardian">Guardian Name</label>
+    <input type="text" id="admGuardian" placeholder="Guardian name">
+    <button class="btn-primary" style="width:100%;" onclick="addAdmissionRecord()">Add Record</button>
+  </div>
+  <div id="admissionRecordsList"></div>
 </div>
 
 <!-- PAGE 4c: SICK RECORD -->
@@ -1365,13 +1433,13 @@ function confirmExamSubjects(){
 window.confirmExamSubjects = confirmExamSubjects;
 
 function switchPage(page){
-  const allPages = ["pageDashboard","pageClasses","pageExamSubjects","pageAdd","pageList","pageRecords","pageSickRecords","pagePunishmentRecords","pageAttendance","pageResources","pageProfile","pageSettings"];
+  const allPages = ["pageDashboard","pageClasses","pageExamSubjects","pageAdd","pageList","pageRecords","pageAdmissionRecords","pageSickRecords","pagePunishmentRecords","pageAttendance","pageResources","pageProfile","pageSettings"];
   allPages.forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove("active"); });
 
   const pageMap = {
     dashboard:"pageDashboard",
     classes:"pageClasses", examSubjects:"pageExamSubjects", add:"pageAdd", list:"pageList",
-    records:"pageRecords", sickrecords:"pageSickRecords", punishmentrecords:"pagePunishmentRecords", attendance:"pageAttendance",
+    records:"pageRecords", admissionrecords:"pageAdmissionRecords", sickrecords:"pageSickRecords", punishmentrecords:"pagePunishmentRecords", attendance:"pageAttendance",
     resources:"pageResources",
     profile:"pageProfile", settings:"pageSettings"
   };
@@ -1388,14 +1456,14 @@ function switchPage(page){
 
   // Back button: show on examSubjects, add, list, settings, profile (sub-page of settings), and the three record sub-pages
   const backBtn = document.getElementById("backBtn");
-  if(backBtn) backBtn.style.display=(page==="examSubjects"||page==="add"||page==="list"||page==="settings"||page==="profile"||page==="sickrecords"||page==="punishmentrecords"||page==="attendance")?"inline-block":"none";
+  if(backBtn) backBtn.style.display=(page==="examSubjects"||page==="add"||page==="list"||page==="settings"||page==="profile"||page==="admissionrecords"||page==="sickrecords"||page==="punishmentrecords"||page==="attendance")?"inline-block":"none";
 
   const titles = {
     dashboard:"Dashboard",
     classes:"Easy Assess", examSubjects:"Select Subjects",
     add:`${classLabel(_currentClass)} — Add Student`,
     list:`${classLabel(_currentClass)} — Students`,
-    records:"Records", sickrecords:"Sick Record", punishmentrecords:"Punishment Records", attendance:"Attendance Register",
+    records:"Records", admissionrecords:"Admission Record", sickrecords:"Sick Record", punishmentrecords:"Punishment Records", attendance:"Attendance Register",
     resources:"Resources",
     profile:"My Profile", settings:"Settings"
   };
@@ -1416,6 +1484,7 @@ function switchPage(page){
   if(page==="list")        render();
   if(page==="resources")   initResourcesPage();
   if(page==="records")     updateRecordsCounts();
+  if(page==="admissionrecords")   renderAdmissionRecords();
   if(page==="sickrecords")        renderSickRecords();
   if(page==="punishmentrecords")  renderPunishmentRecords();
   if(page==="attendance")         initAttendancePage();
@@ -1424,7 +1493,7 @@ function switchPage(page){
 let _settingsReturnPage = "dashboard";
 function getCurrentPageKey(){
   const map = {pageDashboard:"dashboard", pageClasses:"classes", pageExamSubjects:"examSubjects", pageAdd:"add", pageList:"list",
-    pageRecords:"records", pageSickRecords:"sickrecords", pagePunishmentRecords:"punishmentrecords", pageAttendance:"attendance",
+    pageRecords:"records", pageAdmissionRecords:"admissionrecords", pageSickRecords:"sickrecords", pagePunishmentRecords:"punishmentrecords", pageAttendance:"attendance",
     pageResources:"resources",
     pageProfile:"profile", pageSettings:"settings"};
   for(const domId in map){
@@ -3071,7 +3140,7 @@ const RESOURCE_TABS = [
 ];
 
 // ── Records: Sick / Punishment ──────────────────────────────────────────────
-const RECORDS_KEY = {sick:"ea33_sick_records", punishment:"ea33_punishment_records"};
+const RECORDS_KEY = {admission:"ea33_admission_records", sick:"ea33_sick_records", punishment:"ea33_punishment_records"};
 
 function getRecords(type){
   return JSON.parse(localStorage.getItem(RECORDS_KEY[type])||"[]");
@@ -3081,10 +3150,13 @@ function saveRecords(type, arr){
 }
 
 function updateRecordsCounts(){
+  const admCount  = getRecords("admission").length;
   const sickCount = getRecords("sick").length;
   const punCount  = getRecords("punishment").length;
+  const aEl2 = document.getElementById("admissionRecordCount");
   const sEl = document.getElementById("sickRecordCount");
   const pEl = document.getElementById("punishmentRecordCount");
+  if(aEl2) aEl2.textContent = admCount>0 ? admCount+" record"+(admCount>1?"s":"") : "No records yet";
   if(sEl) sEl.textContent = sickCount>0 ? sickCount+" record"+(sickCount>1?"s":"") : "No records yet";
   if(pEl) pEl.textContent = punCount>0 ? punCount+" record"+(punCount>1?"s":"") : "No records yet";
 
@@ -3119,16 +3191,138 @@ function renderRecordsList(type, containerId, fieldKey){
     <div class="notes-item" style="cursor:default;">
       <div style="min-width:0;">
         <div class="notes-item-label" style="font-weight:700;">${escapeHtml(r.name)} <span style="font-weight:400;color:var(--muted);">(${r.sex==="Male"?"M":"F"})</span></div>
-        <div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">${escapeHtml(r[fieldKey])} · ${r.date}</div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">${fieldKey?escapeHtml(r[fieldKey])+" · ":""}${r.date}</div>
       </div>
       <button class="notes-item-pdf" title="Delete" onclick="deleteRecord('${type}','${r.id}')">🗑</button>
     </div>`).join("") + `</div>`;
 }
 
+function renderAdmissionRecords(){
+  const container = document.getElementById("admissionRecordsList");
+  if(!container) return;
+  const records = getRecords("admission");
+  if(records.length===0){
+    container.innerHTML = `<div style="text-align:center;padding:2.5rem 1rem;color:var(--muted);">No records yet.</div>`;
+    return;
+  }
+  container.innerHTML = `<div class="notes-list-wrap">` + records.map(r=>{
+    const bits = [];
+    if(r.dob) bits.push(`DOB: ${r.dob}`);
+    if(r.age!==""&&r.age!=null) bits.push(`Age: ${r.age}`);
+    if(r.orphan) bits.push(`Orphan: ${r.orphan}`);
+    if(r.disability&&r.disability!=="None") bits.push(`Disability: ${r.disability}`);
+    if(r.repeater==="Yes") bits.push("Repeater");
+    if(r.transferIn==="Yes") bits.push("Transfer In");
+    if(r.village) bits.push(`Village: ${escapeHtml(r.village)}`);
+    if(r.district) bits.push(escapeHtml(r.district));
+    if(r.denomination) bits.push(escapeHtml(r.denomination));
+    if(r.guardian) bits.push(`Guardian: ${escapeHtml(r.guardian)}`);
+    return `
+    <div class="notes-item" style="cursor:default;">
+      <div style="min-width:0;">
+        <div class="notes-item-label" style="font-weight:700;">${escapeHtml(r.name)} <span style="font-weight:400;color:var(--muted);">(${r.sex==="Male"?"M":"F"})</span></div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">${bits.join(" · ")}${bits.length?" · ":""}${r.date}</div>
+      </div>
+      <button class="notes-item-pdf" title="Delete" onclick="deleteRecord('admission','${r.id}')">🗑</button>
+    </div>`;
+  }).join("") + `</div>`;
+}
 function renderSickRecords(){ renderRecordsList("sick", "sickRecordsList", "disease"); }
 function renderPunishmentRecords(){ renderRecordsList("punishment", "punishmentRecordsList", "offence"); }
+window.renderAdmissionRecords = renderAdmissionRecords;
 window.renderSickRecords = renderSickRecords;
 window.renderPunishmentRecords = renderPunishmentRecords;
+
+// Malawi's 28 districts
+const MALAWI_DISTRICTS = ["Balaka","Blantyre","Chikwawa","Chiradzulu","Chitipa","Dedza","Dowa","Karonga",
+  "Kasungu","Likoma","Lilongwe","Machinga","Mangochi","Mchinji","Mulanje","Mwanza","Mzimba","Neno",
+  "Nkhata Bay","Nkhotakota","Nsanje","Ntcheu","Ntchisi","Phalombe","Rumphi","Salima","Thyolo","Zomba"];
+
+// Common denominations/religions found in Malawi
+const MALAWI_DENOMINATIONS = ["Roman Catholic","CCAP (Presbyterian)","Anglican","Seventh-day Adventist",
+  "Baptist","Pentecostal","Assemblies of God","Jehovah's Witness","Islam","Zion","Nazarene",
+  "Other Christian","Other Religion","None"];
+
+function populateAdmissionSpinners(){
+  const distEl = document.getElementById("admDistrict");
+  if(distEl && distEl.options.length<=1){
+    MALAWI_DISTRICTS.forEach(d=>{
+      const opt=document.createElement("option"); opt.value=d; opt.textContent=d; distEl.appendChild(opt);
+    });
+  }
+  const denomEl = document.getElementById("admDenomination");
+  if(denomEl && denomEl.options.length<=1){
+    MALAWI_DENOMINATIONS.forEach(d=>{
+      const opt=document.createElement("option"); opt.value=d; opt.textContent=d; denomEl.appendChild(opt);
+    });
+  }
+}
+window.populateAdmissionSpinners = populateAdmissionSpinners;
+
+function calcAdmissionAge(){
+  const dobVal = document.getElementById("admDob").value;
+  const ageEl = document.getElementById("admAge");
+  if(!dobVal){ ageEl.value=""; return; }
+  const dob = new Date(dobVal);
+  const today = new Date();
+  let age = today.getFullYear() - dob.getFullYear();
+  const m = today.getMonth() - dob.getMonth();
+  if(m<0 || (m===0 && today.getDate()<dob.getDate())) age--;
+  ageEl.value = age>=0 ? age : "";
+}
+window.calcAdmissionAge = calcAdmissionAge;
+
+function toggleOrphanStatus(which){
+  const singleBox = document.getElementById("admOrphanSingle");
+  const doubleBox = document.getElementById("admOrphanDouble");
+  if(which==="single" && singleBox.checked) doubleBox.checked=false;
+  if(which==="double" && doubleBox.checked) singleBox.checked=false;
+}
+window.toggleOrphanStatus = toggleOrphanStatus;
+
+function addAdmissionRecord(){
+  const name        = document.getElementById("admName").value.trim();
+  const sex         = document.getElementById("admSex").value;
+  const dob         = document.getElementById("admDob").value;
+  const age         = document.getElementById("admAge").value;
+  const orphan      = document.getElementById("admOrphanSingle").checked ? "Single"
+                     : document.getElementById("admOrphanDouble").checked ? "Double" : "";
+  const disability  = document.getElementById("admDisability").value;
+  const repeater    = document.getElementById("admRepeater").value;
+  const transferIn  = document.getElementById("admTransferIn").value;
+  const village     = document.getElementById("admVillage").value.trim();
+  const district    = document.getElementById("admDistrict").value;
+  const denomination= document.getElementById("admDenomination").value;
+  const guardian    = document.getElementById("admGuardian").value.trim();
+
+  if(!name){ alert("Please enter the student's name."); return; }
+  if(!sex){ alert("Please select sex."); return; }
+
+  const records = getRecords("admission");
+  records.unshift({
+    id:Date.now().toString(), name, sex, dob, age, orphan, disability, repeater, transferIn,
+    village, district, denomination, guardian, date:new Date().toLocaleDateString()
+  });
+  saveRecords("admission", records);
+
+  document.getElementById("admName").value="";
+  document.getElementById("admSex").value="";
+  document.getElementById("admDob").value="";
+  document.getElementById("admAge").value="";
+  document.getElementById("admOrphanSingle").checked=false;
+  document.getElementById("admOrphanDouble").checked=false;
+  document.getElementById("admDisability").value="None";
+  document.getElementById("admRepeater").value="No";
+  document.getElementById("admTransferIn").value="No";
+  document.getElementById("admVillage").value="";
+  document.getElementById("admDistrict").value="";
+  document.getElementById("admDenomination").value="";
+  document.getElementById("admGuardian").value="";
+
+  renderAdmissionRecords();
+  updateRecordsCounts();
+}
+window.addAdmissionRecord = addAdmissionRecord;
 
 function addSickRecord(){
   const name    = document.getElementById("sickName").value.trim();
@@ -3170,7 +3364,9 @@ function deleteRecord(type, id){
   if(!confirm("Delete this record?")) return;
   const records = getRecords(type).filter(r=>r.id!==id);
   saveRecords(type, records);
-  if(type==="sick") renderSickRecords(); else renderPunishmentRecords();
+  if(type==="admission") renderAdmissionRecords();
+  else if(type==="sick") renderSickRecords();
+  else renderPunishmentRecords();
   updateRecordsCounts();
 }
 window.deleteRecord = deleteRecord;
@@ -3650,6 +3846,7 @@ render();
 updateExcelBtn();
 updateBadge();
 renderDashboard();
+populateAdmissionSpinners();
 
 // ── Google Analytics: PWA install tracking ──────────────────────────────
 // Fires once, on first load, so you can see how many sessions are already
