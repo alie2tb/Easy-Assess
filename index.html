@@ -236,15 +236,19 @@
   .notes-item-pdf{background:#E8F5EE;border:none;border-radius:8px;width:32px;height:32px;font-size:1rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
   .notes-item-pdf:hover{background:#d5eee1;}
   /* attendance register */
-  .att-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#fff;border-bottom:1px solid var(--border);gap:10px;}
+  .att-row{display:flex;flex-direction:column;gap:10px;padding:12px 16px;background:#fff;border-bottom:1px solid var(--border);}
   .att-row:last-child{border-bottom:none;}
   html.dark .att-row{background:var(--card);}
-  .att-toggle{display:flex;gap:6px;flex-shrink:0;}
-  .att-btn{border:1.5px solid var(--border);background:none;border-radius:8px;padding:6px 12px;font-size:0.76rem;font-weight:600;cursor:pointer;color:var(--muted);white-space:nowrap;}
+  .att-toggle{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+  .att-btn{border:1.5px solid var(--border);background:none;border-radius:8px;padding:7px 4px;font-size:0.72rem;font-weight:600;cursor:pointer;color:var(--muted);white-space:nowrap;text-align:center;}
   .att-btn.present.active{background:#E1F5EE;border-color:#1D9E75;color:#085041;}
   .att-btn.absent.active{background:#FAECE7;border-color:#D85A30;color:#4A1B0C;}
+  .att-btn.sick.active{background:#FFF3E0;border-color:#BA7517;color:#5C3D0A;}
+  .att-btn.leave.active{background:#ECE9FB;border-color:#6D5FD8;color:#2C2470;}
   html.dark .att-btn.present.active{background:#123d31;}
   html.dark .att-btn.absent.active{background:#3d1f14;}
+  html.dark .att-btn.sick.active{background:#3d2f10;}
+  html.dark .att-btn.leave.active{background:#211c47;}
   html.dark .notes-item-pdf{background:#1e332b;}
   /* resource PDF card — Preview / Download */
   .res-pdf-card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:14px 16px;margin-bottom:10px;}
@@ -269,10 +273,16 @@
   html.dark .dash-section{background:var(--card);}
   .dash-section-title{font-weight:700;font-size:0.9rem;color:var(--text);margin-bottom:0.8rem;}
   .dash-empty{font-size:0.82rem;color:var(--muted);}
-  .dash-attendance-row{display:flex;gap:10px;}
-  .dash-att-pill{flex:1;text-align:center;padding:10px;border-radius:10px;font-weight:700;font-size:0.85rem;}
+  .dash-news-preview{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:0.9rem 1rem;cursor:pointer;}
+  .dash-news-tag{display:inline-block;background:var(--primary);color:#fff;font-size:0.68rem;font-weight:700;padding:3px 9px;border-radius:6px;margin-bottom:0.5rem;}
+  .dash-news-headline{font-family:Georgia,'Times New Roman',serif;font-weight:700;font-size:0.95rem;color:var(--text);line-height:1.35;margin-bottom:0.35rem;}
+  .dash-news-preview-text{font-size:0.8rem;color:var(--muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .dash-attendance-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .dash-att-pill{text-align:center;padding:10px;border-radius:10px;font-weight:700;font-size:0.85rem;}
   .dash-att-pill.present{background:#E1F5EE;color:#085041;}
   .dash-att-pill.absent{background:#FAECE7;color:#4A1B0C;}
+  .dash-att-pill.sick{background:#FFF3E0;color:#5C3D0A;}
+  .dash-att-pill.leave{background:#ECE9FB;color:#2C2470;}
   .notes-list-wrap{background:#fff;border-radius:12px;border:1px solid var(--border);overflow:hidden;margin-bottom:1rem;}
   .notes-std-header{padding:8px 16px;background:var(--grey-100,#f5f6f8);font-size:0.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;border-bottom:1px solid var(--border);}
   /* exam subject selection */
@@ -387,6 +397,25 @@
   .class-card .cls-name{font-weight:700;font-size:1rem;color:var(--text);margin-bottom:0.2rem;}
   .class-card .cls-count{font-size:0.75rem;color:var(--muted);}
   .class-card .cls-badge{position:absolute;top:10px;right:10px;background:var(--primary);color:#fff;font-size:0.65rem;font-weight:700;border-radius:999px;padding:2px 7px;}
+  /* news fragment */
+  .news-section-title{font-size:1.35rem;font-weight:800;color:var(--text);margin:0.2rem 0 1rem;letter-spacing:-0.01em;}
+  .news-announce-card{background:var(--card);border-radius:14px;padding:1.1rem 1.1rem;margin-bottom:0.9rem;display:flex;align-items:center;gap:0.9rem;box-shadow:0 1px 4px rgba(0,0,0,0.07);cursor:pointer;transition:transform 0.15s;}
+  .news-announce-card:active{transform:scale(0.98);}
+  .news-announce-bar{width:4px;align-self:stretch;border-radius:3px;background:var(--warn);flex-shrink:0;min-height:44px;}
+  .news-announce-body{flex:1;min-width:0;}
+  .news-announce-title{font-size:1.02rem;font-weight:700;color:var(--text);line-height:1.32;margin-bottom:0.4rem;}
+  .news-announce-date{font-size:0.82rem;color:var(--muted);}
+  .news-announce-chevron{color:var(--muted);font-size:1.4rem;flex-shrink:0;}
+  .news-divider{height:1px;background:var(--border);margin:1.5rem 0 1.3rem;}
+  .news-section-header-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.1rem;}
+  .news-section-header-row .news-section-title{margin:0;}
+  .news-see-all{color:var(--primary);font-weight:700;font-size:0.95rem;cursor:pointer;flex-shrink:0;}
+  .news-article-card{background:var(--card);border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.09);margin-bottom:1.3rem;cursor:pointer;}
+  .news-article-image{position:relative;height:180px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));}
+  .news-article-tag{position:absolute;left:14px;bottom:-14px;background:rgba(15,25,20,0.85);color:#fff;font-size:0.76rem;font-weight:600;padding:6px 14px;border-radius:8px;}
+  .news-article-body{padding:1.5rem 1.1rem 1.1rem;}
+  .news-article-headline{font-family:Georgia,'Times New Roman',serif;font-size:1.22rem;font-weight:700;color:var(--text);line-height:1.34;margin:0 0 0.5rem;}
+  .news-article-preview{font-size:0.86rem;color:var(--muted);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   /* pdf dialog */
   #pdfModal{display:none;position:fixed;inset:0;z-index:8890;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;padding:1rem;}
   #pdfModal.open{display:flex;}
@@ -461,11 +490,11 @@
     <input type="hidden" id="editId">
     <div class="grid">
       <div>
-        <label for="name">Student (from Admission Record)</label>
+        <label for="name">Student (from Students list)</label>
         <select id="name" required onchange="syncSexFromAdmission('name','sex')">
           <option value="">Select student</option>
         </select>
-        <p class="hint" id="noAdmissionHintAdd" style="display:none;color:#b45309;">No students found in Admission Records yet. Add the student under Records → Admission Record first.</p>
+        <p class="hint" id="noAdmissionHintAdd" style="display:none;color:#b45309;">No students found. Add the student under the Students tab first.</p>
       </div>
       <div>
         <label for="sex">Sex</label>
@@ -569,10 +598,10 @@
 <div class="page" id="pageRecords">
   <p style="font-size:0.82rem;color:var(--muted);margin:0.4rem 0 1rem;">Keep track of learners' health and discipline incidents</p>
   <div class="class-grid">
-    <div class="class-card" onclick="switchPage('admissionrecords')">
-      <span class="cls-icon">🧾</span>
-      <div class="cls-name">Admission Record</div>
-      <div class="cls-count" id="admissionRecordCount">No records yet</div>
+    <div class="class-card" onclick="switchPage('classes')">
+      <span class="cls-icon">📋</span>
+      <div class="cls-name">Assess</div>
+      <div class="cls-count" id="assessClassCount">Manage classes &amp; marks</div>
     </div>
     <div class="class-card" onclick="switchPage('sickrecords')">
       <span class="cls-icon">🤒</span>
@@ -603,6 +632,10 @@
       <option value="">Select</option>
       <option value="Male">Male</option>
       <option value="Female">Female</option>
+    </select>
+    <label for="admClass">Class</label>
+    <select id="admClass">
+      <option value="">Select class</option>
     </select>
     <label for="admDob">Date of Birth</label>
     <input type="date" id="admDob" onchange="calcAdmissionAge()">
@@ -665,7 +698,7 @@
     <select id="sickName" onchange="syncSexFromAdmission('sickName','sickSex')">
       <option value="">Select student</option>
     </select>
-    <p class="hint" id="noAdmissionHintSick" style="display:none;color:#b45309;margin:2px 0 10px;">No students found in Admission Records yet. Add the student under Records → Admission Record first.</p>
+    <p class="hint" id="noAdmissionHintSick" style="display:none;color:#b45309;margin:2px 0 10px;">No students found. Add the student under the Students tab first.</p>
     <label for="sickSex">Sex</label>
     <select id="sickSex" disabled>
       <option value="">—</option>
@@ -687,7 +720,7 @@
     <select id="punName" onchange="syncSexFromAdmission('punName','punSex')">
       <option value="">Select student</option>
     </select>
-    <p class="hint" id="noAdmissionHintPun" style="display:none;color:#b45309;margin:2px 0 10px;">No students found in Admission Records yet. Add the student under Records → Admission Record first.</p>
+    <p class="hint" id="noAdmissionHintPun" style="display:none;color:#b45309;margin:2px 0 10px;">No students found. Add the student under the Students tab first.</p>
     <label for="punSex">Sex</label>
     <select id="punSex" disabled>
       <option value="">—</option>
@@ -731,6 +764,20 @@
   <div id="syllabusesListContainer" style="display:none;"></div>
   <div id="lessonPlanCodeContainer" style="display:none;"></div>
   <div id="comingSoonContainer" style="display:none;"></div>
+</div>
+
+<!-- PAGE 6: NEWS -->
+<div class="page" id="pageNews">
+  <h2 class="news-section-title">Announcements</h2>
+  <div id="newsAnnouncementsList"></div>
+
+  <div class="news-divider"></div>
+
+  <div class="news-section-header-row">
+    <h2 class="news-section-title">Latest News</h2>
+    <span class="news-see-all">See All</span>
+  </div>
+  <div id="newsArticlesList"></div>
 </div>
 
 <!-- PAGE 5: SETTINGS -->
@@ -925,6 +972,10 @@
         <option value="">Select</option>
         <option value="Male">Male</option>
         <option value="Female">Female</option>
+      </select>
+      <label for="edAdmClass">Class</label>
+      <select id="edAdmClass">
+        <option value="">Select class</option>
       </select>
       <label for="edAdmDob">Date of Birth</label>
       <input type="date" id="edAdmDob" onchange="calcEditAdmissionAge()">
@@ -1539,38 +1590,39 @@ function confirmExamSubjects(){
 window.confirmExamSubjects = confirmExamSubjects;
 
 function switchPage(page){
-  const allPages = ["pageDashboard","pageClasses","pageExamSubjects","pageAdd","pageList","pageRecords","pageAdmissionRecords","pageSickRecords","pagePunishmentRecords","pageAttendance","pageResources","pageProfile","pageSettings"];
+  const allPages = ["pageDashboard","pageClasses","pageExamSubjects","pageAdd","pageList","pageRecords","pageAdmissionRecords","pageSickRecords","pagePunishmentRecords","pageAttendance","pageResources","pageNews","pageProfile","pageSettings"];
   allPages.forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove("active"); });
 
   const pageMap = {
     dashboard:"pageDashboard",
     classes:"pageClasses", examSubjects:"pageExamSubjects", add:"pageAdd", list:"pageList",
     records:"pageRecords", admissionrecords:"pageAdmissionRecords", sickrecords:"pageSickRecords", punishmentrecords:"pagePunishmentRecords", attendance:"pageAttendance",
-    resources:"pageResources",
+    resources:"pageResources", news:"pageNews",
     profile:"pageProfile", settings:"pageSettings"
   };
   const target = document.getElementById(pageMap[page]);
   if(target) target.classList.add("active");
 
   // Bottom nav (Settings/Profile are no longer bottom-nav tabs — reached via the ⋮ menu instead)
-  const navMap = {dashboard:"navDashboard", classes:"navClasses", records:"navRecords", resources:"navResources"};
-  ["navDashboard","navClasses","navRecords","navResources"].forEach(id=>{
+  const navMap = {dashboard:"navDashboard", admissionrecords:"navStudents", records:"navRecords", resources:"navResources", news:"navNews"};
+  ["navDashboard","navStudents","navRecords","navResources","navNews"].forEach(id=>{
     const el=document.getElementById(id); if(el) el.classList.remove("active");
   });
   const activeNav = navMap[page];
   if(activeNav){ const el=document.getElementById(activeNav); if(el) el.classList.add("active"); }
 
-  // Back button: show on examSubjects, add, list, settings, profile (sub-page of settings), and the three record sub-pages
+  // Back button: show on examSubjects, add, list, settings, profile (sub-page of settings), classes (now a Records card),
+  // and the two remaining record sub-pages. (admissionrecords/"Students" and "news" are primary top-level tabs, so no back button.)
   const backBtn = document.getElementById("backBtn");
-  if(backBtn) backBtn.style.display=(page==="examSubjects"||page==="add"||page==="list"||page==="settings"||page==="profile"||page==="admissionrecords"||page==="sickrecords"||page==="punishmentrecords"||page==="attendance")?"inline-block":"none";
+  if(backBtn) backBtn.style.display=(page==="classes"||page==="examSubjects"||page==="add"||page==="list"||page==="settings"||page==="profile"||page==="sickrecords"||page==="punishmentrecords"||page==="attendance")?"inline-block":"none";
 
   const titles = {
-    dashboard:"Dashboard",
+    dashboard:"Home",
     classes:"Easy Assess", examSubjects:"Select Subjects",
     add:`${classLabel(_currentClass)} — Add Student`,
     list:`${classLabel(_currentClass)} — Students`,
-    records:"Records", admissionrecords:"Admission Record", sickrecords:"Sick Record", punishmentrecords:"Punishment Records", attendance:"Attendance Register",
-    resources:"Resources",
+    records:"Records", admissionrecords:"Students", sickrecords:"Sick Record", punishmentrecords:"Punishment Records", attendance:"Attendance Register",
+    resources:"Resources", news:"News",
     profile:"My Profile", settings:"Settings"
   };
   const titleEl = document.getElementById("topTitle");
@@ -1589,6 +1641,7 @@ function switchPage(page){
   if(page==="profile")     buildProfilePage();
   if(page==="list")        render();
   if(page==="resources")   initResourcesPage();
+  if(page==="news")        renderNewsPage();
   if(page==="records")     updateRecordsCounts();
   if(page==="add"){
     populateAdmissionNameDropdown("name");
@@ -1665,15 +1718,21 @@ function renderDashboard(){
   const sickCount = getRecords("sick").length;
   const punCount  = getRecords("punishment").length;
 
+  const latestAnnouncement = (typeof NEWS_ANNOUNCEMENTS!=="undefined" && NEWS_ANNOUNCEMENTS.length) ? NEWS_ANNOUNCEMENTS[0] : null;
+  const latestArticle      = (typeof NEWS_ARTICLES!=="undefined" && NEWS_ARTICLES.length) ? NEWS_ARTICLES[0] : null;
+
   const today    = new Date().toISOString().slice(0,10);
   const attData  = getAttendanceData();
-  let presentToday=0, absentToday=0, attendanceTaken=false;
+  let presentToday=0, absentToday=0, sickToday=0, leaveToday=0, attendanceTaken=false;
   Object.keys(attData).forEach(key=>{
     const record = attData[key];
     if(record && record.date === today){
       attendanceTaken = true;
       Object.values(record.entries||{}).forEach(status=>{
-        if(status==="Present") presentToday++; else if(status==="Absent") absentToday++;
+        if(status==="Present") presentToday++;
+        else if(status==="Absent") absentToday++;
+        else if(status==="Sick") sickToday++;
+        else if(status==="Leave") leaveToday++;
       });
     }
   });
@@ -1712,7 +1771,32 @@ function renderDashboard(){
         <div class="dash-attendance-row">
           <div class="dash-att-pill present">Present: ${presentToday}</div>
           <div class="dash-att-pill absent">Absent: ${absentToday}</div>
+          <div class="dash-att-pill sick">Sick: ${sickToday}</div>
+          <div class="dash-att-pill leave">Leave: ${leaveToday}</div>
         </div>` : `<div class="dash-empty">No attendance recorded yet today.</div>`}
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>Latest Updates</span>
+        <span style="color:var(--primary);font-weight:700;font-size:0.8rem;cursor:pointer;" onclick="switchPage('news')">See all ›</span>
+      </div>
+      ${latestAnnouncement ? `
+        <div class="news-announce-card" style="margin-bottom:0.9rem;" onclick="switchPage('news')">
+          <div class="news-announce-bar"></div>
+          <div class="news-announce-body">
+            <div class="news-announce-title">${escapeHtml(latestAnnouncement.title)}</div>
+            <div class="news-announce-date">${escapeHtml(latestAnnouncement.date)}</div>
+          </div>
+          <span class="news-announce-chevron">›</span>
+        </div>` : ``}
+      ${latestArticle ? `
+        <div class="dash-news-preview" onclick="switchPage('news')">
+          <span class="dash-news-tag">${escapeHtml(latestArticle.tag)}</span>
+          <div class="dash-news-headline">${escapeHtml(latestArticle.headline)}</div>
+          <div class="dash-news-preview-text">${escapeHtml(latestArticle.preview)}</div>
+        </div>` : ``}
+      ${(!latestAnnouncement && !latestArticle) ? `<div class="dash-empty">No news yet.</div>` : ``}
     </div>`;
 }
 window.renderDashboard = renderDashboard;
@@ -3370,13 +3454,10 @@ function updateAdmissionEmptyHints(){
 window.updateAdmissionEmptyHints = updateAdmissionEmptyHints;
 
 function updateRecordsCounts(){
-  const admCount  = getRecords("admission").length;
   const sickCount = getRecords("sick").length;
   const punCount  = getRecords("punishment").length;
-  const aEl2 = document.getElementById("admissionRecordCount");
   const sEl = document.getElementById("sickRecordCount");
   const pEl = document.getElementById("punishmentRecordCount");
-  if(aEl2) aEl2.textContent = admCount>0 ? admCount+" record"+(admCount>1?"s":"") : "No records yet";
   if(sEl) sEl.textContent = sickCount>0 ? sickCount+" record"+(sickCount>1?"s":"") : "No records yet";
   if(pEl) pEl.textContent = punCount>0 ? punCount+" record"+(punCount>1?"s":"") : "No records yet";
 
@@ -3449,7 +3530,18 @@ const MALAWI_DENOMINATIONS = ["Roman Catholic","CCAP (Presbyterian)","Anglican",
   "Baptist","Pentecostal","Assemblies of God","Jehovah's Witness","Islam","Zion","Nazarene",
   "Other Christian","Other Religion","None"];
 
+function admissionClassOptionsHtml(){
+  let html = "";
+  for(let c=1;c<=8;c++) html += `<option value="${c}">Standard ${c}</option>`;
+  html += `<option value="JC">Junior Certificate</option><option value="MSCE">MSCE</option>`;
+  return html;
+}
+
 function populateAdmissionSpinners(){
+  const classEl = document.getElementById("admClass");
+  if(classEl && classEl.options.length<=1){ classEl.insertAdjacentHTML("beforeend", admissionClassOptionsHtml()); }
+  const edClassEl = document.getElementById("edAdmClass");
+  if(edClassEl && edClassEl.options.length<=1){ edClassEl.insertAdjacentHTML("beforeend", admissionClassOptionsHtml()); }
   const distEl = document.getElementById("admDistrict");
   if(distEl && distEl.options.length<=1){
     MALAWI_DISTRICTS.forEach(d=>{
@@ -3501,6 +3593,7 @@ window.toggleOrphanStatus = toggleOrphanStatus;
 function addAdmissionRecord(){
   const name        = document.getElementById("admName").value.trim();
   const sex         = document.getElementById("admSex").value;
+  const cls         = document.getElementById("admClass").value;
   const dob         = document.getElementById("admDob").value;
   const age         = document.getElementById("admAge").value;
   const orphan      = document.getElementById("admOrphanSingle").checked ? "Single"
@@ -3516,16 +3609,18 @@ function addAdmissionRecord(){
 
   if(!name){ alert("Please enter the student's name."); return; }
   if(!sex){ alert("Please select sex."); return; }
+  if(!cls){ alert("Please select the student's class (needed for Attendance Register)."); return; }
 
   const records = getRecords("admission");
   records.unshift({
-    id:Date.now().toString(), name, sex, dob, age, orphan, disability, repeater, transferIn,
+    id:Date.now().toString(), name, sex, class:cls, dob, age, orphan, disability, repeater, transferIn,
     village, district, denomination, guardian, whatsapp, date:new Date().toLocaleDateString()
   });
   saveRecords("admission", records);
 
   document.getElementById("admName").value="";
   document.getElementById("admSex").value="";
+  document.getElementById("admClass").value="";
   document.getElementById("admDob").value="";
   document.getElementById("admAge").value="";
   document.getElementById("admOrphanSingle").checked=false;
@@ -3556,6 +3651,7 @@ function showAdmissionDetail(id){
   document.getElementById("admDetailName").textContent = r.name;
   const fields = [
     ["Sex", r.sex||"—"],
+    ["Class", r.class?classLabel(r.class):"—"],
     ["Date of Birth", r.dob||"—"],
     ["Age", (r.age!==""&&r.age!=null)?r.age:"—"],
     ["Orphan Status", r.orphan||"None"],
@@ -3600,6 +3696,7 @@ function editAdmissionDetail(){
   if(!r) return;
   document.getElementById("edAdmName").value = r.name||"";
   document.getElementById("edAdmSex").value = r.sex||"";
+  document.getElementById("edAdmClass").value = r.class||"";
   document.getElementById("edAdmDob").value = r.dob||"";
   document.getElementById("edAdmAge").value = (r.age!==""&&r.age!=null)?r.age:"";
   document.getElementById("edAdmOrphanSingle").checked = r.orphan==="Single";
@@ -3647,8 +3744,10 @@ window.toggleEditOrphanStatus = toggleEditOrphanStatus;
 function saveAdmissionEdit(){
   const name = document.getElementById("edAdmName").value.trim();
   const sex  = document.getElementById("edAdmSex").value;
+  const cls  = document.getElementById("edAdmClass").value;
   if(!name){ alert("Please enter the student's name."); return; }
   if(!sex){ alert("Please select sex."); return; }
+  if(!cls){ alert("Please select the student's class (needed for Attendance Register)."); return; }
 
   const records = getRecords("admission");
   const idx = records.findIndex(r=>r.id===admissionDetailId);
@@ -3656,7 +3755,7 @@ function saveAdmissionEdit(){
 
   records[idx] = {
     ...records[idx],
-    name, sex,
+    name, sex, class:cls,
     dob: document.getElementById("edAdmDob").value,
     age: document.getElementById("edAdmAge").value,
     orphan: document.getElementById("edAdmOrphanSingle").checked ? "Single"
@@ -3733,7 +3832,17 @@ function saveAttendanceData(data){
 }
 function attendanceRecordKey(cls,date){ return cls+"_"+date; }
 
-let _attendanceState = {}; // studentId -> "Present"/"Absent", for the currently loaded class + date
+// Returns the admission-record students belonging to a given class, sorted by name.
+// clsRaw is the raw <select id="attClass"> value ("1".."8","JC","MSCE") which is
+// exactly how each admission record's `class` field is stored.
+function getAdmissionListForClass(clsRaw){
+  return getRecords("admission")
+    .filter(r=>String(r.class)===String(clsRaw))
+    .slice()
+    .sort((a,b)=>a.name.localeCompare(b.name));
+}
+
+let _attendanceState = {}; // admission record id -> "Present"/"Absent"/"Sick"/"Leave", for the currently loaded class + date
 
 function initAttendancePage(){
   const classSel = document.getElementById("attClass");
@@ -3752,13 +3861,13 @@ function loadAttendanceRoll(){
   const clsRaw = document.getElementById("attClass").value;
   const cls  = isExamLevel(clsRaw) ? clsRaw : parseInt(clsRaw,10);
   const date = document.getElementById("attDate").value;
-  const list = getList(cls);
+  const list = getAdmissionListForClass(clsRaw);
   const container = document.getElementById("attendanceRollList");
   const summaryEl = document.getElementById("attendanceSummary");
   const saveBtn   = document.getElementById("saveAttendanceBtn");
 
   if(list.length===0){
-    container.innerHTML = `<div style="text-align:center;padding:2.5rem 1rem;color:var(--muted);">No students in ${classLabel(cls)} yet.</div>`;
+    container.innerHTML = `<div style="text-align:center;padding:2.5rem 1rem;color:var(--muted);">No students admitted to ${classLabel(cls)} yet. Add them under the Students tab.</div>`;
     summaryEl.style.display = "none";
     saveBtn.style.display   = "none";
     _attendanceState = {};
@@ -3779,18 +3888,19 @@ window.loadAttendanceRoll = loadAttendanceRoll;
 
 function renderAttendanceRoll(list){
   const container = document.getElementById("attendanceRollList");
-  container.innerHTML = `<div class="notes-list-wrap">` + list.map(s=>{
-    const status = _attendanceState[s.id];
-    const disp = resolveStudentDisplay(s);
+  container.innerHTML = `<div class="notes-list-wrap">` + list.map(r=>{
+    const status = _attendanceState[r.id];
     return `
     <div class="att-row">
       <div style="min-width:0;">
-        <div style="font-weight:600;color:var(--text);">${escapeHtml(disp.name)}</div>
-        <div style="font-size:0.76rem;color:var(--muted);">${disp.sex==="Male"?"M":"F"}</div>
+        <div style="font-weight:600;color:var(--text);">${escapeHtml(r.name)}</div>
+        <div style="font-size:0.76rem;color:var(--muted);">${r.sex==="Male"?"M":"F"}</div>
       </div>
       <div class="att-toggle">
-        <button class="att-btn present ${status==="Present"?"active":""}" onclick="setAttendanceStatus('${s.id}','Present')">Present</button>
-        <button class="att-btn absent ${status==="Absent"?"active":""}" onclick="setAttendanceStatus('${s.id}','Absent')">Absent</button>
+        <button class="att-btn present ${status==="Present"?"active":""}" onclick="setAttendanceStatus('${r.id}','Present')">Present</button>
+        <button class="att-btn absent ${status==="Absent"?"active":""}" onclick="setAttendanceStatus('${r.id}','Absent')">Absent</button>
+        <button class="att-btn sick ${status==="Sick"?"active":""}" onclick="setAttendanceStatus('${r.id}','Sick')">Sick</button>
+        <button class="att-btn leave ${status==="Leave"?"active":""}" onclick="setAttendanceStatus('${r.id}','Leave')">Leave</button>
       </div>
     </div>`;
   }).join("") + `</div>`;
@@ -3800,8 +3910,7 @@ function renderAttendanceRoll(list){
 function setAttendanceStatus(studentId, status){
   _attendanceState[studentId] = status;
   const clsRaw = document.getElementById("attClass").value;
-  const cls = isExamLevel(clsRaw) ? clsRaw : parseInt(clsRaw,10);
-  renderAttendanceRoll(getList(cls));
+  renderAttendanceRoll(getAdmissionListForClass(clsRaw));
 }
 window.setAttendanceStatus = setAttendanceStatus;
 
@@ -3810,7 +3919,9 @@ function updateAttendanceSummary(){
   const values  = Object.values(_attendanceState);
   const present = values.filter(v=>v==="Present").length;
   const absent  = values.filter(v=>v==="Absent").length;
-  summaryEl.textContent   = `Present: ${present}   ·   Absent: ${absent}`;
+  const sick    = values.filter(v=>v==="Sick").length;
+  const leave   = values.filter(v=>v==="Leave").length;
+  summaryEl.textContent   = `Present: ${present}   ·   Absent: ${absent}   ·   Sick: ${sick}   ·   Leave: ${leave}`;
   summaryEl.style.display = "block";
 }
 
@@ -4007,6 +4118,61 @@ function renderLessonPlanCode(){
   }
 }
 window.renderLessonPlanCode = renderLessonPlanCode;
+
+// Sample announcements & news content (this app has no live news backend,
+// so this shows realistic placeholder content styled to match the requested design).
+const NEWS_ANNOUNCEMENTS = [
+  { title:"MSCE 2025 Registration Deadline — April 30th", date:"Apr 20, 2025" },
+  { title:"Teachers' In-Service Training: May 12–16, Lilongwe", date:"Apr 18, 2025" },
+  { title:"New CPD Module Available: Inclusive Education", date:"Apr 15, 2025" }
+];
+
+const NEWS_ARTICLES = [
+  {
+    tag:"Policy",
+    headline:"Ministry of Education Launches New Curriculum Framework for Primary Schools",
+    preview:"The Malawi Ministry of Education has unveiled a new curriculum framework aimed at improving literacy and numeracy outcomes across primary schools nationwide."
+  },
+  {
+    tag:"Funding",
+    headline:"Government Announces Increased Bursary Support for Rural Teachers",
+    preview:"New funding will help cover accommodation and transport costs for teachers posted to hard-to-reach rural schools starting next term."
+  },
+  {
+    tag:"Exams",
+    headline:"PSLCE Marking Guidelines Updated for 2025",
+    preview:"MANEB has released updated marking guidelines for the Primary School Leaving Certificate Examination, with revised rubrics for continuous assessment."
+  }
+];
+
+function renderNewsPage(){
+  const annContainer = document.getElementById("newsAnnouncementsList");
+  const artContainer = document.getElementById("newsArticlesList");
+  if(annContainer){
+    annContainer.innerHTML = NEWS_ANNOUNCEMENTS.map(a=>`
+      <div class="news-announce-card">
+        <div class="news-announce-bar"></div>
+        <div class="news-announce-body">
+          <div class="news-announce-title">${escapeHtml(a.title)}</div>
+          <div class="news-announce-date">${escapeHtml(a.date)}</div>
+        </div>
+        <span class="news-announce-chevron">›</span>
+      </div>`).join("");
+  }
+  if(artContainer){
+    artContainer.innerHTML = NEWS_ARTICLES.map(n=>`
+      <div class="news-article-card">
+        <div class="news-article-image">
+          <span class="news-article-tag">${escapeHtml(n.tag)}</span>
+        </div>
+        <div class="news-article-body">
+          <div class="news-article-headline">${escapeHtml(n.headline)}</div>
+          <div class="news-article-preview">${escapeHtml(n.preview)}</div>
+        </div>
+      </div>`).join("");
+  }
+}
+window.renderNewsPage = renderNewsPage;
 
 function renderComingSoon(tab){
   const container = document.getElementById("comingSoonContainer");
@@ -4449,13 +4615,13 @@ if("serviceWorker" in navigator){
   <div class="nav-item-wrap">
     <button class="nav-item active" id="navDashboard" onclick="switchPage('dashboard')">
       <span class="nav-icon">🏠</span>
-      <span>Dashboard</span>
+      <span>Home</span>
     </button>
   </div>
   <div class="nav-item-wrap">
-    <button class="nav-item" id="navClasses" onclick="switchPage('classes')">
-      <span class="nav-icon">📋</span>
-      <span>Assess</span>
+    <button class="nav-item" id="navStudents" onclick="switchPage('admissionrecords')">
+      <span class="nav-icon">🎓</span>
+      <span>Students</span>
     </button>
   </div>
   <div class="nav-item-wrap">
@@ -4468,6 +4634,12 @@ if("serviceWorker" in navigator){
     <button class="nav-item" id="navResources" onclick="switchPage('resources')">
       <span class="nav-icon">📚</span>
       <span>Resources</span>
+    </button>
+  </div>
+  <div class="nav-item-wrap">
+    <button class="nav-item" id="navNews" onclick="switchPage('news')">
+      <span class="nav-icon">📰</span>
+      <span>News</span>
     </button>
   </div>
 </nav>
