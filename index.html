@@ -145,6 +145,12 @@
   #admDetailInfo div span{font-size:0.72rem;color:var(--muted);display:block;}
   #admDetailInfo div strong{font-size:0.9rem;}
 
+  #stockDetailModal{display:none;position:fixed;inset:0;z-index:8888;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;padding:1rem;}
+  #stockDetailModal.open{display:flex;}
+  #stockDetailBox{background:#fff;border-radius:14px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;padding:1.5rem;}
+  html.dark #stockDetailBox{background:var(--card);color:var(--text);}
+  #stockDetailItems{display:flex;flex-direction:column;gap:10px;margin:0.4rem 0 1rem;max-height:50vh;overflow-y:auto;}
+
   .lp-frame{width:100%;height:calc(100vh - 210px);min-height:520px;border:none;border-radius:12px;background:#fff;display:block;}
   .report-header{text-align:center;border-bottom:2px solid #1D9E75;padding-bottom:1rem;margin-bottom:1rem;}
   .report-header h2{margin:0 0 0.2rem;font-size:1.3rem;color:#0F6E56;}
@@ -708,7 +714,12 @@
       <div class="cls-name">Transfer Out Record</div>
       <div class="cls-count" id="transferRecordCount">No records yet</div>
     </div>
-    <div class="class-card full-width-card" onclick="switchPage('attendance')">
+    <div class="class-card" onclick="switchPage('stockrecords')">
+      <span class="cls-icon">📦</span>
+      <div class="cls-name">Stock Record</div>
+      <div class="cls-count" id="stockRecordCount">No records yet</div>
+    </div>
+    <div class="class-card" onclick="switchPage('attendance')">
       <span class="cls-icon">📅</span>
       <div class="cls-name">Attendance Register</div>
       <div class="cls-count" id="attendanceTodayCount">Mark today's attendance</div>
@@ -912,6 +923,12 @@
     <button class="btn-primary" id="transferSubmitBtn" style="width:100%;" onclick="addTransferRecord()">Add Record</button>
   </div>
   <div id="transferRecordsList"></div>
+</div>
+
+<!-- PAGE 4f: STOCK RECORD -->
+<div class="page" id="pageStockRecords">
+  <p style="font-size:0.82rem;color:var(--muted);margin:0.4rem 0 1rem;">Tap a student to record items received from stock</p>
+  <div id="stockRecordsList"></div>
 </div>
 
 <!-- PAGE 4e: ATTENDANCE REGISTER -->
@@ -1313,6 +1330,21 @@
         <button class="btn-primary btn-small" onclick="saveAdmissionEdit()">Save</button>
         <button class="btn-secondary btn-small" onclick="cancelAdmissionEdit()">Cancel</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Stock Record detail modal -->
+<div id="stockDetailModal">
+  <div id="stockDetailBox">
+    <h3 id="stockDetailName" style="margin:0 0 0.2rem;">Name</h3>
+    <p id="stockDetailSex" style="font-size:0.8rem;color:var(--muted);margin:0 0 0.8rem;">Stock Record</p>
+    <div id="stockDetailItems"></div>
+    <div class="modal-actions">
+      <button class="btn-primary btn-small" onclick="updateStockRecord()">Update</button>
+      <button class="btn-danger btn-small" onclick="deleteStockRecordEntry()">Delete</button>
+      <button class="btn-secondary btn-small" onclick="closeStockDetail()">Close</button>
+      <button class="btn-secondary btn-small" onclick="pdfStockRecord()">PDF</button>
     </div>
   </div>
 </div>
@@ -1874,13 +1906,13 @@ function confirmExamSubjects(){
 window.confirmExamSubjects = confirmExamSubjects;
 
 function switchPage(page){
-  const allPages = ["pageDashboard","pageClasses","pageExamSubjects","pageAdd","pageList","pageRecords","pageAdmissionRecords","pageSickRecords","pagePunishmentRecords","pageTransferRecords","pageAttendance","pageResources","pageNews","pageProfile","pageSettings"];
+  const allPages = ["pageDashboard","pageClasses","pageExamSubjects","pageAdd","pageList","pageRecords","pageAdmissionRecords","pageSickRecords","pagePunishmentRecords","pageTransferRecords","pageStockRecords","pageAttendance","pageResources","pageNews","pageProfile","pageSettings"];
   allPages.forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove("active"); });
 
   const pageMap = {
     dashboard:"pageDashboard",
     classes:"pageClasses", examSubjects:"pageExamSubjects", add:"pageAdd", list:"pageList",
-    records:"pageRecords", admissionrecords:"pageAdmissionRecords", sickrecords:"pageSickRecords", punishmentrecords:"pagePunishmentRecords", transferrecords:"pageTransferRecords", attendance:"pageAttendance",
+    records:"pageRecords", admissionrecords:"pageAdmissionRecords", sickrecords:"pageSickRecords", punishmentrecords:"pagePunishmentRecords", transferrecords:"pageTransferRecords", stockrecords:"pageStockRecords", attendance:"pageAttendance",
     resources:"pageResources", news:"pageNews",
     profile:"pageProfile", settings:"pageSettings"
   };
@@ -1898,14 +1930,14 @@ function switchPage(page){
   // Back button: show on examSubjects, add, list, settings, profile (sub-page of settings), classes (now a Records card),
   // and the two remaining record sub-pages. (admissionrecords/"Students" and "news" are primary top-level tabs, so no back button.)
   const backBtn = document.getElementById("backBtn");
-  if(backBtn) backBtn.style.display=(page==="classes"||page==="examSubjects"||page==="add"||page==="list"||page==="settings"||page==="profile"||page==="sickrecords"||page==="punishmentrecords"||page==="transferrecords"||page==="attendance")?"inline-block":"none";
+  if(backBtn) backBtn.style.display=(page==="classes"||page==="examSubjects"||page==="add"||page==="list"||page==="settings"||page==="profile"||page==="sickrecords"||page==="punishmentrecords"||page==="transferrecords"||page==="stockrecords"||page==="attendance")?"inline-block":"none";
 
   const titles = {
     dashboard:"Home",
     classes:"Easy Assess", examSubjects:"Select Subjects",
     add:`${classLabel(_currentClass)} — Add Student`,
     list:`${classLabel(_currentClass)} — Students`,
-    records:"Records", admissionrecords:"Students", sickrecords:"Sick Record", punishmentrecords:"Punishment Records", transferrecords:"Transfer Out Record", attendance:"Attendance Register",
+    records:"Records", admissionrecords:"Students", sickrecords:"Sick Record", punishmentrecords:"Punishment Records", transferrecords:"Transfer Out Record", stockrecords:"Stock Record", attendance:"Attendance Register",
     resources:"Resources", news:"News",
     profile:"My Profile", settings:"Settings"
   };
@@ -1948,13 +1980,16 @@ function switchPage(page){
     populateAdmissionNameDropdown("transferName");
     updateAdmissionEmptyHints();
   }
+  if(page==="stockrecords"){
+    renderStockRecords();
+  }
   if(page==="attendance")         initAttendancePage();
 }
 
 let _settingsReturnPage = "dashboard";
 function getCurrentPageKey(){
   const map = {pageDashboard:"dashboard", pageClasses:"classes", pageExamSubjects:"examSubjects", pageAdd:"add", pageList:"list",
-    pageRecords:"records", pageAdmissionRecords:"admissionrecords", pageSickRecords:"sickrecords", pagePunishmentRecords:"punishmentrecords", pageTransferRecords:"transferrecords", pageAttendance:"attendance",
+    pageRecords:"records", pageAdmissionRecords:"admissionrecords", pageSickRecords:"sickrecords", pagePunishmentRecords:"punishmentrecords", pageTransferRecords:"transferrecords", pageStockRecords:"stockrecords", pageAttendance:"attendance",
     pageResources:"resources",
     pageProfile:"profile", pageSettings:"settings"};
   for(const domId in map){
@@ -1974,13 +2009,14 @@ function goBack(){
   const sickActive         = document.getElementById("pageSickRecords").classList.contains("active");
   const punishmentActive   = document.getElementById("pagePunishmentRecords").classList.contains("active");
   const transferActive     = document.getElementById("pageTransferRecords").classList.contains("active");
+  const stockActive        = document.getElementById("pageStockRecords").classList.contains("active");
   const attendanceActive   = document.getElementById("pageAttendance").classList.contains("active");
   if(profileActive)  switchPage("settings");   // Profile is sub-page of Settings
   else if(settingsActive) switchPage(_settingsReturnPage);
   else if(listActive) switchPage("add");
   else if(addActive)  switchPage("classes");
   else if(examSubjectsActive) switchPage("classes");
-  else if(sickActive || punishmentActive || transferActive || attendanceActive) switchPage("records");
+  else if(sickActive || punishmentActive || transferActive || stockActive || attendanceActive) switchPage("records");
 }
 window.switchPage=switchPage;window.goBack=goBack;
 
@@ -3987,7 +4023,7 @@ const RESOURCE_TABS = [
 ];
 
 // ── Records: Sick / Punishment ──────────────────────────────────────────────
-const RECORDS_KEY = {admission:"ea33_admission_records", sick:"ea33_sick_records", punishment:"ea33_punishment_records"};
+const RECORDS_KEY = {admission:"ea33_admission_records", sick:"ea33_sick_records", punishment:"ea33_punishment_records", stock:"ea33_stock_records"};
 
 function getRecords(type){
   return JSON.parse(localStorage.getItem(RECORDS_KEY[type])||"[]");
@@ -4063,12 +4099,15 @@ function updateRecordsCounts(){
   const sickCount = getRecords("sick").length;
   const punCount  = getRecords("punishment").length;
   const transferCount = getRecords("transfer").length;
+  const stockCount = getRecords("stock").length;
   const sEl = document.getElementById("sickRecordCount");
   const pEl = document.getElementById("punishmentRecordCount");
   const tEl = document.getElementById("transferRecordCount");
+  const stEl = document.getElementById("stockRecordCount");
   if(sEl) sEl.textContent = sickCount>0 ? sickCount+" record"+(sickCount>1?"s":"") : "No records yet";
   if(pEl) pEl.textContent = punCount>0 ? punCount+" record"+(punCount>1?"s":"") : "No records yet";
   if(tEl) tEl.textContent = transferCount>0 ? transferCount+" record"+(transferCount>1?"s":"") : "No records yet";
+  if(stEl) stEl.textContent = stockCount>0 ? stockCount+" record"+(stockCount>1?"s":"") : "No records yet";
 
   // Attendance card: aggregate today's Present/Absent across every class, if any was taken
   const aEl = document.getElementById("attendanceTodayCount");
@@ -4206,10 +4245,154 @@ function renderAdmissionRecords(){
 function renderSickRecords(){ renderRecordsList("sick", "sickRecordsList", "disease"); }
 function renderPunishmentRecords(){ renderRecordsList("punishment", "punishmentRecordsList", "offence"); }
 function renderTransferRecords(){ renderRecordsList("transfer", "transferRecordsList", "offence"); }
+function renderStockRecords(){
+  const container = document.getElementById("stockRecordsList");
+  if(!container) return;
+  const students = getRecords("admission").slice().sort((a,b)=>a.name.localeCompare(b.name));
+  if(students.length===0){
+    container.innerHTML = `<div class="student-empty"><div class="student-empty-icon">📦</div><p>No students added yet</p><p style="font-size:0.85rem;">Add students under the Students tab first</p></div>`;
+    return;
+  }
+  container.innerHTML = `<div class="student-list">` + students.map(r=>`
+    <div class="student-item" onclick="openStockDetail('${r.id}')">
+      <div class="student-info">
+        <div class="student-name">${escapeHtml(r.name)}</div>
+      </div>
+      <div class="student-sex-badge ${r.sex==="Male"?"male":"female"}">${r.sex==="Male"?"M":"F"}</div>
+    </div>`).join("") + `</div>`;
+}
 window.renderAdmissionRecords = renderAdmissionRecords;
 window.renderSickRecords = renderSickRecords;
 window.renderPunishmentRecords = renderPunishmentRecords;
 window.renderTransferRecords = renderTransferRecords;
+window.renderStockRecords = renderStockRecords;
+
+// ── Stock Record detail modal (Name & Sex sourced live from Admission Records) ──
+let _stockDetailId = null;
+let _stockDetailItems = [];
+
+function textbookLabel(sub){
+  return sub.label.toUpperCase() + " TEXTBOOK";
+}
+
+// Fixed stock items shown alongside the per-subject textbooks (no "TEXTBOOK" suffix)
+const EXTRA_STOCK_ITEMS = [
+  {key:"mathsworkbook", label:"MATHS WORK BOOK"},
+  {key:"pen",           label:"PEN"},
+  {key:"exercisebooks", label:"EXERCISE BOOKS"}
+];
+
+function getStockItemsList(cls){
+  const subs = getSubjects(cls) || [];
+  const textbookItems = subs.map(sub=>({key:sub.key, label:textbookLabel(sub)}));
+  return textbookItems.concat(EXTRA_STOCK_ITEMS);
+}
+
+function renderStockDetailItems(items, checkedMap){
+  if(!items || items.length===0){
+    return `<p style="color:var(--muted);font-size:0.85rem;">No items configured for this class yet.</p>`;
+  }
+  return items.map(item=>`
+    <div class="adm-form-checkbox">
+      <input type="checkbox" id="stockChk_${item.key}" ${checkedMap && checkedMap[item.key] ? "checked" : ""}>
+      <label for="stockChk_${item.key}">${escapeHtml(item.label)}</label>
+    </div>`).join("");
+}
+
+function openStockDetail(admissionId){
+  const rec = getAdmissionRecordById(admissionId);
+  if(!rec) return;
+  _stockDetailId = admissionId;
+  _stockDetailItems = getStockItemsList(rec.class);
+  const stockRec = getRecords("stock").find(r=>r.id===admissionId);
+  document.getElementById("stockDetailName").textContent = rec.name;
+  document.getElementById("stockDetailSex").textContent = `${rec.sex||"—"}${rec.class?" · "+classLabel(rec.class):""}`;
+  document.getElementById("stockDetailItems").innerHTML = renderStockDetailItems(_stockDetailItems, stockRec ? stockRec.items : null);
+  document.getElementById("stockDetailModal").classList.add("open");
+}
+window.openStockDetail = openStockDetail;
+
+function closeStockDetail(){
+  document.getElementById("stockDetailModal").classList.remove("open");
+  _stockDetailId = null;
+  _stockDetailItems = [];
+}
+window.closeStockDetail = closeStockDetail;
+
+function updateStockRecord(){
+  if(!_stockDetailId) return;
+  const items = {};
+  _stockDetailItems.forEach(item=>{
+    const chk = document.getElementById("stockChk_"+item.key);
+    items[item.key] = !!(chk && chk.checked);
+  });
+  const records = getRecords("stock");
+  const idx = records.findIndex(r=>r.id===_stockDetailId);
+  const entry = {id:_stockDetailId, items, date:new Date().toLocaleDateString()};
+  if(idx===-1) records.unshift(entry); else records[idx] = entry;
+  saveRecords("stock", records);
+  updateRecordsCounts();
+  alert("Stock record updated.");
+}
+window.updateStockRecord = updateStockRecord;
+
+function deleteStockRecordEntry(){
+  if(!_stockDetailId) return;
+  if(!confirm("Delete this student's stock record?")) return;
+  const records = getRecords("stock").filter(r=>r.id!==_stockDetailId);
+  saveRecords("stock", records);
+  _stockDetailItems.forEach(item=>{
+    const chk = document.getElementById("stockChk_"+item.key);
+    if(chk) chk.checked = false;
+  });
+  updateRecordsCounts();
+}
+window.deleteStockRecordEntry = deleteStockRecordEntry;
+
+function pdfStockRecord(){
+  if(!_stockDetailId) return;
+  const rec = getAdmissionRecordById(_stockDetailId);
+  if(!rec) return;
+  const rows = _stockDetailItems.map(item=>{
+    const chk = document.getElementById("stockChk_"+item.key);
+    return [item.label, (chk && chk.checked) ? "Received" : "Not Received"];
+  });
+  const {jsPDF} = window.jspdf;
+  const doc = new jsPDF();
+  let y = 20;
+  doc.setFontSize(16); doc.setFont(undefined,"bold");
+  doc.text("Stock Record", 105, y, {align:"center"});
+  y += 10;
+  doc.setFontSize(11); doc.setFont(undefined,"normal");
+  doc.text(`Name: ${rec.name}`, 14, y); y += 7;
+  doc.text(`Sex: ${rec.sex||"—"}`, 14, y); y += 7;
+  doc.text(`Class: ${rec.class?classLabel(rec.class):"—"}`, 14, y); y += 4;
+
+  if(rows.length===0){
+    doc.setFontSize(10);
+    doc.text("No items configured for this class.", 14, y+8);
+  } else {
+    doc.autoTable({
+      startY: y+6,
+      head: [["Item","Status"]],
+      body: rows,
+      theme: "grid",
+      styles: {fontSize:10, cellPadding:3},
+      headStyles: {fillColor:[15,110,86], textColor:[255,255,255]}
+    });
+  }
+  doc.save(`Stock-Record-${rec.name.replace(/\s+/g,"-")}.pdf`);
+}
+window.pdfStockRecord = pdfStockRecord;
+
+document.addEventListener("DOMContentLoaded", function(){
+  const stockModal = document.getElementById("stockDetailModal");
+  if(stockModal){
+    stockModal.addEventListener("click", function(e){
+      if(e.target===this) closeStockDetail();
+    });
+  }
+});
 
 // Malawi's 28 districts
 const MALAWI_DISTRICTS = ["Balaka","Blantyre","Chikwawa","Chiradzulu","Chitipa","Dedza","Dowa","Karonga",
@@ -4558,6 +4741,7 @@ function deleteRecord(type, id){
   else if(type==="sick") renderSickRecords();
   else if(type==="punishment") renderPunishmentRecords();
   else if(type==="transfer") renderTransferRecords();
+  else if(type==="stock") renderStockRecords();
   updateRecordsCounts();
 }
 window.deleteRecord = deleteRecord;
