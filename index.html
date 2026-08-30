@@ -89,6 +89,8 @@
   input,select{width:100%;padding:8px;border:1px solid var(--border);border-radius:8px;font-size:0.95rem;background:#fff;}
   select:disabled{background:#f3f4f6;color:var(--muted);cursor:not-allowed;}
   html.dark select:disabled{background:#1f2937;}
+  .textview-field{width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-size:0.95rem;background:#f3f4f6;color:var(--text);font-weight:600;box-sizing:border-box;}
+  html.dark .textview-field{background:#1f2937;}
   .hint{font-size:0.74rem;line-height:1.4;margin:2px 0 8px;}
   .actions{margin-top:1rem;display:flex;gap:8px;flex-wrap:wrap;}
   button{border:none;border-radius:8px;padding:10px 16px;font-size:0.95rem;cursor:pointer;font-weight:500;}
@@ -299,6 +301,64 @@
   .lp-form label{display:block;font-size:0.85rem;font-weight:700;color:var(--text);margin:0 0 6px;}
   .lp-form select,.lp-form input,.lp-form textarea{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:12px;font-size:0.95rem;font-family:inherit;margin-bottom:1.1rem;background:#fff;color:var(--text);}
   .lp-form select:focus,.lp-form input:focus,.lp-form textarea:focus{outline:none;border-color:var(--primary);}
+
+  /* ── Admission Record Form ── */
+  .adm-form{background:var(--card);border-radius:16px;padding:1.5rem;border:1px solid var(--border);}
+  .adm-form h3{margin:0 0 1.5rem;font-size:1.15rem;font-weight:700;color:var(--forest);font-family:'Lora',serif;}
+  .adm-form-section{margin-bottom:1.8rem;padding-bottom:1.2rem;border-bottom:1px solid var(--border);}
+  .adm-form-section:last-of-type{border-bottom:none;margin-bottom:1.2rem;padding-bottom:0;}
+  .adm-form-section-title{font-size:0.8rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.7px;margin-bottom:1rem;}
+  .adm-form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:1.1rem;}
+  .adm-form-field{display:flex;flex-direction:column;}
+  .adm-form-field label{display:block;font-size:0.8rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin:0 0 6px;text-align:left;}
+  .adm-form-field input[type="text"],.adm-form-field input[type="date"],.adm-form-field input[type="tel"],.adm-form-field select{padding:11px 13px;border:1.5px solid var(--border);border-radius:10px;font-size:0.95rem;font-family:inherit;background:var(--bg);color:var(--text);transition:border-color .2s,box-shadow .2s;}
+  .adm-form-field input:focus,.adm-form-field select:focus{outline:none;border-color:var(--forest);box-shadow:0 0 0 3px rgba(45,90,61,.1);}
+  .adm-form-field input:disabled{background:var(--bg2);color:var(--text2);cursor:not-allowed;}
+  .adm-form-field.full-width{grid-column:1 / -1;}
+  .adm-form-inline{display:flex;gap:1rem;margin-bottom:1rem;}
+  .adm-form-inline .adm-form-field{flex:1;}
+  .adm-form-checkbox-group{display:flex;gap:1.5rem;margin-bottom:1.1rem;}
+  .adm-form-checkbox{display:flex;align-items:center;gap:8px;cursor:pointer;}
+  .adm-form-checkbox input[type="checkbox"]{width:18px;height:18px;cursor:pointer;accent-color:var(--forest);}
+  .adm-form-checkbox label{margin:0;font-size:0.95rem;font-weight:500;color:var(--text);text-transform:none;letter-spacing:normal;cursor:pointer;}
+
+  /* ── Floating Action Button ── */
+  .fab{position:fixed;bottom:90px;right:20px;width:56px;height:56px;border-radius:50%;background:var(--primary);color:#fff;border:none;font-size:28px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.3);transition:transform .2s,box-shadow .2s;z-index:100;}
+  .fab:hover{transform:scale(1.1);box-shadow:0 6px 16px rgba(0,0,0,.4)}
+  .fab:active{transform:scale(0.95)}
+
+  /* ── Modal Dialog ── */
+  .modal{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;align-items:flex-end;z-index:1000;}
+  .modal-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.5);}
+  .modal-content{position:relative;background:var(--bg);border-radius:24px 24px 0 0;width:100%;max-height:90vh;overflow-y:auto;padding:0;box-shadow:0 -4px 20px rgba(0,0,0,.3);}
+  .modal-header{display:flex;justify-content:space-between;align-items:center;padding:20px 20px;border-bottom:1px solid var(--border);background:var(--card);border-radius:24px 24px 0 0;position:sticky;top:0;z-index:10;}
+  .modal-header h3{margin:0;font-size:1.1rem;font-weight:700;color:var(--text);}
+  .modal-close{background:none;border:none;font-size:24px;color:var(--text2);cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;transition:color .2s;}
+  .modal-close:hover{color:var(--text)}
+  .modal-body{padding:20px;}
+  .modal-footer{display:flex;gap:10px;padding:15px 20px;border-top:1px solid var(--border);background:var(--card);position:sticky;bottom:0;}
+  .modal-footer button{flex:1;padding:12px;border:none;border-radius:8px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:background .2s;}
+  .modal-footer .btn-secondary{background:var(--border);color:var(--text);}
+  .modal-footer .btn-secondary:hover{background:var(--border-dark);}
+  .modal-footer .btn-primary{background:var(--forest);color:#fff;}
+  .modal-footer .btn-primary:hover{background:var(--forest-mid);}
+
+  /* ── Student List View ── */
+  .student-list{display:flex;flex-direction:column;gap:0;}
+  .student-item{display:flex;align-items:center;justify-content:space-between;padding:16px 16px;border-bottom:1px solid var(--border);background:var(--card);cursor:pointer;transition:background .2s;}
+  .student-item:hover{background:var(--card-hover)}
+  .student-item:active{background:var(--bg2)}
+  .student-info{flex:1;}
+  .student-name{font-size:1rem;font-weight:600;color:var(--text);margin:0;}
+  .student-sex{font-size:0.8rem;color:var(--text2);margin:4px 0 0;}
+  .student-sex-badge{display:inline-block;min-width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:#fff;margin-left:10px;}
+  .student-sex-badge.male{background:#3b82f6;}
+  .student-sex-badge.female{background:#ec4899;}
+  .student-item-actions{display:flex;gap:8px;}
+  .student-item-btn{background:none;border:none;color:var(--text2);cursor:pointer;font-size:1.2rem;transition:color .2s;}
+  .student-item-btn:hover{color:var(--text)}
+  .student-empty{padding:40px 20px;text-align:center;color:var(--text2);}
+  .student-empty-icon{font-size:3rem;margin-bottom:10px;opacity:0.5;}
   .lp-form textarea{resize:vertical;min-height:70px;}
   .lp-form ::placeholder{color:#9a9a97;}
   html.dark .lp-form{background:var(--card);}
@@ -321,6 +381,10 @@
   .res-tab{flex:0 0 auto;background:none;border:none;padding:10px 14px;font-size:0.76rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;letter-spacing:0.03em;white-space:nowrap;}
   .res-tab.active{color:var(--primary-dark);border-bottom-color:var(--primary);}
   html.dark .res-tab{color:var(--muted);}
+  .stu-tabs-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-bottom:1rem;}
+  .stu-tabs{display:flex;gap:8px;white-space:nowrap;width:max-content;min-width:100%;padding:2px 2px 6px;}
+  .stu-tab{flex:0 0 auto;background:var(--card);border:1.5px solid var(--border);border-radius:999px;padding:7px 14px;font-size:0.78rem;font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;transition:background .2s,border-color .2s,color .2s;}
+  .stu-tab.active{background:var(--primary);border-color:var(--primary);color:#fff;}
   /* note editor overlay */
   #noteEditorModal{display:none;position:fixed;inset:0;z-index:8880;background:#fff;flex-direction:column;}
   #noteEditorModal.open{display:flex;}
@@ -332,9 +396,6 @@
   #notesArea{flex:1;width:100%;border:1px solid var(--border);border-radius:10px;padding:0.9rem;font-size:0.95rem;font-family:inherit;resize:none;box-sizing:border-box;color:var(--text);background:#fff;}
   #notesArea:focus{outline:none;border-color:var(--primary);}
   #notesSaved{font-size:0.8rem;color:var(--primary);min-height:1.4em;margin-top:0.5rem;text-align:right;}
-  /* floating add button */
-  #fabAddStudent{position:fixed;bottom:78px;right:16px;z-index:400;background:var(--primary);color:#fff;border:none;border-radius:999px;padding:12px 20px;display:none;align-items:center;gap:8px;cursor:pointer;box-shadow:0 4px 16px rgba(29,158,117,0.4);font-family:inherit;transition:background 0.2s,transform 0.15s;}
-  #fabAddStudent:hover{background:var(--primary-dark);transform:scale(1.04);}
   /* update toast */
   /* update dialog */
   #updateDialog{position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;padding:1.5rem;}
@@ -527,6 +588,7 @@
         <select id="name" required onchange="syncSexFromAdmission('name','sex')">
           <option value="">Select student</option>
         </select>
+        <div id="nameDisplay" class="textview-field" style="display:none;"></div>
         <p class="hint" id="noAdmissionHintAdd" style="display:none;color:#b45309;">No students found. Add the student under the Students tab first.</p>
       </div>
       <div>
@@ -536,6 +598,7 @@
           <option value="Male">Male</option>
           <option value="Female">Female</option>
         </select>
+        <div id="sexDisplay" class="textview-field" style="display:none;"></div>
       </div>
     </div>
     <div class="grid" id="subjectFields" style="margin-top:8px;"></div>
@@ -619,12 +682,6 @@
   </div>
 </div><!-- end students list card -->
 
-<!-- Floating Add Student button -->
-<button id="fabAddStudent" onclick="switchPage('add')" title="Add Student">
-  <span style="font-size:1.5rem;line-height:1;">+</span>
-  <span style="font-size:0.8rem;font-weight:600;">Add Student</span>
-</button>
-
 </div><!-- end pageList -->
 
 <!-- PAGE 4b: RECORDS -->
@@ -661,71 +718,132 @@
 
 <!-- PAGE 4c0: ADMISSION RECORD -->
 <div class="page" id="pageAdmissionRecords">
-  <div class="lp-form" style="margin-bottom:1rem;">
-    <h3>Add Admission Record</h3>
-    <label for="admName">Name</label>
-    <input type="text" id="admName" placeholder="Student name">
-    <label for="admSex">Sex</label>
-    <select id="admSex">
-      <option value="">Select</option>
-      <option value="Male">Male</option>
-      <option value="Female">Female</option>
-    </select>
-    <label for="admClass">Class</label>
-    <select id="admClass">
-      <option value="">Select class</option>
-    </select>
-    <label for="admDob">Date of Birth</label>
-    <input type="date" id="admDob" onchange="calcAdmissionAge()">
-    <label for="admAge">Age</label>
-    <input type="text" id="admAge" placeholder="Calculated automatically" readonly disabled>
-    <label>Orphan Status</label>
-    <div style="display:flex;gap:1.2rem;margin-bottom:0.8rem;">
-      <label style="display:flex;align-items:center;gap:6px;font-size:0.9rem;color:var(--text);margin:0;">
-        <input type="checkbox" id="admOrphanSingle" style="width:auto;" onclick="toggleOrphanStatus('single')"> Single
-      </label>
-      <label style="display:flex;align-items:center;gap:6px;font-size:0.9rem;color:var(--text);margin:0;">
-        <input type="checkbox" id="admOrphanDouble" style="width:auto;" onclick="toggleOrphanStatus('double')"> Double
-      </label>
-    </div>
-    <label for="admDisability">Disability</label>
-    <select id="admDisability">
-      <option value="None">None</option>
-      <option value="Visual">Visual</option>
-      <option value="Hearing">Hearing</option>
-      <option value="Physical">Physical</option>
-      <option value="Intellectual">Intellectual</option>
-      <option value="Albinism">Albinism</option>
-      <option value="Multiple">Multiple</option>
-      <option value="Other">Other</option>
-    </select>
-    <label for="admRepeater">Repeater</label>
-    <select id="admRepeater">
-      <option value="No">No</option>
-      <option value="Yes">Yes</option>
-    </select>
-    <label for="admTransferIn">Transfer In</label>
-    <select id="admTransferIn">
-      <option value="No">No</option>
-      <option value="Yes">Yes</option>
-    </select>
-    <label for="admVillage">Village</label>
-    <input type="text" id="admVillage" placeholder="Village">
-    <label for="admDistrict">District of Origin</label>
-    <select id="admDistrict">
-      <option value="">Select district</option>
-    </select>
-    <label for="admDenomination">Denomination</label>
-    <select id="admDenomination">
-      <option value="">Select denomination</option>
-    </select>
-    <label for="admGuardian">Guardian Name</label>
-    <input type="text" id="admGuardian" placeholder="Guardian name">
-    <label for="admWhatsapp">WhatsApp Number</label>
-    <input type="tel" id="admWhatsapp" placeholder="e.g., 0991234567" inputmode="tel">
-    <button class="btn-primary" style="width:100%;" onclick="addAdmissionRecord()">Add Record</button>
+  <!-- Filter tabs -->
+  <div class="stu-tabs-wrap">
+    <div class="stu-tabs" id="stuFilterTabs"></div>
   </div>
-  <div id="admissionRecordsList"></div>
+  <!-- Age range control (shown only when the Age tab is active) -->
+  <div id="ageFilterBar" style="display:none;align-items:center;gap:8px;margin:-6px 0 14px;flex-wrap:wrap;">
+    <input type="number" id="ageMinInput" placeholder="Min age" min="0" style="width:90px;">
+    <span style="color:var(--muted);font-size:0.85rem;">to</span>
+    <input type="number" id="ageMaxInput" placeholder="Max age" min="0" style="width:90px;">
+    <button class="btn-primary btn-small" onclick="applyAgeFilter()">Apply</button>
+    <button class="btn-secondary btn-small" onclick="clearAgeFilter()">Clear</button>
+  </div>
+  <!-- Students List View -->
+  <div id="admissionRecordsList" style="padding-bottom:100px;"></div>
+  
+  <!-- Floating Action Button -->
+  <button class="fab" onclick="openAddStudentModal()">+</button>
+  
+  <!-- Add Student Modal Dialog -->
+  <div id="addStudentModal" class="modal" style="display:none;">
+    <div class="modal-overlay" onclick="closeAddStudentModal()"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Add Student</h3>
+        <button class="modal-close" onclick="closeAddStudentModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="adm-form-field full-width">
+          <label for="admName">Student Name *</label>
+          <input type="text" id="admName" placeholder="Enter student name">
+        </div>
+        <div class="adm-form-field">
+          <label for="admSex">Sex *</label>
+          <select id="admSex">
+            <option value="">Select</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
+        <div class="adm-form-field">
+          <label for="admClass">Class *</label>
+          <select id="admClass">
+            <option value="">Select class</option>
+          </select>
+        </div>
+        <div class="adm-form-field">
+          <label for="admDob">Date of Birth</label>
+          <input type="date" id="admDob" onchange="calcAdmissionAge()">
+        </div>
+        <div class="adm-form-field">
+          <label for="admAge">Age</label>
+          <input type="text" id="admAge" placeholder="Auto-calculated" readonly disabled>
+        </div>
+
+        <div style="margin-top:1.2rem;padding-top:1rem;border-top:1px solid var(--border);">
+          <label style="display:block;font-size:0.8rem;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.8rem;">Orphan Status</label>
+          <div class="adm-form-checkbox-group">
+            <div class="adm-form-checkbox">
+              <input type="checkbox" id="admOrphanSingle" onclick="toggleOrphanStatus('single')">
+              <label for="admOrphanSingle">Single Orphan</label>
+            </div>
+            <div class="adm-form-checkbox">
+              <input type="checkbox" id="admOrphanDouble" onclick="toggleOrphanStatus('double')">
+              <label for="admOrphanDouble">Double Orphan</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="adm-form-field">
+          <label for="admDisability">Disability</label>
+          <select id="admDisability">
+            <option value="None">None</option>
+            <option value="Visual">Visual</option>
+            <option value="Hearing">Hearing</option>
+            <option value="Physical">Physical</option>
+            <option value="Intellectual">Intellectual</option>
+            <option value="Albinism">Albinism</option>
+            <option value="Multiple">Multiple</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="adm-form-field">
+          <label for="admRepeater">Repeater</label>
+          <select id="admRepeater">
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+          </select>
+        </div>
+        <div class="adm-form-field">
+          <label for="admTransferIn">Transfer In</label>
+          <select id="admTransferIn">
+            <option value="No">No</option>
+            <option value="Yes">Yes</option>
+          </select>
+        </div>
+        <div class="adm-form-field full-width">
+          <label for="admVillage">Village</label>
+          <input type="text" id="admVillage" placeholder="Enter village name">
+        </div>
+        <div class="adm-form-field">
+          <label for="admDistrict">District of Origin</label>
+          <select id="admDistrict">
+            <option value="">Select district</option>
+          </select>
+        </div>
+        <div class="adm-form-field">
+          <label for="admDenomination">Denomination</label>
+          <select id="admDenomination">
+            <option value="">Select denomination</option>
+          </select>
+        </div>
+        <div class="adm-form-field full-width">
+          <label for="admGuardian">Guardian Name</label>
+          <input type="text" id="admGuardian" placeholder="Enter guardian name">
+        </div>
+        <div class="adm-form-field">
+          <label for="admWhatsapp">WhatsApp Number</label>
+          <input type="tel" id="admWhatsapp" placeholder="e.g., 0991234567" inputmode="tel">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeAddStudentModal()">Cancel</button>
+        <button class="btn-primary" onclick="addAdmissionRecord()">Add Student</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- PAGE 4c: SICK RECORD -->
@@ -1794,9 +1912,6 @@ function switchPage(page){
   const titleEl = document.getElementById("topTitle");
   if(titleEl) titleEl.textContent = titles[page]||"Easy Assess";
 
-  const fab = document.getElementById("fabAddStudent");
-  if(fab) fab.style.display = page==="list" ? "flex" : "none";
-
   if(page==="dashboard") renderDashboard();
   if(page==="classes")  buildClassGrid();
   if(page==="settings"){
@@ -1810,10 +1925,14 @@ function switchPage(page){
   if(page==="news")        renderNewsPage();
   if(page==="records")     updateRecordsCounts();
   if(page==="add"){
+    setStudentFieldsMode(false);
     populateAdmissionNameDropdown("name");
     updateAdmissionEmptyHints();
   }
-  if(page==="admissionrecords")   renderAdmissionRecords();
+  if(page==="admissionrecords"){ 
+    renderAdmissionRecords();
+    populateAdmissionSpinners();
+  }
   if(page==="sickrecords"){
     renderSickRecords();
     populateAdmissionNameDropdown("sickName");
@@ -2285,66 +2404,88 @@ function buildSubjectFields(){
 
 // ── Render list ───────────────────────────────────────────────────────────
 function render(){
-  const cls=currentClass(), subs=getSubjects(cls);
-  const q=document.getElementById("search").value.trim().toLowerCase();
-  const list=getList(cls).filter(s=>s.name.toLowerCase().includes(q))
-    .sort((a,b)=>calcTotal(b,subs,cls)-calcTotal(a,subs,cls));
-  const tbody=document.getElementById("studentTable");
-  tbody.innerHTML="";
-  document.getElementById("emptyMsg").style.display=list.length===0?"block":"none";
+  const cls = currentClass();
+  const subs = getSubjects(cls);
+  
+  // Get students from ADMISSION RECORDS for this class
+  const admissionRecords = getRecords("admission").filter(r => r.class === cls.toString());
+  
+  // Get assessment data for this class
+  const assessmentData = getList(cls);
+  
+  // Merge: use admission records as base, overlay assessment data
+  const mergedList = admissionRecords.map(adm => {
+    const assessment = assessmentData.find(a => a.name === adm.name && a.sex === adm.sex);
+    return {
+      id: assessment?.id || adm.id,
+      name: adm.name,
+      sex: adm.sex,
+      class: adm.class,
+      ...assessment
+    };
+  });
+  
+  const q = document.getElementById("search").value.trim().toLowerCase();
+  const list = mergedList.filter(s => s.name.toLowerCase().includes(q))
+    .sort((a,b) => (calcTotal(b, subs, cls) || 0) - (calcTotal(a, subs, cls) || 0));
+  
+  const tbody = document.getElementById("studentTable");
+  tbody.innerHTML = "";
+  document.getElementById("emptyMsg").style.display = list.length === 0 ? "block" : "none";
 
   const levelHeader = document.getElementById("levelColHeader");
   if(levelHeader) levelHeader.textContent = isExamLevel(cls) ? "Grade" : "Level";
 
-  const boys  = list.filter(s=>s.sex==="Male").length;
-  const girls = list.filter(s=>s.sex==="Female").length;
-  const bar   = document.getElementById("counterBar");
-  if(list.length>0){
-    bar.style.display="flex";
-    document.getElementById("countBoys").textContent  = boys;
+  const boys = list.filter(s => s.sex === "Male").length;
+  const girls = list.filter(s => s.sex === "Female").length;
+  const bar = document.getElementById("counterBar");
+  if(list.length > 0){
+    bar.style.display = "flex";
+    document.getElementById("countBoys").textContent = boys;
     document.getElementById("countGirls").textContent = girls;
     document.getElementById("countTotal").textContent = list.length;
   } else {
-    bar.style.display="none";
+    bar.style.display = "none";
   }
   updateBadge();
 
-  // Pre-compute positions using DENSE RANKING — ties share same position, no numbers skipped
-  const uniqueTotals = [...new Set(list.map(s => calcTotal(s, subs, cls)))].sort((a,b)=>b-a);
+  // Pre-compute positions using DENSE RANKING
+  const uniqueTotals = [...new Set(list.map(s => calcTotal(s, subs, cls) || 0))].sort((a,b) => b-a);
   list.forEach(s => {
-    const total = calcTotal(s, subs, cls);
-    s._pos   = uniqueTotals.indexOf(total) + 1;
+    const total = calcTotal(s, subs, cls) || 0;
+    s._pos = uniqueTotals.indexOf(total) + 1;
     s._total = total;
   });
 
-  list.forEach((s, idx)=>{
-    const total    = s._total;
+  list.forEach((s, idx) => {
+    const total = s._total;
     const maxTotal = getMaxTotal(subs, cls);
-    const passFail = getPassFail(total, cls, s, subs);
-    const passColor = passFail==="PASS" ? "#085041" : "#D85A30";
-    const passBg    = passFail==="PASS" ? "#E1F5EE"  : "#FAECE7";
+    const passFail = total > 0 ? getPassFail(total, cls, s, subs) : "—";
+    const passColor = passFail === "PASS" ? "#085041" : passFail === "FAIL" ? "#D85A30" : "#999";
+    const passBg = passFail === "PASS" ? "#E1F5EE" : passFail === "FAIL" ? "#FAECE7" : "#f0f0f0";
     const pos = s._pos;
 
-    // "Grade" column: MSCE uses the overall 1-9 scale, JC uses the overall A-F
-    // scale (both based on this student's average of their best 6 subjects),
-    // everyone else keeps the existing 1-4 level.
-    const totalDisplay = displayTotal(total,cls);
+    const totalDisplay = total > 0 ? displayTotal(total, cls) : "—";
     let gradeDisplay;
-    if(cls==="MSCE")      gradeDisplay = getMsceGrade(totalDisplay);
-    else if(cls==="JC")   gradeDisplay = getJceGrade(totalDisplay);
-    else                  gradeDisplay = getLevelAndRemark(total,maxTotal).level;
+    if(total > 0){
+      if(cls === "MSCE") gradeDisplay = getMsceGrade(totalDisplay);
+      else if(cls === "JC") gradeDisplay = getJceGrade(totalDisplay);
+      else gradeDisplay = getLevelAndRemark(total, maxTotal).level;
+    } else {
+      gradeDisplay = "—";
+    }
 
-    const tr=document.createElement("tr");
-    tr.style.cursor="pointer";
-    tr.title="Click to view report";
-    tr.innerHTML=`
+    const tr = document.createElement("tr");
+    tr.style.cursor = "pointer";
+    tr.title = "Click to view report";
+    tr.innerHTML = `
       <td style="color:var(--muted);font-weight:600;">${pos}</td>
       <td>${escapeHtml(s.name)}</td>
-      <td><span class="pill ${s.sex==="Male"?"male":"female"}">${s.sex==="Male"?"M":"F"}</span></td>
+      <td><span class="pill ${s.sex === "Male" ? "male" : "female"}">${s.sex === "Male" ? "M" : "F"}</span></td>
       <td class="total">${totalDisplay}</td>
       <td style="font-weight:600;color:var(--primary-dark);">${gradeDisplay}</td>
       <td><span style="padding:2px 10px;border-radius:999px;font-size:0.78rem;font-weight:700;background:${passBg};color:${passColor};">${passFail}</span></td>`;
-    tr.addEventListener("click", ()=>showReport(s.id));
+    tr.addEventListener("click", () => showReport(s.id));
     tbody.appendChild(tr);
   });
 }
@@ -2395,6 +2536,7 @@ function handleSave(e){
   const ft = document.getElementById("formTitle"); if(ft) ft.textContent="Add student";
   const sb = document.getElementById("submitBtn"); if(sb) sb.textContent="Save";
   const cb = document.getElementById("cancelBtn"); if(cb) cb.style.display="none";
+  setStudentFieldsMode(false);
   buildSubjectFields();
   render();
   buildClassGrid();
@@ -2519,10 +2661,43 @@ document.addEventListener("DOMContentLoaded", ()=>{
   }
 });
 
+// Toggles the Name & Sex fields between an editable dropdown (Add mode) and a
+// locked, plain-text display (Edit mode) — identity fields shouldn't be changed
+// from this form; corrections belong in the student's Admission Record.
+function setStudentFieldsMode(editing, nameText, sexText){
+  const nameSel  = document.getElementById("name");
+  const sexSel   = document.getElementById("sex");
+  const nameDisp = document.getElementById("nameDisplay");
+  const sexDisp  = document.getElementById("sexDisplay");
+  const hint     = document.getElementById("noAdmissionHintAdd");
+  if(editing){
+    if(nameSel)  nameSel.style.display  = "none";
+    if(sexSel)   sexSel.style.display   = "none";
+    if(nameDisp){ nameDisp.textContent = nameText || ""; nameDisp.style.display = "block"; }
+    if(sexDisp){  sexDisp.textContent  = sexText==="Male" ? "Male" : sexText==="Female" ? "Female" : "—"; sexDisp.style.display = "block"; }
+    if(hint) hint.style.display = "none";
+  } else {
+    if(nameSel)  nameSel.style.display  = "";
+    if(sexSel)   sexSel.style.display   = "";
+    if(nameDisp) nameDisp.style.display = "none";
+    if(sexDisp)  sexDisp.style.display  = "none";
+  }
+}
+window.setStudentFieldsMode = setStudentFieldsMode;
+
 function editStudent(id){
   const cls=currentClass(),subs=getSubjects(cls);
-  const s=getList(cls).find(s=>s.id===id);
-  if(!s) return;
+  let s = getList(cls).find(s=>s.id===id);
+  let admissionOnly = false;
+  if(!s){
+    // No assessment entry exists yet for this id — it may be an Admission Record id
+    // (i.e. a student who's admitted but has never had scores entered). Build a
+    // stand-in record from their Admission Record so Edit still opens pre-filled.
+    const adm = getAdmissionRecordById(id);
+    if(!adm) return;
+    s = { id, name: adm.name, sex: adm.sex, admissionId: adm.id };
+    admissionOnly = true;
+  }
   setMode("manual");
   switchPage('add');
   const nameSel = document.getElementById("name");
@@ -2539,11 +2714,22 @@ function editStudent(id){
     nameSel.dataset.legacyName = s.name;
   }
   document.getElementById("sex").value=s.sex;
-  subs.forEach(sub=>{const el=document.getElementById(sub.key);if(el)el.value=s[sub.key]||0;});
-  if(editId) editId.value=id;
+  subs.forEach(sub=>{
+    const el=document.getElementById(sub.key);
+    if(!el) return;
+    // Show a real blank field for subjects with no score yet, rather than "0".
+    el.value = (s[sub.key] !== undefined && s[sub.key] !== null) ? s[sub.key] : "";
+  });
+  // If there's no existing assessment record (student never scored before), leave
+  // editId blank so Save creates a fresh assessment entry instead of trying to
+  // "update" a record that doesn't exist.
+  if(editId) editId.value = admissionOnly ? "" : id;
   if(formTitle) formTitle.textContent="Edit student";
   if(submitBtn) submitBtn.textContent="Update";
   if(cancelBtn) cancelBtn.style.display="inline-block";
+  setStudentFieldsMode(true, s.name, s.sex);
+  const editTitleEl = document.getElementById("topTitle");
+  if(editTitleEl) editTitleEl.textContent = `${classLabel(cls)} — Edit Student`;
   updateAdmissionEmptyHints();
   window.scrollTo({top:0,behavior:"smooth"});
 }
@@ -2562,6 +2748,9 @@ function resetForm(){
   if(formTitle) formTitle.textContent="Add student";
   if(submitBtn) submitBtn.textContent="Save";
   if(cancelBtn) cancelBtn.style.display="none";
+  setStudentFieldsMode(false);
+  const resetTitleEl = document.getElementById("topTitle");
+  if(resetTitleEl) resetTitleEl.textContent = `${classLabel(currentClass())} — Add Student`;
   buildSubjectFields();
   populateAdmissionNameDropdown("name");
   updateAdmissionEmptyHints();
@@ -2577,26 +2766,42 @@ let activeReportId = null;
 
 function showReport(id){
   const cls=currentClass(),subs=getSubjects(cls);
-  const allList=getList(cls).sort((a,b)=>calcTotal(b,subs,cls)-calcTotal(a,subs,cls));
-  const s=allList.find(s=>s.id===id);
+  
+  // Get students from merged data (admission records + assessment data)
+  const admissionRecords = getRecords("admission").filter(r => r.class === cls.toString());
+  const assessmentData = getList(cls);
+  const mergedList = admissionRecords.map(adm => {
+    const assessment = assessmentData.find(a => a.name === adm.name && a.sex === adm.sex);
+    return {
+      id: assessment?.id || adm.id,
+      name: adm.name,
+      sex: adm.sex,
+      class: adm.class,
+      _hasScores: !!assessment,
+      ...assessment
+    };
+  }).sort((a,b)=>calcTotal(b,subs,cls)-calcTotal(a,subs,cls));
+  
+  const s = mergedList.find(s => s.id === id) || mergedList.find(s => s.name && s.name === id);
   if(!s) return;
   activeReportId = id;
+  const hasScores = !!s._hasScores;
   const total=calcTotal(s,subs,cls),maxTotal=getMaxTotal(subs,cls);
   const {level,remark}=getLevelAndRemark(total,maxTotal);
 
   // Dense ranking — ties share position, no numbers skipped
-  const uniqueTotals = [...new Set(allList.map(x=>calcTotal(x,subs,cls)))].sort((a,b)=>b-a);
-  const pos = uniqueTotals.indexOf(total) + 1;
+  const uniqueTotals = [...new Set(mergedList.map(x=>calcTotal(x,subs,cls)||0))].sort((a,b)=>b-a);
+  const pos = uniqueTotals.indexOf(total||0) + 1;
 
   document.getElementById("rClass").textContent=`${classLabel(cls)} — Academic Report`;
   document.getElementById("rName").textContent=s.name;
   document.getElementById("rSex").textContent=s.sex==="Male"?"M":"F";
-  document.getElementById("rPosition").textContent=`${pos} of ${allList.length}`;
+  document.getElementById("rPosition").textContent = hasScores ? `${pos} of ${mergedList.length}` : "—";
   document.getElementById("rDate").textContent=new Date().toLocaleDateString();
   const totalDisp = displayTotal(total,cls);
   const totalText = isExamLevel(cls) ? `${totalDisp} / 100 (avg. of best 6)` : `${total} / ${maxTotal}`;
-  document.getElementById("rTotal").textContent=totalText;
-  document.getElementById("rTotalFoot").textContent=totalText;
+  document.getElementById("rTotal").textContent = hasScores ? totalText : "—";
+  document.getElementById("rTotalFoot").textContent = hasScores ? totalText : "—";
 
   const pf=getPassFail(total,cls,s,subs);
 
@@ -2616,10 +2821,13 @@ function showReport(id){
     remarkValue = remark;
   }
   if(levelLabelEl) levelLabelEl.textContent = isExamLevel(cls) ? "Grade:" : "Level:";
-  document.getElementById("rLevel").textContent=gradeValue;
-  document.getElementById("rRemark").textContent=remarkValue;
+  document.getElementById("rLevel").textContent = hasScores ? gradeValue : "—";
+  document.getElementById("rRemark").textContent = hasScores ? remarkValue : "—";
   const pfEl=document.getElementById("rPassFail");
-  if(pfEl){pfEl.textContent=pf;pfEl.style.color=pf==="PASS"?"#085041":"#D85A30";}
+  if(pfEl){
+    pfEl.textContent = hasScores ? pf : "—";
+    pfEl.style.color = hasScores ? (pf==="PASS"?"#085041":"#D85A30") : "var(--muted)";
+  }
   const tbody=document.getElementById("rSubjects");
   tbody.innerHTML="";
 
@@ -2633,9 +2841,16 @@ function showReport(id){
     ? `<td>Total</td><td id="rTotalFoot"></td><td></td><td></td>`
     : `<td>Total</td><td id="rTotalFoot"></td><td></td><td></td>`;
   // Rebuilding the row above recreated #rTotalFoot, so re-apply its text
-  document.getElementById("rTotalFoot").textContent=totalText;
+  document.getElementById("rTotalFoot").textContent = hasScores ? totalText : "—";
 
   subs.forEach(sub=>{
+    if(!hasScores){
+      // Student has not been assessed yet — show blank score fields rather than 0s/grades.
+      const tr=document.createElement("tr");
+      tr.innerHTML=`<td>${sub.label}</td><td>—</td><td>—</td><td>—</td>`;
+      tbody.appendChild(tr);
+      return;
+    }
     const score=s[sub.key]||0;
     let g, gradeClass, gradeTitle="";
     if(cls==="MSCE"){
@@ -2653,9 +2868,9 @@ function showReport(id){
     let extraCell = "";
     if(showSubjectPosition){
       // Dense ranking on this subject's score across every student in the class
-      const subjectScores = [...new Set(allList.map(x=>Number(x[sub.key])||0))].sort((a,b)=>b-a);
+      const subjectScores = [...new Set(mergedList.map(x=>Number(x[sub.key])||0))].sort((a,b)=>b-a);
       const subjectPos = subjectScores.indexOf(score) + 1;
-      extraCell = `<td>${subjectPos} of ${allList.length}</td>`;
+      extraCell = `<td>${subjectPos} of ${mergedList.length}</td>`;
     } else {
       extraCell = `<td>${GRADE_REMARK[g]}</td>`;
     }
@@ -2673,8 +2888,15 @@ function editFromReport(){
 }
 
 function deleteFromReport(){
-  if(!confirm("Delete this student record?")) return;
   const cls=currentClass();
+  const existing = getList(cls).find(s=>s.id===activeReportId);
+  if(!existing){
+    // This student has never had scores entered — there's no assessment record to
+    // delete here. Deleting the student entirely is done from Students (Admission Records).
+    alert("This student has no scores recorded yet, so there's nothing to delete here. To remove the student entirely, delete them from the Students tab (Admission Records).");
+    return;
+  }
+  if(!confirm("Delete this student record?")) return;
   saveList(cls, getList(cls).filter(s=>s.id!==activeReportId));
   closeReport();
   render();
@@ -3885,20 +4107,100 @@ function renderRecordsList(type, containerId, fieldKey){
     </div>`).join("") + `</div>`;
 }
 
+const STUDENT_FILTERS = [
+  { key:"all",        label:"All" },
+  { key:"boys",        label:"Boys" },
+  { key:"girls",       label:"Girls" },
+  { key:"age",         label:"Age" },
+  { key:"repeaters",   label:"Repeaters" },
+  { key:"transfers",   label:"Transfers In" },
+  { key:"orphans",     label:"Orphans" },
+  { key:"disability",  label:"With Disability" }
+];
+let _studentFilter = "all";
+let _ageMin = null, _ageMax = null;
+
+function buildStudentFilterTabs(){
+  const wrap = document.getElementById("stuFilterTabs");
+  if(!wrap) return;
+  wrap.innerHTML = STUDENT_FILTERS.map(f=>
+    `<button class="stu-tab ${f.key===_studentFilter?"active":""}" onclick="setStudentFilter('${f.key}')">${f.label}</button>`
+  ).join("");
+  const ageBar = document.getElementById("ageFilterBar");
+  if(ageBar) ageBar.style.display = _studentFilter==="age" ? "flex" : "none";
+}
+window.buildStudentFilterTabs = buildStudentFilterTabs;
+
+function setStudentFilter(key){
+  _studentFilter = key;
+  buildStudentFilterTabs();
+  renderAdmissionRecords();
+}
+window.setStudentFilter = setStudentFilter;
+
+function applyAgeFilter(){
+  const minEl = document.getElementById("ageMinInput");
+  const maxEl = document.getElementById("ageMaxInput");
+  _ageMin = (minEl && minEl.value!=="") ? Number(minEl.value) : null;
+  _ageMax = (maxEl && maxEl.value!=="") ? Number(maxEl.value) : null;
+  renderAdmissionRecords();
+}
+window.applyAgeFilter = applyAgeFilter;
+
+function clearAgeFilter(){
+  _ageMin = null; _ageMax = null;
+  const minEl = document.getElementById("ageMinInput"); if(minEl) minEl.value = "";
+  const maxEl = document.getElementById("ageMaxInput"); if(maxEl) maxEl.value = "";
+  renderAdmissionRecords();
+}
+window.clearAgeFilter = clearAgeFilter;
+
+function matchesStudentFilter(r, key){
+  switch(key){
+    case "boys":       return r.sex==="Male";
+    case "girls":      return r.sex==="Female";
+    case "age":{
+      const age = Number(r.age);
+      if(!r.age || isNaN(age)) return false;
+      if(_ageMin!==null && age < _ageMin) return false;
+      if(_ageMax!==null && age > _ageMax) return false;
+      return true;
+    }
+    case "repeaters":  return r.repeater==="Yes";
+    case "transfers":  return r.transferIn==="Yes";
+    case "orphans":    return r.orphan==="Single" || r.orphan==="Double";
+    case "disability": return !!r.disability && r.disability!=="None";
+    default:           return true;
+  }
+}
+
 function renderAdmissionRecords(){
   const container = document.getElementById("admissionRecordsList");
   if(!container) return;
-  const records = getRecords("admission");
-  if(records.length===0){
-    container.innerHTML = `<div style="text-align:center;padding:2.5rem 1rem;color:var(--muted);">No records yet.</div>`;
+  buildStudentFilterTabs();
+  const allRecords = getRecords("admission");
+  const records = allRecords.filter(r=>matchesStudentFilter(r, _studentFilter));
+  if(allRecords.length===0){
+    container.innerHTML = `<div class="student-empty"><div class="student-empty-icon">👥</div><p>No students added yet</p><p style="font-size:0.85rem;">Click the + button to add your first student</p></div>`;
     return;
   }
-  container.innerHTML = `<div class="notes-list-wrap">` + records.map(r=>`
-    <div class="notes-item" style="cursor:pointer;" onclick="showAdmissionDetail('${r.id}')">
-      <div style="min-width:0;">
-        <div class="notes-item-label" style="font-weight:700;">${escapeHtml(r.name)} <span style="font-weight:400;color:var(--muted);">(${r.sex==="Male"?"M":"F"})</span></div>
+  if(records.length===0){
+    const filterLabel = _studentFilter==="age"
+      ? `Age ${_ageMin!==null?_ageMin:"0"}–${_ageMax!==null?_ageMax:"∞"}`
+      : (STUDENT_FILTERS.find(f=>f.key===_studentFilter)||{}).label || "";
+    container.innerHTML = `<div class="student-empty"><div class="student-empty-icon">🔍</div><p>No students match "${escapeHtml(filterLabel)}"</p></div>`;
+    return;
+  }
+  container.innerHTML = `<div class="student-list">` + records.map(r=>`
+    <div class="student-item" onclick="showAdmissionDetail('${r.id}')">
+      <div class="student-info">
+        <div class="student-name">${escapeHtml(r.name)}</div>
+        <div class="student-sex">Class: ${r.class || "—"}${r.age?" · Age: "+escapeHtml(String(r.age)):""}</div>
       </div>
-      <span style="color:var(--muted);font-size:1rem;">›</span>
+      <div class="student-sex-badge ${r.sex==="Male"?"male":"female"}">${r.sex==="Male"?"M":"F"}</div>
+      <div class="student-item-actions">
+        <button class="student-item-btn" onclick="event.stopPropagation();deleteRecord('admission','${r.id}')" title="Delete">🗑️</button>
+      </div>
     </div>`).join("") + `</div>`;
 }
 function renderSickRecords(){ renderRecordsList("sick", "sickRecordsList", "disease"); }
@@ -4027,6 +4329,35 @@ function addAdmissionRecord(){
   updateRecordsCounts();
 }
 window.addAdmissionRecord = addAdmissionRecord;
+
+// ── Add Student Modal ────────────────────────────────────────────────────────
+function openAddStudentModal(){
+  document.getElementById("addStudentModal").style.display = "flex";
+  populateAdmissionSpinners();
+  // Clear form fields
+  document.getElementById("admName").value = "";
+  document.getElementById("admSex").value = "";
+  document.getElementById("admClass").value = "";
+  document.getElementById("admDob").value = "";
+  document.getElementById("admAge").value = "";
+  document.getElementById("admOrphanSingle").checked = false;
+  document.getElementById("admOrphanDouble").checked = false;
+  document.getElementById("admDisability").value = "None";
+  document.getElementById("admRepeater").value = "No";
+  document.getElementById("admTransferIn").value = "No";
+  document.getElementById("admVillage").value = "";
+  document.getElementById("admDistrict").value = "";
+  document.getElementById("admDenomination").value = "";
+  document.getElementById("admGuardian").value = "";
+  document.getElementById("admWhatsapp").value = "";
+}
+
+function closeAddStudentModal(){
+  document.getElementById("addStudentModal").style.display = "none";
+}
+
+window.openAddStudentModal = openAddStudentModal;
+window.closeAddStudentModal = closeAddStudentModal;
 
 // ── Admission detail modal (view / edit / delete) ───────────────────────────
 let admissionDetailId = null;
