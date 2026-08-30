@@ -928,6 +928,9 @@
 <!-- PAGE 4f: STOCK RECORD -->
 <div class="page" id="pageStockRecords">
   <p style="font-size:0.82rem;color:var(--muted);margin:0.4rem 0 1rem;">Tap a student to record items received from stock</p>
+  <div class="stu-tabs-wrap">
+    <div class="stu-tabs" id="stockFilterTabs"></div>
+  </div>
   <div id="stockRecordsList"></div>
 </div>
 
@@ -4248,9 +4251,22 @@ function renderTransferRecords(){ renderRecordsList("transfer", "transferRecords
 function renderStockRecords(){
   const container = document.getElementById("stockRecordsList");
   if(!container) return;
-  const students = getRecords("admission").slice().sort((a,b)=>a.name.localeCompare(b.name));
-  if(students.length===0){
+  buildStockFilterTabs();
+  const allStudents = getRecords("admission").slice().sort((a,b)=>a.name.localeCompare(b.name));
+  if(allStudents.length===0){
     container.innerHTML = `<div class="student-empty"><div class="student-empty-icon">📦</div><p>No students added yet</p><p style="font-size:0.85rem;">Add students under the Students tab first</p></div>`;
+    return;
+  }
+  let students = allStudents;
+  if(_stockFilter==="received")     students = students.filter(r=>hasReceivedStockItems(r.id));
+  else if(_stockFilter==="pending") students = students.filter(r=>!hasReceivedStockItems(r.id));
+  else if(_stockFilter.indexOf("item:")===0){
+    const itemKey = _stockFilter.slice(5);
+    students = students.filter(r=>hasReceivedSpecificItem(r.id, itemKey));
+  }
+
+  if(students.length===0){
+    container.innerHTML = `<div class="student-empty"><div class="student-empty-icon">📦</div><p>No students match this filter</p></div>`;
     return;
   }
   container.innerHTML = `<div class="student-list">` + students.map(r=>`
@@ -4260,6 +4276,54 @@ function renderStockRecords(){
       </div>
       <div class="student-sex-badge ${r.sex==="Male"?"male":"female"}">${r.sex==="Male"?"M":"F"}</div>
     </div>`).join("") + `</div>`;
+}
+
+const STOCK_BASE_FILTERS = [
+  { key:"all",      label:"All" },
+  { key:"received", label:"Received" },
+  { key:"pending",  label:"Not Received" }
+];
+let _stockFilter = "all";
+
+function getAllStockItemsAcrossStudents(){
+  const admissionRecs = getRecords("admission");
+  const classesPresent = Array.from(new Set(admissionRecs.map(r=>r.class).filter(Boolean)));
+  const map = new Map();
+  classesPresent.forEach(cls=>{
+    getStockItemsList(cls).forEach(item=>{
+      if(!map.has(item.key)) map.set(item.key, item.label);
+    });
+  });
+  return Array.from(map.entries()).map(([key,label])=>({key,label}));
+}
+
+function buildStockFilterTabs(){
+  const wrap = document.getElementById("stockFilterTabs");
+  if(!wrap) return;
+  const itemFilters = getAllStockItemsAcrossStudents().map(it=>({key:"item:"+it.key, label:it.label}));
+  const filters = STOCK_BASE_FILTERS.concat(itemFilters);
+  if(!filters.some(f=>f.key===_stockFilter)) _stockFilter = "all";
+  wrap.innerHTML = filters.map(f=>
+    `<button class="stu-tab ${f.key===_stockFilter?"active":""}" onclick="setStockFilter('${f.key}')">${escapeHtml(f.label)}</button>`
+  ).join("");
+}
+window.buildStockFilterTabs = buildStockFilterTabs;
+
+function setStockFilter(key){
+  _stockFilter = key;
+  renderStockRecords();
+}
+window.setStockFilter = setStockFilter;
+
+function hasReceivedStockItems(admissionId){
+  const rec = getRecords("stock").find(r=>r.id===admissionId);
+  if(!rec || !rec.items) return false;
+  return Object.values(rec.items).some(v=>v===true);
+}
+
+function hasReceivedSpecificItem(admissionId, itemKey){
+  const rec = getRecords("stock").find(r=>r.id===admissionId);
+  return !!(rec && rec.items && rec.items[itemKey]===true);
 }
 window.renderAdmissionRecords = renderAdmissionRecords;
 window.renderSickRecords = renderSickRecords;
@@ -4332,6 +4396,7 @@ function updateStockRecord(){
   if(idx===-1) records.unshift(entry); else records[idx] = entry;
   saveRecords("stock", records);
   updateRecordsCounts();
+  renderStockRecords();
   alert("Stock record updated.");
 }
 window.updateStockRecord = updateStockRecord;
@@ -4346,6 +4411,7 @@ function deleteStockRecordEntry(){
     if(chk) chk.checked = false;
   });
   updateRecordsCounts();
+  renderStockRecords();
 }
 window.deleteStockRecordEntry = deleteStockRecordEntry;
 
