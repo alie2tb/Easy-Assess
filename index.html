@@ -490,6 +490,18 @@
   .sow-preview table{width:100%;border-collapse:collapse;font-size:12px;}
   .sow-preview th,.sow-preview td{padding:8px;border:1px solid var(--border);text-align:left;}
   .sow-preview th{background:var(--forest);color:#fff;font-weight:700;}
+  /* ── School Calendar ── */
+  .school-calendar-wrap{padding:0.5rem 0;}
+  .calendar-header{display:flex;align-items:center;gap:12px;margin-bottom:1.5rem;}
+  .calendar-icon{font-size:2rem;}
+  .calendar-title{margin:0;font-size:1.3rem;font-weight:700;color:var(--text);}
+  .calendar-table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;background:var(--card);border-radius:12px;border:1px solid var(--border);padding:1rem;}
+  .calendar-table{width:100%;border-collapse:collapse;font-size:0.95rem;}
+  .calendar-table th{background:var(--primary);color:#fff;padding:12px;text-align:left;font-weight:700;border:none;}
+  .calendar-table td{padding:12px;border-bottom:1px solid var(--border);color:var(--text);}
+  .calendar-table tr:last-child td{border-bottom:none;}
+  .calendar-table tbody tr:hover{background:rgba(29,158,117,0.05);}
+  html.dark .calendar-table tbody tr:hover{background:rgba(29,158,117,0.1);}
   .class-card.full-width-card{grid-column:1 / -1;}
   .class-card:hover{border-color:var(--primary);box-shadow:0 4px 16px rgba(29,158,117,0.12);transform:translateY(-2px);}
   .class-card.has-data{border-color:var(--primary);}
@@ -753,7 +765,6 @@
     <div class="modal-content">
       <div class="modal-header">
         <h3>Add Student</h3>
-        <button class="modal-close" onclick="closeAddStudentModal()">✕</button>
       </div>
       <div class="modal-body">
         <div class="adm-form-field full-width">
@@ -768,15 +779,17 @@
             <option value="Female">Female</option>
           </select>
         </div>
-        <div class="adm-form-field">
+        <div class="adm-form-field" id="admClassField">
           <label for="admClass">Class *</label>
           <select id="admClass">
             <option value="">Select class</option>
           </select>
+          <p class="hint" style="color:var(--muted);font-size:0.72rem;margin:4px 0 0;">This class will be used for every student you add here. You'll only be asked once.</p>
         </div>
         <div class="adm-form-field">
-          <label for="admDob">Date of Birth</label>
+          <label for="admDob">Date of Birth *</label>
           <input type="date" id="admDob" onchange="calcAdmissionAge()">
+          <p class="hint" style="color:var(--muted);font-size:0.72rem;margin:4px 0 0;">Students must be between 6 and 30 years old.</p>
         </div>
         <div class="adm-form-field">
           <label for="admAge">Age</label>
@@ -850,7 +863,6 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button class="btn-secondary" onclick="closeAddStudentModal()">Cancel</button>
         <button class="btn-primary" onclick="addAdmissionRecord()">Add Student</button>
       </div>
     </div>
@@ -1068,6 +1080,42 @@
     </div>
   </div>
   <div id="comingSoonContainer" style="display:none;"></div>
+  <div id="schoolCalendarContainer" style="display:none;">
+    <div class="school-calendar-wrap">
+      <div class="calendar-header">
+        <span class="calendar-icon">📅</span>
+        <h2 class="calendar-title">Malawi 2026/27 Academic Calendar</h2>
+      </div>
+      <div class="calendar-table-wrap">
+        <table class="calendar-table">
+          <thead>
+            <tr>
+              <th>Term</th>
+              <th>Opening Date</th>
+              <th>Closing Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Term One</strong></td>
+              <td>14 Sept 2026</td>
+              <td>18 Dec 2026</td>
+            </tr>
+            <tr>
+              <td><strong>Term Two</strong></td>
+              <td>4 Jan 2027</td>
+              <td>25 Mar 2027</td>
+            </tr>
+            <tr>
+              <td><strong>Term Three</strong></td>
+              <td>12 Apr 2027</td>
+              <td>16 Jul 2027</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- PAGE 6: NEWS -->
@@ -1250,6 +1298,7 @@
       <button class="btn-secondary btn-small" id="rEditBtn" onclick="editFromReport()">Edit</button>
       <button class="btn-secondary btn-small" onclick="closeReport()">Close</button>
       <button class="btn-primary btn-small" onclick="printReport()">Print / Save PDF</button>
+      <button style="background:#25D366;color:#fff;" class="btn-small" onclick="shareReportWhatsApp()" title="Share to Guardian via WhatsApp">📱 Share</button>
     </div>
   </div>
 </div>
@@ -1262,7 +1311,6 @@
       <p style="font-size:0.8rem;color:var(--muted);margin:0;">Admission Record</p>
       <div id="admDetailInfo"></div>
       <div class="modal-actions">
-        <button class="btn-danger btn-small" onclick="deleteAdmissionDetail()">Delete</button>
         <button class="btn-secondary btn-small" onclick="editAdmissionDetail()">Edit</button>
         <button class="btn-secondary btn-small" onclick="closeAdmissionDetail()">Close</button>
       </div>
@@ -1281,8 +1329,9 @@
       <select id="edAdmClass">
         <option value="">Select class</option>
       </select>
-      <label for="edAdmDob">Date of Birth</label>
+      <label for="edAdmDob">Date of Birth *</label>
       <input type="date" id="edAdmDob" onchange="calcEditAdmissionAge()">
+      <p class="hint" style="color:var(--muted);font-size:0.72rem;margin:-6px 0 8px;">Students must be between 6 and 30 years old.</p>
       <label for="edAdmAge">Age</label>
       <input type="text" id="edAdmAge" placeholder="Calculated automatically" readonly disabled>
       <label>Orphan Status</label>
@@ -2230,18 +2279,161 @@ function renderDashboard(){
   });
   const passRate = totalStudents>0 ? Math.round(totalPass/totalStudents*100) : 0;
 
-  const sickCount = getRecords("sick").length;
-  const punCount  = getRecords("punishment").length;
-  const transferCount = getRecords("transfer").length;
+  const sickRecords = getRecords("sick");
+  const punRecords = getRecords("punishment");
+  const transferRecords = getRecords("transfer");
+  
+  // Count sick records by gender
+  let sickBoysCount = 0, sickGirlsCount = 0;
+  sickRecords.forEach(rec => {
+    if(rec.sex === "Male") sickBoysCount++;
+    else if(rec.sex === "Female") sickGirlsCount++;
+  });
+  const sickTotalCount = sickRecords.length;
+  
+  // Count punishment records by gender
+  let punBoysCount = 0, punGirlsCount = 0;
+  punRecords.forEach(rec => {
+    if(rec.sex === "Male") punBoysCount++;
+    else if(rec.sex === "Female") punGirlsCount++;
+  });
+  const punTotalCount = punRecords.length;
+  
+  // Count transfer out records by gender
+  let transferBoysCount = 0, transferGirlsCount = 0;
+  transferRecords.forEach(rec => {
+    if(rec.sex === "Male") transferBoysCount++;
+    else if(rec.sex === "Female") transferGirlsCount++;
+  });
+  const transferTotalCount = transferRecords.length;
 
   // Count from admission records
   const admissionRecords = getRecords("admission");
-  let transferInCount = 0, singleOrphanCount = 0, doubleOrphanCount = 0, repeaterCount = 0;
+  let transferInBoys = 0, transferInGirls = 0, singleOrphanBoys = 0, singleOrphanGirls = 0, 
+      doubleOrphanBoys = 0, doubleOrphanGirls = 0, repeaterBoys = 0, repeaterGirls = 0;
+  
   admissionRecords.forEach(rec=>{
-    if(rec.transferIn === "Yes") transferInCount++;
-    if(rec.orphanSingle) singleOrphanCount++;
-    if(rec.orphanDouble) doubleOrphanCount++;
-    if(rec.repeater === "Yes") repeaterCount++;
+    if(rec.transferIn === "Yes") {
+      if(rec.sex === "Male") transferInBoys++;
+      else if(rec.sex === "Female") transferInGirls++;
+    }
+    if(rec.orphan === "Single") {
+      if(rec.sex === "Male") singleOrphanBoys++;
+      else if(rec.sex === "Female") singleOrphanGirls++;
+    }
+    if(rec.orphan === "Double") {
+      if(rec.sex === "Male") doubleOrphanBoys++;
+      else if(rec.sex === "Female") doubleOrphanGirls++;
+    }
+    if(rec.repeater === "Yes") {
+      if(rec.sex === "Male") repeaterBoys++;
+      else if(rec.sex === "Female") repeaterGirls++;
+    }
+  });
+  
+  const transferInCount = transferInBoys + transferInGirls;
+  const singleOrphanCount = singleOrphanBoys + singleOrphanGirls;
+  const doubleOrphanCount = doubleOrphanBoys + doubleOrphanGirls;
+  const repeaterCount = repeaterBoys + repeaterGirls;
+
+  // Count disabilities by gender
+  let visualBoys = 0, visualGirls = 0, hearingBoys = 0, hearingGirls = 0, physicalBoys = 0, physicalGirls = 0,
+      intellectualBoys = 0, intellectualGirls = 0, albinismBoys = 0, albinismGirls = 0, multipleBoys = 0, multipleGirls = 0, otherDisabilityBoys = 0, otherDisabilityGirls = 0;
+
+  admissionRecords.forEach(rec => {
+    if(rec.disability === "Visual") {
+      if(rec.sex === "Male") visualBoys++;
+      else if(rec.sex === "Female") visualGirls++;
+    }
+    if(rec.disability === "Hearing") {
+      if(rec.sex === "Male") hearingBoys++;
+      else if(rec.sex === "Female") hearingGirls++;
+    }
+    if(rec.disability === "Physical") {
+      if(rec.sex === "Male") physicalBoys++;
+      else if(rec.sex === "Female") physicalGirls++;
+    }
+    if(rec.disability === "Intellectual") {
+      if(rec.sex === "Male") intellectualBoys++;
+      else if(rec.sex === "Female") intellectualGirls++;
+    }
+    if(rec.disability === "Albinism") {
+      if(rec.sex === "Male") albinismBoys++;
+      else if(rec.sex === "Female") albinismGirls++;
+    }
+    if(rec.disability === "Multiple") {
+      if(rec.sex === "Male") multipleBoys++;
+      else if(rec.sex === "Female") multipleGirls++;
+    }
+    if(rec.disability === "Other") {
+      if(rec.sex === "Male") otherDisabilityBoys++;
+      else if(rec.sex === "Female") otherDisabilityGirls++;
+    }
+  });
+
+  // Count denominations by gender
+  let catholicBoys = 0, catholicGirls = 0, ccapBoys = 0, ccapGirls = 0, anglicianBoys = 0, anglicianGirls = 0,
+      adventistBoys = 0, adventistGirls = 0, baptistBoys = 0, baptistGirls = 0, pentecostalBoys = 0, pentecostalGirls = 0,
+      aogBoys = 0, aogGirls = 0, jwBoys = 0, jwGirls = 0, islamBoys = 0, islamGirls = 0, zionBoys = 0, zionGirls = 0,
+      nazareneBoys = 0, nazareneGirls = 0, otherChristianBoys = 0, otherChristianGirls = 0, otherReligionBoys = 0, otherReligionGirls = 0, noneBoys = 0, noneGirls = 0;
+
+  admissionRecords.forEach(rec => {
+    if(rec.denomination === "Roman Catholic") {
+      if(rec.sex === "Male") catholicBoys++;
+      else if(rec.sex === "Female") catholicGirls++;
+    }
+    if(rec.denomination === "CCAP (Presbyterian)") {
+      if(rec.sex === "Male") ccapBoys++;
+      else if(rec.sex === "Female") ccapGirls++;
+    }
+    if(rec.denomination === "Anglican") {
+      if(rec.sex === "Male") anglicianBoys++;
+      else if(rec.sex === "Female") anglicianGirls++;
+    }
+    if(rec.denomination === "Seventh-day Adventist") {
+      if(rec.sex === "Male") adventistBoys++;
+      else if(rec.sex === "Female") adventistGirls++;
+    }
+    if(rec.denomination === "Baptist") {
+      if(rec.sex === "Male") baptistBoys++;
+      else if(rec.sex === "Female") baptistGirls++;
+    }
+    if(rec.denomination === "Pentecostal") {
+      if(rec.sex === "Male") pentecostalBoys++;
+      else if(rec.sex === "Female") pentecostalGirls++;
+    }
+    if(rec.denomination === "Assemblies of God") {
+      if(rec.sex === "Male") aogBoys++;
+      else if(rec.sex === "Female") aogGirls++;
+    }
+    if(rec.denomination === "Jehovah's Witness") {
+      if(rec.sex === "Male") jwBoys++;
+      else if(rec.sex === "Female") jwGirls++;
+    }
+    if(rec.denomination === "Islam") {
+      if(rec.sex === "Male") islamBoys++;
+      else if(rec.sex === "Female") islamGirls++;
+    }
+    if(rec.denomination === "Zion") {
+      if(rec.sex === "Male") zionBoys++;
+      else if(rec.sex === "Female") zionGirls++;
+    }
+    if(rec.denomination === "Nazarene") {
+      if(rec.sex === "Male") nazareneBoys++;
+      else if(rec.sex === "Female") nazareneGirls++;
+    }
+    if(rec.denomination === "Other Christian") {
+      if(rec.sex === "Male") otherChristianBoys++;
+      else if(rec.sex === "Female") otherChristianGirls++;
+    }
+    if(rec.denomination === "Other Religion") {
+      if(rec.sex === "Male") otherReligionBoys++;
+      else if(rec.sex === "Female") otherReligionGirls++;
+    }
+    if(rec.denomination === "None") {
+      if(rec.sex === "Male") noneBoys++;
+      else if(rec.sex === "Female") noneGirls++;
+    }
   });
 
   const latestAnnouncement = (typeof NEWS_ANNOUNCEMENTS!=="undefined" && NEWS_ANNOUNCEMENTS.length) ? NEWS_ANNOUNCEMENTS[0] : null;
@@ -2263,6 +2455,40 @@ function renderDashboard(){
     }
   });
 
+  // Calculate monthly average attendance by gender
+  const currentDate = new Date();
+  const currentMonth = String(currentDate.getMonth() + 1).padStart(2, '0'); // 01-12
+  const currentYear = currentDate.getFullYear();
+  const monthPrefix = `${currentYear}-${currentMonth}`;
+  
+  let boysPresent = 0, boysTotal = 0, girlsPresent = 0, girlsTotal = 0;
+  const admRecords = getRecords("admission");
+  const boysList = admRecords.filter(r => r.sex === "Male");
+  const girlsList = admRecords.filter(r => r.sex === "Female");
+  
+  Object.keys(attData).forEach(key=>{
+    const record = attData[key];
+    if(record && record.date && record.date.startsWith(monthPrefix)){
+      Object.entries(record.entries||{}).forEach(([studentId, status])=>{
+        const boy = boysList.find(b => b.id === studentId || b.name === studentId);
+        const girl = girlsList.find(g => g.id === studentId || g.name === studentId);
+        
+        if(boy){
+          boysTotal++;
+          if(status === "Present") boysPresent++;
+        }
+        if(girl){
+          girlsTotal++;
+          if(status === "Present") girlsPresent++;
+        }
+      });
+    }
+  });
+  
+  const boysAvgAttendance = boysTotal > 0 ? Math.round((boysPresent / boysTotal) * 100) : 0;
+  const girlsAvgAttendance = girlsTotal > 0 ? Math.round((girlsPresent / girlsTotal) * 100) : 0;
+  const monthlyAttendanceRecorded = boysTotal > 0 || girlsTotal > 0;
+
   container.innerHTML = `
     <div class="dash-grid">
       <div class="dash-card full-width">
@@ -2279,35 +2505,6 @@ function renderDashboard(){
         <div class="dash-card-value">${totalGirls}</div>
         <div class="dash-card-label">Girls</div>
       </div>
-
-      <div class="dash-card">
-        <div class="dash-card-value">${sickCount}</div>
-        <div class="dash-card-label">Sick Records</div>
-      </div>
-      <div class="dash-card">
-        <div class="dash-card-value">${punCount}</div>
-        <div class="dash-card-label">Punishment Records</div>
-      </div>
-      <div class="dash-card">
-        <div class="dash-card-value">${transferCount}</div>
-        <div class="dash-card-label">Transfer Out</div>
-      </div>
-      <div class="dash-card">
-        <div class="dash-card-value">${transferInCount}</div>
-        <div class="dash-card-label">Transfer In</div>
-      </div>
-      <div class="dash-card">
-        <div class="dash-card-value">${singleOrphanCount}</div>
-        <div class="dash-card-label">Single Orphans</div>
-      </div>
-      <div class="dash-card">
-        <div class="dash-card-value">${doubleOrphanCount}</div>
-        <div class="dash-card-label">Double Orphans</div>
-      </div>
-      <div class="dash-card">
-        <div class="dash-card-value">${repeaterCount}</div>
-        <div class="dash-card-label">Repeaters</div>
-      </div>
     </div>
 
     <div class="dash-section">
@@ -2319,6 +2516,267 @@ function renderDashboard(){
           <div class="dash-att-pill sick">Sick: ${sickToday}</div>
           <div class="dash-att-pill leave">Leave: ${leaveToday}</div>
         </div>` : `<div class="dash-empty">No attendance recorded yet today.</div>`}
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">This Month Average Attendance</div>
+      ${monthlyAttendanceRecorded ? `
+        <div class="dash-attendance-row">
+          <div class="dash-att-pill present">Boys: ${boysAvgAttendance}%</div>
+          <div class="dash-att-pill present">Girls: ${girlsAvgAttendance}%</div>
+        </div>` : `<div class="dash-empty">No attendance recorded yet this month.</div>`}
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Sick Records</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${sickBoysCount}</div>
+        <div class="dash-att-pill absent">Girls: ${sickGirlsCount}</div>
+        <div class="dash-att-pill sick">Total: ${sickTotalCount}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Punishment Records</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${punBoysCount}</div>
+        <div class="dash-att-pill absent">Girls: ${punGirlsCount}</div>
+        <div class="dash-att-pill sick">Total: ${punTotalCount}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Transfer Out</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${transferBoysCount}</div>
+        <div class="dash-att-pill absent">Girls: ${transferGirlsCount}</div>
+        <div class="dash-att-pill sick">Total: ${transferTotalCount}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Transfer In</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${transferInBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${transferInGirls}</div>
+        <div class="dash-att-pill sick">Total: ${transferInCount}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Single Orphans</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${singleOrphanBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${singleOrphanGirls}</div>
+        <div class="dash-att-pill sick">Total: ${singleOrphanCount}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Double Orphans</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${doubleOrphanBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${doubleOrphanGirls}</div>
+        <div class="dash-att-pill sick">Total: ${doubleOrphanCount}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Repeaters</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${repeaterBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${repeaterGirls}</div>
+        <div class="dash-att-pill sick">Total: ${repeaterCount}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Visual Disability</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${visualBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${visualGirls}</div>
+        <div class="dash-att-pill sick">Total: ${visualBoys + visualGirls}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Hearing Disability</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${hearingBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${hearingGirls}</div>
+        <div class="dash-att-pill sick">Total: ${hearingBoys + hearingGirls}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Physical Disability</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${physicalBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${physicalGirls}</div>
+        <div class="dash-att-pill sick">Total: ${physicalBoys + physicalGirls}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Intellectual Disability</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${intellectualBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${intellectualGirls}</div>
+        <div class="dash-att-pill sick">Total: ${intellectualBoys + intellectualGirls}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Albinism</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${albinismBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${albinismGirls}</div>
+        <div class="dash-att-pill sick">Total: ${albinismBoys + albinismGirls}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Multiple Disabilities</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${multipleBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${multipleGirls}</div>
+        <div class="dash-att-pill sick">Total: ${multipleBoys + multipleGirls}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Other Disability</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${otherDisabilityBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${otherDisabilityGirls}</div>
+        <div class="dash-att-pill sick">Total: ${otherDisabilityBoys + otherDisabilityGirls}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Roman Catholic</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${catholicBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${catholicGirls}</div>
+        <div class="dash-att-pill sick">Total: ${catholicBoys + catholicGirls}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">CCAP (Presbyterian)</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${ccapBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${ccapGirls}</div>
+        <div class="dash-att-pill sick">Total: ${ccapBoys + ccapGirls}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Anglican</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${anglicianBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${anglicianGirls}</div>
+        <div class="dash-att-pill sick">Total: ${anglicianBoys + anglicianGirls}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Seventh-day Adventist</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${adventistBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${adventistGirls}</div>
+        <div class="dash-att-pill sick">Total: ${adventistBoys + adventistGirls}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Baptist</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${baptistBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${baptistGirls}</div>
+        <div class="dash-att-pill sick">Total: ${baptistBoys + baptistGirls}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Pentecostal</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${pentecostalBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${pentecostalGirls}</div>
+        <div class="dash-att-pill sick">Total: ${pentecostalBoys + pentecostalGirls}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Assemblies of God</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${aogBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${aogGirls}</div>
+        <div class="dash-att-pill sick">Total: ${aogBoys + aogGirls}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Jehovah's Witness</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${jwBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${jwGirls}</div>
+        <div class="dash-att-pill sick">Total: ${jwBoys + jwGirls}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Islam</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${islamBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${islamGirls}</div>
+        <div class="dash-att-pill sick">Total: ${islamBoys + islamGirls}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Zion</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${zionBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${zionGirls}</div>
+        <div class="dash-att-pill sick">Total: ${zionBoys + zionGirls}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Nazarene</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${nazareneBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${nazareneGirls}</div>
+        <div class="dash-att-pill sick">Total: ${nazareneBoys + nazareneGirls}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Other Christian</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${otherChristianBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${otherChristianGirls}</div>
+        <div class="dash-att-pill sick">Total: ${otherChristianBoys + otherChristianGirls}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Other Religion</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${otherReligionBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${otherReligionGirls}</div>
+        <div class="dash-att-pill sick">Total: ${otherReligionBoys + otherReligionGirls}</div>
+      </div>
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">No Denomination</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${noneBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${noneGirls}</div>
+        <div class="dash-att-pill sick">Total: ${noneBoys + noneGirls}</div>
+      </div>
     </div>
 
     <div class="dash-section">
@@ -2977,6 +3435,95 @@ function printReport(){
   win.document.close();
   setTimeout(()=>{win.print();},400);
 }
+
+function shareReportWhatsApp(){
+  const cls = currentClass();
+  const subs = getSubjects(cls);
+  
+  // Get merged list to find student details
+  const admissionRecords = getRecords("admission").filter(r => r.class === cls.toString());
+  const assessmentData = getList(cls);
+  const mergedList = admissionRecords.map(adm => {
+    const assessment = assessmentData.find(a => a.name === adm.name && a.sex === adm.sex);
+    return {
+      id: assessment?.id || adm.id,
+      name: adm.name,
+      sex: adm.sex,
+      class: adm.class,
+      whatsapp: adm.whatsapp,
+      guardian: adm.guardian,
+      _hasScores: !!assessment,
+      ...assessment
+    };
+  }).sort((a,b)=>calcTotal(b,subs,cls)-calcTotal(a,subs,cls));
+  
+  const student = mergedList.find(s => s.id === activeReportId) || mergedList.find(s => s.name && s.name === activeReportId);
+  if(!student){
+    alert("Student not found");
+    return;
+  }
+  
+  // Check if WhatsApp number exists
+  if(!student.whatsapp){
+    alert("Guardian WhatsApp number not found for this student. Please add it in the Students tab (Admission Records).");
+    return;
+  }
+  
+  // Get report details
+  const hasScores = !!student._hasScores;
+  const total = calcTotal(student, subs, cls);
+  const maxTotal = getMaxTotal(subs, cls);
+  const { level, remark } = getLevelAndRemark(total, maxTotal);
+  const pf = getPassFail(total, cls, student, subs);
+  
+  let gradeValue, remarkValue;
+  if(cls==="MSCE"){
+    const totalDisp = displayTotal(total, cls);
+    gradeValue = getMsceGrade(totalDisp);
+    remarkValue = pf;
+  } else if(cls==="JC"){
+    const totalDisp = displayTotal(total, cls);
+    gradeValue = getJceGrade(totalDisp);
+    remarkValue = pf;
+  } else {
+    gradeValue = level;
+    remarkValue = remark;
+  }
+  
+  // Build message
+  let message = `*${classLabel(cls)} - Academic Report*\n\n`;
+  message += `*Student:* ${student.name}\n`;
+  message += `*Date:* ${new Date().toLocaleDateString()}\n`;
+  if(hasScores){
+    message += `*Total Score:* ${total} / ${maxTotal}\n`;
+    message += `*Grade/Level:* ${gradeValue}\n`;
+    message += `*Result:* ${pf}\n`;
+    message += `*Remarks:* ${remarkValue}\n`;
+  } else {
+    message += `*Status:* No scores recorded yet\n`;
+  }
+  
+  // Add subject scores
+  if(hasScores && subs.length > 0){
+    message += `\n*Subject Scores:*\n`;
+    subs.forEach(sub => {
+      const score = student[sub.key] || 0;
+      message += `${sub.label}: ${score}\n`;
+    });
+  }
+  
+  message += `\n_Sent from Easy Assess_`;
+  
+  // Format phone number (remove non-numeric chars if needed) and open WhatsApp
+  const phoneNumber = student.whatsapp.replace(/\D/g, '');
+  const encodedMessage = encodeURIComponent(message);
+  
+  // Try opening WhatsApp with the formatted message
+  // If WhatsApp is installed, it will open; otherwise try web WhatsApp
+  const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+  window.open(whatsappUrl, '_blank');
+}
+
 document.getElementById("reportModal").addEventListener("click",function(e){if(e.target===this)closeReport();});
 
 // ── Export PDF ────────────────────────────────────────────────────────────
@@ -3270,7 +3817,7 @@ function clearScan(){
 
 // expose globals
 window.editStudent=editStudent;window.deleteStudent=deleteStudent;
-window.showReport=showReport;window.closeReport=closeReport;window.printReport=printReport;
+window.showReport=showReport;window.closeReport=closeReport;window.printReport=printReport;window.shareReportWhatsApp=shareReportWhatsApp;
 window.editFromReport=editFromReport;window.deleteFromReport=deleteFromReport;
 window.saveScanned=saveScanned;window.clearScan=clearScan;window.setMode=setMode;
 
@@ -4023,6 +4570,7 @@ const RESOURCE_TABS = [
   {key:"learnersbooks",  label:"LEARNERS BOOKS"},
   {key:"schemes",        label:"SCHEMES OF WORK"},
   {key:"lessonplans",    label:"LESSON PLANS"},
+  {key:"calendar",       label:"SCHOOL CALENDAR"},
 ];
 
 // ── Records: Sick / Punishment ──────────────────────────────────────────────
@@ -4530,10 +5078,46 @@ function toggleOrphanStatus(which){
 }
 window.toggleOrphanStatus = toggleOrphanStatus;
 
+// Once at least one student has been saved, we already know which class this
+// device/dialog is being used for — so the Class field only needs to be asked
+// once. Every student added afterwards is silently saved under that same class.
+function getLockedAdmissionClass(){
+  const records = getRecords("admission");
+  return records.length ? records[0].class : null;
+}
+function updateAdmClassFieldVisibility(){
+  const fieldWrap = document.getElementById("admClassField");
+  const classSel  = document.getElementById("admClass");
+  const hasStudents = getRecords("admission").length > 0;
+  if(fieldWrap) fieldWrap.style.display = hasStudents ? "none" : "";
+  if(classSel)  classSel.required = !hasStudents;
+}
+window.updateAdmClassFieldVisibility = updateAdmClassFieldVisibility;
+
+// Students fragment only accepts students between 6 and 30 years old.
+// Age is derived from Date of Birth, so DOB effectively becomes required.
+const MIN_STUDENT_AGE = 6;
+const MAX_STUDENT_AGE = 30;
+function validateStudentAge(ageValue){
+  if(ageValue === "" || ageValue === null || ageValue === undefined){
+    return { valid:false, message:"Please enter the student's date of birth so their age can be verified. Only students between "+MIN_STUDENT_AGE+" and "+MAX_STUDENT_AGE+" years old can be saved here." };
+  }
+  const ageNum = Number(ageValue);
+  if(isNaN(ageNum)){
+    return { valid:false, message:"Couldn't read the student's age from their date of birth. Please check it and try again." };
+  }
+  if(ageNum < MIN_STUDENT_AGE || ageNum > MAX_STUDENT_AGE){
+    return { valid:false, message:"This app only accepts students between "+MIN_STUDENT_AGE+" and "+MAX_STUDENT_AGE+" years old. This student's calculated age is "+ageNum+"." };
+  }
+  return { valid:true, ageNum };
+}
+window.validateStudentAge = validateStudentAge;
+
 function addAdmissionRecord(){
   const name        = document.getElementById("admName").value.trim();
   const sex         = document.getElementById("admSex").value;
-  const cls         = document.getElementById("admClass").value;
+  const lockedClass = getLockedAdmissionClass();
+  const cls         = lockedClass || document.getElementById("admClass").value;
   const dob         = document.getElementById("admDob").value;
   const age         = document.getElementById("admAge").value;
   const orphan      = document.getElementById("admOrphanSingle").checked ? "Single"
@@ -4550,6 +5134,8 @@ function addAdmissionRecord(){
   if(!name){ alert("Please enter the student's name."); return; }
   if(!sex){ alert("Please select sex."); return; }
   if(!cls){ alert("Please select the student's class (needed for Attendance Register)."); return; }
+  const ageCheck = validateStudentAge(age);
+  if(!ageCheck.valid){ alert(ageCheck.message); return; }
 
   const records = getRecords("admission");
   records.unshift({
@@ -4574,8 +5160,10 @@ function addAdmissionRecord(){
   document.getElementById("admGuardian").value="";
   document.getElementById("admWhatsapp").value="";
 
+  updateAdmClassFieldVisibility();
   renderAdmissionRecords();
   updateRecordsCounts();
+  closeAddStudentModal();
 }
 window.addAdmissionRecord = addAdmissionRecord;
 
@@ -4583,6 +5171,7 @@ window.addAdmissionRecord = addAdmissionRecord;
 function openAddStudentModal(){
   document.getElementById("addStudentModal").style.display = "flex";
   populateAdmissionSpinners();
+  updateAdmClassFieldVisibility();
   // Clear form fields
   document.getElementById("admName").value = "";
   document.getElementById("admSex").value = "";
@@ -4714,9 +5303,12 @@ function saveAdmissionEdit(){
   const name = document.getElementById("edAdmName").value.trim();
   const sex  = document.getElementById("edAdmSex").value;
   const cls  = document.getElementById("edAdmClass").value;
+  const age  = document.getElementById("edAdmAge").value;
   if(!name){ alert("Please enter the student's name."); return; }
   if(!sex){ alert("Please select sex."); return; }
   if(!cls){ alert("Please select the student's class (needed for Attendance Register)."); return; }
+  const ageCheck = validateStudentAge(age);
+  if(!ageCheck.valid){ alert(ageCheck.message); return; }
 
   const records = getRecords("admission");
   const idx = records.findIndex(r=>r.id===admissionDetailId);
@@ -4954,12 +5546,14 @@ function setResourceTab(tab){
   document.getElementById("syllabusesListContainer").style.display = tab==="syllabuses"  ? "block" : "none";
   document.getElementById("sowContainer").style.display            = tab==="schemes"     ? "block" : "none";
   document.getElementById("lessonPlanCodeContainer").style.display = tab==="lessonplans" ? "block" : "none";
-  document.getElementById("comingSoonContainer").style.display     = (tab!=="notes" && tab!=="syllabuses" && tab!=="schemes" && tab!=="lessonplans") ? "block" : "none";
+  document.getElementById("schoolCalendarContainer").style.display = tab==="calendar"    ? "block" : "none";
+  document.getElementById("comingSoonContainer").style.display     = (tab!=="notes" && tab!=="syllabuses" && tab!=="schemes" && tab!=="lessonplans" && tab!=="calendar") ? "block" : "none";
 
   if(tab==="notes")           renderNotesList();
   else if(tab==="syllabuses") renderSyllabusesList();
   else if(tab==="schemes")    { sowLoadSyllabuses().then(() => sowInit()); }
   else if(tab==="lessonplans")renderLessonPlanCode();
+  else if(tab==="calendar")   {} // Calendar is static, no render needed
   else                        renderComingSoon(tab);
 }
 window.setResourceTab = setResourceTab;
