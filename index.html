@@ -5706,15 +5706,15 @@ function renderLessonPlanCode(){
 }
 window.renderLessonPlanCode = renderLessonPlanCode;
 
-// Sample announcements & news content (this app has no live news backend,
-// so this shows realistic placeholder content styled to match the requested design).
-const NEWS_ANNOUNCEMENTS = [
+// Sample announcements & news content — used as an initial/offline fallback
+// until news.json (a separate, editable data file) loads successfully.
+let NEWS_ANNOUNCEMENTS = [
   { title:"MSCE 2025 Registration Deadline — April 30th", date:"Apr 20, 2025" },
   { title:"Teachers' In-Service Training: May 12–16, Lilongwe", date:"Apr 18, 2025" },
   { title:"New CPD Module Available: Inclusive Education", date:"Apr 15, 2025" }
 ];
 
-const NEWS_ARTICLES = [
+let NEWS_ARTICLES = [
   {
     tag:"Policy",
     headline:"Ministry of Education Launches New Curriculum Framework for Primary Schools",
@@ -5731,6 +5731,25 @@ const NEWS_ARTICLES = [
     preview:"MANEB has released updated marking guidelines for the Primary School Leaving Certificate Examination, with revised rubrics for continuous assessment."
   }
 ];
+
+// Loads news.json (a standalone, easy-to-edit data file shipped alongside
+// index.html) and refreshes both the News page and the Home "Latest Updates"
+// preview once it's available. If it can't be loaded (e.g. opened directly as
+// a local file without a server), the hardcoded fallback content above is used.
+async function loadNewsData(){
+  try{
+    const res = await fetch("news.json", {cache:"no-store"});
+    if(!res.ok) return;
+    const data = await res.json();
+    if(Array.isArray(data.announcements) && data.announcements.length) NEWS_ANNOUNCEMENTS = data.announcements;
+    if(Array.isArray(data.articles) && data.articles.length) NEWS_ARTICLES = data.articles;
+    renderNewsPage();
+    renderDashboard();
+  } catch(e){
+    // Offline / opened as a local file without a server — keep fallback content.
+  }
+}
+window.loadNewsData = loadNewsData;
 
 function renderNewsPage(){
   const annContainer = document.getElementById("newsAnnouncementsList");
@@ -5749,7 +5768,7 @@ function renderNewsPage(){
   if(artContainer){
     artContainer.innerHTML = NEWS_ARTICLES.map(n=>`
       <div class="news-article-card">
-        <div class="news-article-image">
+        <div class="news-article-image"${n.image?` style="background-image:url('${n.image.replace(/'/g,"%27")}');background-size:cover;background-position:center;"`:""}>
           <span class="news-article-tag">${escapeHtml(n.tag)}</span>
         </div>
         <div class="news-article-body">
@@ -6102,6 +6121,7 @@ updateExcelBtn();
 updateBadge();
 renderDashboard();
 populateAdmissionSpinners();
+loadNewsData();
 
 // ── Google Analytics: PWA install tracking ──────────────────────────────
 // Fires once, on first load, so you can see how many sessions are already

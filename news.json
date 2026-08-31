@@ -1,0 +1,37 @@
+{
+  "announcements": [
+    { "title": "MSCE 2025 Registration Deadline — April 30th", "date": "Apr 20, 2025" },
+    { "title": "Teachers' In-Service Training: May 12–16, Lilongwe", "date": "Apr 18, 2025" },
+    { "title": "New CPD Module Available: Inclusive Education", "date": "Apr 15, 2025" }
+  ],
+  "articles": [
+    {
+      "id": "duwana-muhammad-donation",
+      "tag": "Community",
+      "headline": "Donors Pledge Over K1.2 Million to Support Determined Young Learner",
+      "preview": "Government officials and business leaders rallied behind 16-year-old Duwana Muhammad of Mangale Primary School at the National Youth Summit in Lilongwe, pledging combined support of more than K1.2 million after her determination to stay in school inspired those in attendance. Standard Bank Malawi also committed to opening an education savings account to help safeguard the funds for her studies.",
+      "date": "2026-08-18"
+    },
+    {
+      "id": "curriculum-framework",
+      "tag": "Policy",
+      "headline": "Ministry of Education Launches New Curriculum Framework for Primary Schools",
+      "preview": "The Malawi Ministry of Education has unveiled a new curriculum framework aimed at improving literacy and numeracy outcomes across primary schools nationwide.",
+      "date": "2025-04-10"
+    },
+    {
+      "id": "rural-bursary-support",
+      "tag": "Funding",
+      "headline": "Government Announces Increased Bursary Support for Rural Teachers",
+      "preview": "New funding will help cover accommodation and transport costs for teachers posted to hard-to-reach rural schools starting next term.",
+      "date": "2025-03-22"
+    },
+    {
+      "id": "pslce-marking-guidelines",
+      "tag": "Exams",
+      "headline": "PSLCE Marking Guidelines Updated for 2025",
+      "preview": "MANEB has released updated marking guidelines for the Primary School Leaving Certificate Examination, with revised rubrics for continuous assessment.",
+      "date": "2025-02-14"
+    }
+  ]
+}
