@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#1D9E75">
-<title>Easy Assess 33</title>
+<title>Easy Assess</title>
 <link rel="manifest" href="manifest.json">
 <!-- Google Analytics (GA4) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-VN4M202H3F"></script>
@@ -550,7 +550,7 @@
 <!-- Top bar (always visible) -->
 <div class="top-bar">
   <button class="gear-btn" id="backBtn" onclick="goBack()" style="display:none;">&#8592;</button>
-  <h1 id="topTitle">Easy Assess 33</h1>
+  <h1 id="topTitle">Easy Assess</h1>
   <button class="gear-btn" onclick="shareApp()" title="Share this app">
     <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
   </button>
@@ -1404,7 +1404,7 @@
 <!-- Share modal -->
 <div id="shareModal">
   <div id="shareBox">
-    <h3>🔗 Share Easy Assess 33</h3>
+    <h3>🔗 Share Easy Assess</h3>
     <p>Share this link with friends and colleagues so they can install the app on their devices.</p>
     <input id="shareUrl" readonly onclick="this.select()">
     <div id="qrWrap"></div>
@@ -2155,61 +2155,7 @@ function sowFmt(isoStr) {
 }
 
 function sowGenerate() {
-  const subj = document.getElementById('sow-subject').value;
-  const wkStart = document.getElementById('sow-weekstart').value;
-  const weeks = parseInt(document.getElementById('sow-weeks').value) || 0;
-  const lpw = parseInt(document.getElementById('sow-lpw').value) || 0;
-  const teacher = document.getElementById('sow-teacher').value.trim();
-  const errEl = document.getElementById('sow-error');
-  errEl.style.display = 'none';
-
-  if (!subj) { errEl.textContent = 'Please select a subject.'; errEl.style.display = 'block'; return; }
-  if (!wkStart) { errEl.textContent = 'Please select a Week Beginning date.'; errEl.style.display = 'block'; return; }
-  const startDay = new Date(wkStart + 'T00:00:00').getDay();
-  if (startDay !== 1) { errEl.textContent = 'Week Beginning must be a Monday.'; errEl.style.display = 'block'; return; }
-  if (!weeks || weeks < 1) { errEl.textContent = 'Please enter number of weeks (min 1).'; errEl.style.display = 'block'; return; }
-  if (!lpw || lpw < 1) { errEl.textContent = 'Please enter lessons per week (min 1).'; errEl.style.display = 'block'; return; }
-
-  const rows = sowSyllabusData[subj] || [];
-  const allLessons = [];
-  rows.forEach(r => {
-    (r.activity_bullets || []).forEach(act => {
-      allLessons.push({
-        activity: act,
-        success_criteria: r.success_criteria || '',
-        methodologies: r.methodologies || '',
-        resources: r.resources || '',
-      });
-    });
-  });
-
-  const tableRows = [];
-  let curMon = wkStart;
-  for (let w = 0; w < weeks; w++) {
-    const weekLessons = [];
-    for (let l = 0; l < lpw; l++) {
-      weekLessons.push(allLessons[(w * lpw + l) % allLessons.length]);
-    }
-    const fri = new Date(curMon + 'T00:00:00');
-    fri.setDate(fri.getDate() + 4);
-    const friISO = fri.getFullYear() + '-' + String(fri.getMonth()+1).padStart(2,'0') + '-' + String(fri.getDate()).padStart(2,'0');
-    tableRows.push({weekNum: w+1, mondayISO: curMon, fridayISO: friISO, lessons: weekLessons, success_criteria: weekLessons[0]?.success_criteria || '', methodologies: weekLessons[0]?.methodologies || ''});
-    curMon = sowNextMon(curMon);
-  }
-
-  sowTableData = {subj, std: sowCurrentStdLabel, teacher, weeks, lpw, tableRows};
-
-  let html = '<table style="width:100%;border-collapse:collapse;"><tr style="background:var(--forest);color:#fff;"><th style="padding:8px;border:1px solid var(--border);">Week</th><th style="padding:8px;border:1px solid var(--border);">Activities</th></tr>';
-  tableRows.forEach(row => {
-    html += `<tr style="border:1px solid var(--border);"><td style="padding:8px;font-weight:700;">Week ${row.weekNum}<br/>${sowFmt(row.mondayISO)}</td><td style="padding:8px;">`;
-    row.lessons.forEach((l, i) => { html += `${i+1}. ${l.activity.replace(/\n/g, ' ')}<br/>`; });
-    html += '</td></tr>';
-  });
-  html += '</table>';
-
-  document.getElementById('sow-preview').innerHTML = html;
-  document.getElementById('sow-preview').style.display = 'block';
-  document.getElementById('sow-pdf-btn').style.display = 'block';
+  alert('Thank you for your interest. Schemes of Work section is still under construction');
 }
 
 function sowGeneratePDF() {
@@ -2869,7 +2815,7 @@ function openHelp(){
 function openAbout(){
   closeAppMenu();
   showInfoModal("ℹ️ About", `
-    <p><strong>Easy Assess 33</strong></p>
+    <p><strong>Easy Assess</strong></p>
     <p>A student assessment and score-management app for Malawian teachers, covering Standards 1–8, Junior Certificate, and MSCE.</p>
     <p>Developed by Juma Ali.</p>
     <p>📞 0995 818 600 &nbsp;|&nbsp; 0888 592 312</p>
@@ -4273,14 +4219,14 @@ function copyLink(){
 
 function shareWhatsApp(){
   const url = document.getElementById("shareUrl").value;
-  const msg = encodeURIComponent(`📋 Easy Assess 33 — School Assessment App\n\nInstall it on your phone or PC:\n${url}`);
+  const msg = encodeURIComponent(`📋 Easy Assess — School Assessment App\n\nInstall it on your phone or PC:\n${url}`);
   window.open(`https://wa.me/?text=${msg}`, "_blank");
 }
 
 function nativeShare(){
   const url = document.getElementById("shareUrl").value;
   navigator.share({
-    title: "Easy Assess 33",
+    title: "Easy Assess",
     text: "School Assessment App — install it on your device!",
     url: url
   }).catch(()=>{});
@@ -5732,16 +5678,31 @@ let NEWS_ARTICLES = [
   }
 ];
 
-// Loads news.json (a standalone, easy-to-edit data file shipped alongside
-// index.html) and refreshes both the News page and the Home "Latest Updates"
-// preview once it's available. If it can't be loaded (e.g. opened directly as
-// a local file without a server), the hardcoded fallback content above is used.
+// Loads announcements.json and news.json (standalone, easy-to-edit data files
+// shipped alongside index.html) and refreshes both the News page and the Home
+// "Latest Updates" preview once available. If either can't be loaded (e.g.
+// opened directly as a local file without a server), the hardcoded fallback
+// content above is used.
+async function loadAnnouncementsData(){
+  try{
+    const res = await fetch("announcements.json", {cache:"no-store"});
+    if(!res.ok) return;
+    const data = await res.json();
+    if(Array.isArray(data.announcements) && data.announcements.length) NEWS_ANNOUNCEMENTS = data.announcements;
+    renderNewsPage();
+    renderDashboard();
+  } catch(e){
+    // Offline / opened as a local file without a server — keep fallback content.
+  }
+}
+window.loadAnnouncementsData = loadAnnouncementsData;
+
 async function loadNewsData(){
+  await loadAnnouncementsData();
   try{
     const res = await fetch("news.json", {cache:"no-store"});
     if(!res.ok) return;
     const data = await res.json();
-    if(Array.isArray(data.announcements) && data.announcements.length) NEWS_ANNOUNCEMENTS = data.announcements;
     if(Array.isArray(data.articles) && data.articles.length) NEWS_ARTICLES = data.articles;
     renderNewsPage();
     renderDashboard();
