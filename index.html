@@ -541,6 +541,37 @@
   .news-article-body{padding:1.5rem 1.1rem 1.1rem;}
   .news-article-headline{font-family:Georgia,'Times New Roman',serif;font-size:1.22rem;font-weight:700;color:var(--text);line-height:1.34;margin:0 0 0.5rem;}
   .news-article-preview{font-size:0.86rem;color:var(--muted);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  /* Forum */
+  .forum-search-wrap{position:relative;margin-bottom:0.9rem;}
+  .forum-search-wrap .fs-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.95rem;pointer-events:none;}
+  .forum-search{width:100%;padding:11px 14px 11px 38px;border:1px solid var(--border);border-radius:12px;font-size:0.92rem;background:var(--grey-100);color:var(--text);}
+  .forum-tabs{display:flex;gap:1.4rem;border-bottom:1px solid var(--border);margin-bottom:1rem;}
+  .forum-tab{background:none;border:none;padding:0 0 0.7rem;font-size:0.85rem;font-weight:700;letter-spacing:0.03em;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;text-transform:uppercase;}
+  .forum-tab.active{color:var(--primary-dark);border-bottom-color:var(--primary-dark);}
+  .forum-post-card{background:var(--card);border-radius:14px;padding:1.1rem;margin-bottom:1rem;box-shadow:0 1px 4px rgba(0,0,0,0.07);cursor:pointer;transition:transform 0.15s;}
+  .forum-post-card:active{transform:scale(0.985);}
+  .forum-post-head{display:flex;align-items:center;gap:0.7rem;margin-bottom:0.7rem;}
+  .forum-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.95rem;flex-shrink:0;}
+  .forum-post-author{font-weight:700;font-size:0.95rem;color:var(--text);line-height:1.25;}
+  .forum-post-time{font-size:0.78rem;color:var(--muted);}
+  .forum-post-tag{margin-left:auto;background:#E1F5EE;color:var(--primary-dark);font-size:0.76rem;font-weight:700;padding:5px 10px;border-radius:999px;white-space:nowrap;flex-shrink:0;}
+  html.dark .forum-post-tag{background:rgba(29,158,117,0.18);}
+  .forum-post-title{font-size:1.08rem;font-weight:700;color:var(--text);line-height:1.32;margin:0 0 0.5rem;}
+  .forum-post-preview{font-size:0.88rem;color:var(--muted);line-height:1.55;margin:0 0 0.7rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .forum-post-foot{display:flex;align-items:center;gap:1.2rem;border-top:1px solid var(--border);padding-top:0.7rem;font-size:0.85rem;color:var(--muted);}
+  .forum-post-foot .fpf-view{margin-left:auto;color:var(--primary-dark);font-weight:700;}
+  .forum-empty{text-align:center;color:var(--muted);padding:2.5rem 0;font-size:0.9rem;}
+  .forum-fab{position:fixed;right:1.1rem;bottom:1.6rem;width:56px;height:56px;border-radius:50%;background:var(--primary);color:#fff;border:none;font-size:1.6rem;box-shadow:0 4px 14px rgba(0,0,0,0.25);cursor:pointer;z-index:150;display:flex;align-items:center;justify-content:center;line-height:1;}
+  #forumPostModal,#forumNewPostModal{display:none;position:fixed;inset:0;z-index:8888;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;padding:1rem;}
+  #forumPostModal.open,#forumNewPostModal.open{display:flex;}
+  #forumPostBox,#forumNewPostBox{background:var(--card);border-radius:14px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;padding:1.4rem;color:var(--text);}
+  .forum-reply-item{border-top:1px solid var(--border);padding:0.8rem 0;display:flex;gap:0.6rem;}
+  .forum-reply-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.72rem;flex-shrink:0;}
+  .forum-reply-body{flex:1;min-width:0;}
+  .forum-reply-author{font-weight:700;font-size:0.85rem;color:var(--text);}
+  .forum-reply-text{font-size:0.85rem;color:var(--text);line-height:1.45;margin-top:2px;}
+  .forum-reply-time{font-size:0.72rem;color:var(--muted);margin-top:2px;}
+  #forumReplyInput{width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;margin-top:0.9rem;background:var(--card);color:var(--text);resize:vertical;min-height:60px;}
   /* pdf dialog */
   #pdfModal{display:none;position:fixed;inset:0;z-index:8890;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;padding:1rem;}
   #pdfModal.open{display:flex;}
@@ -1147,6 +1178,54 @@
     <span class="news-see-all">See All</span>
   </div>
   <div id="newsArticlesList"></div>
+</div>
+
+<!-- PAGE: FORUM -->
+<div class="page" id="pageForum">
+  <div class="forum-search-wrap">
+    <span class="fs-icon">🔍</span>
+    <input type="text" id="forumSearchInput" class="forum-search" placeholder="Search discussions…" oninput="renderForumPage()">
+  </div>
+  <div class="forum-tabs">
+    <button class="forum-tab active" id="forumTabLatest" onclick="setForumTab('latest')">Latest</button>
+    <button class="forum-tab" id="forumTabPopular" onclick="setForumTab('popular')">Popular</button>
+    <button class="forum-tab" id="forumTabMine" onclick="setForumTab('mine')">My Posts</button>
+  </div>
+  <div id="forumPostsList"></div>
+  <button class="forum-fab" title="New discussion" onclick="openNewForumPost()">＋</button>
+</div>
+
+<!-- Forum: Post Detail Modal -->
+<div id="forumPostModal">
+  <div id="forumPostBox">
+    <div style="display:flex;justify-content:flex-end;">
+      <button class="sidebar-close-btn" style="color:var(--muted);" onclick="closeForumPost()">&times;</button>
+    </div>
+    <div id="forumPostDetail"></div>
+  </div>
+</div>
+
+<!-- Forum: New Post Modal -->
+<div id="forumNewPostModal">
+  <div id="forumNewPostBox">
+    <h3 style="margin:0 0 1rem;font-size:1rem;font-weight:700;">New Discussion</h3>
+    <label>Category</label>
+    <select id="fnpCategory" style="margin-bottom:0.8rem;">
+      <option>Mathematics</option>
+      <option>Classroom Mgmt</option>
+      <option>Literacy</option>
+      <option>Assessment</option>
+      <option>General</option>
+    </select>
+    <label>Title</label>
+    <input type="text" id="fnpTitle" placeholder="What's your question or topic?" style="margin-bottom:0.8rem;">
+    <label>Details</label>
+    <textarea id="fnpBody" placeholder="Add more detail…" style="width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;min-height:90px;background:var(--card);color:var(--text);margin-bottom:1rem;resize:vertical;"></textarea>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button class="btn-secondary" onclick="closeNewForumPost()">Cancel</button>
+      <button class="btn-primary" onclick="submitNewForumPost()">Post</button>
+    </div>
+  </div>
 </div>
 
 <!-- PAGE 5: SETTINGS -->
@@ -1975,22 +2054,22 @@ function confirmExamSubjects(){
 window.confirmExamSubjects = confirmExamSubjects;
 
 function switchPage(page){
-  const allPages = ["pageDashboard","pageClasses","pageExamSubjects","pageAdd","pageList","pageRecords","pageAdmissionRecords","pageSickRecords","pagePunishmentRecords","pageTransferRecords","pageStockRecords","pageAttendance","pageResources","pageNews","pageProfile","pageSettings"];
+  const allPages = ["pageDashboard","pageClasses","pageExamSubjects","pageAdd","pageList","pageRecords","pageAdmissionRecords","pageSickRecords","pagePunishmentRecords","pageTransferRecords","pageStockRecords","pageAttendance","pageResources","pageNews","pageForum","pageProfile","pageSettings"];
   allPages.forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove("active"); });
 
   const pageMap = {
     dashboard:"pageDashboard",
     classes:"pageClasses", examSubjects:"pageExamSubjects", add:"pageAdd", list:"pageList",
     records:"pageRecords", admissionrecords:"pageAdmissionRecords", sickrecords:"pageSickRecords", punishmentrecords:"pagePunishmentRecords", transferrecords:"pageTransferRecords", stockrecords:"pageStockRecords", attendance:"pageAttendance",
-    resources:"pageResources", news:"pageNews",
+    resources:"pageResources", news:"pageNews", forum:"pageForum",
     profile:"pageProfile", settings:"pageSettings"
   };
   const target = document.getElementById(pageMap[page]);
   if(target) target.classList.add("active");
 
-  // Sidebar nav (Settings/About/Support now live in the sidebar footer)
-  const navMap = {dashboard:"navDashboard", admissionrecords:"navStudents", records:"navRecords", resources:"navResources", news:"navNews"};
-  ["navDashboard","navStudents","navRecords","navResources","navNews"].forEach(id=>{
+  // Sidebar nav (About/Support live in the sidebar footer)
+  const navMap = {dashboard:"navDashboard", admissionrecords:"navStudents", records:"navRecords", resources:"navResources", news:"navNews", forum:"navForum", settings:"navSettings"};
+  ["navDashboard","navStudents","navRecords","navResources","navNews","navForum","navSettings"].forEach(id=>{
     const el=document.getElementById(id); if(el) el.classList.remove("active");
   });
   const activeNav = navMap[page];
@@ -2007,7 +2086,7 @@ function switchPage(page){
     add:`${classLabel(_currentClass)} — Add Student`,
     list:`${classLabel(_currentClass)} — Students`,
     records:"Records", admissionrecords:"Students", sickrecords:"Sick Record", punishmentrecords:"Punishment Records", transferrecords:"Transfer Out Record", stockrecords:"Stock Record", attendance:"Attendance Register",
-    resources:"Resources", news:"News",
+    resources:"Resources", news:"News", forum:"Discussion Forum",
     profile:"My Profile", settings:"Settings"
   };
   const titleEl = document.getElementById("topTitle");
@@ -2024,6 +2103,7 @@ function switchPage(page){
   if(page==="list")        render();
   if(page==="resources")   initResourcesPage();
   if(page==="news")        renderNewsPage();
+  if(page==="forum")       renderForumPage();
   if(page==="records")     updateRecordsCounts();
   if(page==="add"){
     setStudentFieldsMode(false);
@@ -2059,7 +2139,7 @@ let _settingsReturnPage = "dashboard";
 function getCurrentPageKey(){
   const map = {pageDashboard:"dashboard", pageClasses:"classes", pageExamSubjects:"examSubjects", pageAdd:"add", pageList:"list",
     pageRecords:"records", pageAdmissionRecords:"admissionrecords", pageSickRecords:"sickrecords", pagePunishmentRecords:"punishmentrecords", pageTransferRecords:"transferrecords", pageStockRecords:"stockrecords", pageAttendance:"attendance",
-    pageResources:"resources",
+    pageResources:"resources", pageNews:"news", pageForum:"forum",
     pageProfile:"profile", pageSettings:"settings"};
   for(const domId in map){
     const el = document.getElementById(domId);
@@ -5761,6 +5841,209 @@ function renderNewsPage(){
 }
 window.renderNewsPage = renderNewsPage;
 
+/* ===================== FORUM ===================== */
+const FORUM_KEY = "ea33_forum_posts";
+const FORUM_TAG_COLORS = ["#1D9E75","#C0532A","#2C6BB0","#8E5CC7","#B0842C","#3A9AA6"];
+
+function forumTagColor(name){
+  let h=0; for(let i=0;i<name.length;i++) h = name.charCodeAt(i) + ((h<<5)-h);
+  return FORUM_TAG_COLORS[Math.abs(h)%FORUM_TAG_COLORS.length];
+}
+function forumInitials(name){
+  return (name||"?").split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join("");
+}
+function forumTimeAgo(ts){
+  const diff = Math.max(0, Date.now()-ts);
+  const mins = Math.floor(diff/60000);
+  if(mins<1) return "just now";
+  if(mins<60) return mins+" min"+(mins===1?"":"s")+" ago";
+  const hrs = Math.floor(mins/60);
+  if(hrs<24) return hrs+" hr"+(hrs===1?"":"s")+" ago";
+  const days = Math.floor(hrs/24);
+  return days+" day"+(days===1?"":"s")+" ago";
+}
+
+// Seed discussions — used as an initial/offline fallback for a fresh forum.
+const FORUM_SEED = [
+  { id:"seed1", author:"Chisomo Banda", tag:"Mathematics", title:"How do I teach fractions to Standard 4 pupils effectively?",
+    body:"I have been struggling to make fractions engaging. Any activities or visual aids that have worked for you in a large classroom would be really helpful — especially ones that don't need much printed material.",
+    ts:Date.now()-2*3600000, likes:14, mine:false,
+    replies:[
+      {author:"Yankho Mwale", text:"Try using folded paper strips — pupils can fold and shade to see halves, quarters and eighths physically.", ts:Date.now()-1.5*3600000},
+      {author:"Grace Phiri", text:"Sharing real objects like oranges or sticks of chalk works well too, and it's free.", ts:Date.now()-1*3600000}
+    ]},
+  { id:"seed2", author:"Yankho Mwale", tag:"Classroom Mgmt", title:"Best practices for managing a large class of 60+ students",
+    body:"Our school has very large classes. I would like to hear strategies that other teachers use to keep learners engaged and orderly without shouting all lesson long.",
+    ts:Date.now()-5*3600000, likes:22, mine:false,
+    replies:[
+      {author:"Chisomo Banda", text:"Group learners into fixed small teams with a leader — it cuts down on chaos a lot.", ts:Date.now()-4*3600000}
+    ]},
+  { id:"seed3", author:"Grace Phiri", tag:"Literacy", title:"Simple phonics games for Standard 1 pupils",
+    body:"Looking for low-cost phonics games that get pupils sounding out letters confidently before they move on to blending words.",
+    ts:Date.now()-26*3600000, likes:9, mine:false, replies:[] }
+];
+
+function loadForumPosts(){
+  const raw = localStorage.getItem(FORUM_KEY);
+  if(raw){ try{ return JSON.parse(raw); }catch(e){} }
+  return FORUM_SEED.slice();
+}
+function saveForumPosts(posts){ localStorage.setItem(FORUM_KEY, JSON.stringify(posts)); }
+let _forumPosts = loadForumPosts();
+let _forumTab = "latest";
+let _forumOpenId = null;
+
+function setForumTab(tab){
+  _forumTab = tab;
+  ["Latest","Popular","Mine"].forEach(t=>{
+    const el = document.getElementById("forumTab"+t);
+    if(el) el.classList.toggle("active", t.toLowerCase()===tab);
+  });
+  renderForumPage();
+}
+window.setForumTab = setForumTab;
+
+function renderForumPage(){
+  const list = document.getElementById("forumPostsList");
+  if(!list) return;
+  const q = (document.getElementById("forumSearchInput")?.value||"").trim().toLowerCase();
+
+  let posts = _forumPosts.slice();
+  if(_forumTab==="popular") posts.sort((a,b)=>b.likes-a.likes);
+  else if(_forumTab==="mine") posts = posts.filter(p=>p.mine);
+  else posts.sort((a,b)=>b.ts-a.ts);
+
+  if(q){
+    posts = posts.filter(p=>
+      p.title.toLowerCase().includes(q) ||
+      p.body.toLowerCase().includes(q) ||
+      p.tag.toLowerCase().includes(q) ||
+      p.author.toLowerCase().includes(q)
+    );
+  }
+
+  if(!posts.length){
+    list.innerHTML = `<div class="forum-empty">${_forumTab==="mine" ? "You haven't posted any discussions yet." : "No discussions found."}</div>`;
+    return;
+  }
+
+  list.innerHTML = posts.map(p=>`
+    <div class="forum-post-card" onclick="openForumPost('${p.id}')">
+      <div class="forum-post-head">
+        <div class="forum-avatar" style="background:${forumTagColor(p.author)};">${escapeHtml(forumInitials(p.author))}</div>
+        <div>
+          <div class="forum-post-author">${escapeHtml(p.author)}</div>
+          <div class="forum-post-time">${forumTimeAgo(p.ts)}</div>
+        </div>
+        <span class="forum-post-tag">${escapeHtml(p.tag)}</span>
+      </div>
+      <div class="forum-post-title">${escapeHtml(p.title)}</div>
+      <div class="forum-post-preview">${escapeHtml(p.body)}</div>
+      <div class="forum-post-foot">
+        <span>👍 ${p.likes}</span>
+        <span>💬 ${p.replies.length} repl${p.replies.length===1?"y":"ies"}</span>
+        <span class="fpf-view">View →</span>
+      </div>
+    </div>`).join("");
+}
+window.renderForumPage = renderForumPage;
+
+function openForumPost(id){
+  _forumOpenId = id;
+  const p = _forumPosts.find(x=>x.id===id);
+  if(!p) return;
+  const detail = document.getElementById("forumPostDetail");
+  detail.innerHTML = `
+    <div class="forum-post-head" style="margin-bottom:0.9rem;">
+      <div class="forum-avatar" style="background:${forumTagColor(p.author)};">${escapeHtml(forumInitials(p.author))}</div>
+      <div>
+        <div class="forum-post-author">${escapeHtml(p.author)}</div>
+        <div class="forum-post-time">${forumTimeAgo(p.ts)}</div>
+      </div>
+      <span class="forum-post-tag">${escapeHtml(p.tag)}</span>
+    </div>
+    <div class="forum-post-title" style="font-size:1.15rem;">${escapeHtml(p.title)}</div>
+    <div style="font-size:0.9rem;color:var(--text);line-height:1.55;margin-bottom:0.9rem;">${escapeHtml(p.body)}</div>
+    <div class="forum-post-foot" style="border-bottom:1px solid var(--border);padding-bottom:0.8rem;">
+      <span style="cursor:pointer;" onclick="likeForumPost('${p.id}')">👍 ${p.likes} Like</span>
+      <span>💬 ${p.replies.length} repl${p.replies.length===1?"y":"ies"}</span>
+    </div>
+    <div id="forumRepliesList">
+      ${p.replies.map(r=>`
+        <div class="forum-reply-item">
+          <div class="forum-reply-avatar" style="background:${forumTagColor(r.author)};">${escapeHtml(forumInitials(r.author))}</div>
+          <div class="forum-reply-body">
+            <div class="forum-reply-author">${escapeHtml(r.author)}</div>
+            <div class="forum-reply-text">${escapeHtml(r.text)}</div>
+            <div class="forum-reply-time">${forumTimeAgo(r.ts)}</div>
+          </div>
+        </div>`).join("") || `<div class="forum-empty" style="padding:1rem 0;">No replies yet — be the first to respond.</div>`}
+    </div>
+    <textarea id="forumReplyInput" placeholder="Write a reply…"></textarea>
+    <div class="actions" style="margin-top:0.6rem;">
+      <button class="btn-primary" onclick="submitForumReply()">Reply</button>
+    </div>
+  `;
+  document.getElementById("forumPostModal").classList.add("open");
+}
+window.openForumPost = openForumPost;
+
+function closeForumPost(){
+  document.getElementById("forumPostModal").classList.remove("open");
+  _forumOpenId = null;
+}
+window.closeForumPost = closeForumPost;
+
+function likeForumPost(id){
+  const p = _forumPosts.find(x=>x.id===id);
+  if(!p) return;
+  p.likes++;
+  saveForumPosts(_forumPosts);
+  openForumPost(id);
+  renderForumPage();
+}
+window.likeForumPost = likeForumPost;
+
+function submitForumReply(){
+  const input = document.getElementById("forumReplyInput");
+  const text = (input.value||"").trim();
+  if(!text || !_forumOpenId) return;
+  const p = _forumPosts.find(x=>x.id===_forumOpenId);
+  if(!p) return;
+  const author = getProfile().name || "Me";
+  p.replies.push({author, text, ts:Date.now()});
+  saveForumPosts(_forumPosts);
+  openForumPost(_forumOpenId);
+  renderForumPage();
+}
+window.submitForumReply = submitForumReply;
+
+function openNewForumPost(){
+  document.getElementById("fnpCategory").value = "Mathematics";
+  document.getElementById("fnpTitle").value = "";
+  document.getElementById("fnpBody").value = "";
+  document.getElementById("forumNewPostModal").classList.add("open");
+}
+window.openNewForumPost = openNewForumPost;
+
+function closeNewForumPost(){
+  document.getElementById("forumNewPostModal").classList.remove("open");
+}
+window.closeNewForumPost = closeNewForumPost;
+
+function submitNewForumPost(){
+  const title = document.getElementById("fnpTitle").value.trim();
+  const body = document.getElementById("fnpBody").value.trim();
+  const tag = document.getElementById("fnpCategory").value;
+  if(!title){ alert("Please add a title for your discussion."); return; }
+  const author = getProfile().name || "Me";
+  _forumPosts.unshift({ id:Date.now().toString(), author, tag, title, body, ts:Date.now(), likes:0, mine:true, replies:[] });
+  saveForumPosts(_forumPosts);
+  closeNewForumPost();
+  setForumTab("latest");
+}
+window.submitNewForumPost = submitNewForumPost;
+
 function renderComingSoon(tab){
   const container = document.getElementById("comingSoonContainer");
   const label = (RESOURCE_TABS.find(t=>t.key===tab)||{}).label || "";
@@ -6236,10 +6519,21 @@ if("serviceWorker" in navigator){
         <span>News</span>
       </button>
     </div>
+    <div class="nav-item-wrap">
+      <button class="nav-item" id="navForum" onclick="switchPage('forum');closeSidebar()">
+        <span class="nav-icon">💬</span>
+        <span>Forum</span>
+      </button>
+    </div>
+    <div class="nav-item-wrap">
+      <button class="nav-item" id="navSettings" onclick="closeSidebar();_settingsReturnPage=getCurrentPageKey();switchPage('settings')">
+        <span class="nav-icon">⚙️</span>
+        <span>Settings</span>
+      </button>
+    </div>
   </div>
   <div class="sidebar-footer">
     <button class="sf-avatar" title="Profile" onclick="closeSidebar();_settingsReturnPage=getCurrentPageKey();switchPage('settings')">👤</button>
-    <button class="sf-icon-btn" title="Settings" onclick="closeSidebar();_settingsReturnPage=getCurrentPageKey();switchPage('settings')">⚙️</button>
     <button class="sf-icon-btn" title="About" onclick="closeSidebar();openAbout()">ℹ️</button>
     <button class="sf-support" title="Help" onclick="closeSidebar();openHelp()">❓ Support</button>
   </div>
