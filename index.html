@@ -19,6 +19,7 @@
     --bg:#f5f6f8;--card:#ffffff;--primary:#1D9E75;--primary-dark:#0F6E56;
     --danger:#D85A30;--warn:#BA7517;--text:#2C2C2A;--muted:#5F5E5A;--border:rgba(0,0,0,0.1);
     --grey-100:#f5f6f8;--grey-700:#3A3A38;
+    --forest:#2D5A3D;--forest-mid:#3E7A54;
   }
   html.dark{
     --bg:#121212;--card:#1E1E1E;--primary:#1D9E75;--primary-dark:#25C490;
@@ -620,7 +621,10 @@
 
 <!-- PAGE 0: DASHBOARD -->
 <div class="page active" id="pageDashboard">
-  <p style="font-size:0.82rem;color:var(--muted);margin:0.5rem 0 1rem;" id="dashboardSubtitle">Everything at a glance</p>
+  <div style="font-size:2.46rem;line-height:1.2;color:var(--muted);margin:0.5rem 0 1rem;font-weight:600;" id="dashboardSubtitle">
+    <div id="dashboardSubtitleLine1">Everything at a glance</div>
+    <div id="dashboardSubtitleLine2"></div>
+  </div>
   <div id="dashboardContent"></div>
 </div>
 
@@ -2152,10 +2156,11 @@ function switchPage(page){
   const activeNav = navMap[page];
   if(activeNav){ const el=document.getElementById(activeNav); if(el) el.classList.add("active"); }
 
-  // Back button: show on examSubjects, add, list, settings, profile (sub-page of settings), classes (now a Records card),
-  // and the two remaining record sub-pages. (admissionrecords/"Students" and "news" are primary top-level tabs, so no back button.)
+  // Back button: show on examSubjects, add, settings, profile (sub-page of settings), classes (now a Records card),
+  // and the two remaining record sub-pages. (admissionrecords/"Students", "news", and the per-class "list" page
+  // are reached from a card/menu and don't need a back button.)
   const backBtn = document.getElementById("backBtn");
-  if(backBtn) backBtn.style.display=(page==="classes"||page==="examSubjects"||page==="add"||page==="list"||page==="settings"||page==="profile"||page==="sickrecords"||page==="punishmentrecords"||page==="transferrecords"||page==="stockrecords"||page==="attendance")?"inline-block":"none";
+  if(backBtn) backBtn.style.display=(page==="classes"||page==="examSubjects"||page==="add"||page==="settings"||page==="profile"||page==="sickrecords"||page==="punishmentrecords"||page==="transferrecords"||page==="stockrecords"||page==="attendance")?"inline-block":"none";
 
   const titles = {
     dashboard:"Home",
@@ -3084,18 +3089,21 @@ function updateAssessCardLabel(){
 }
 
 // Replaces the "Everything at a glance" line on the Dashboard with the
-// school name and class the teacher entered in the first-use dialog
-// (or later edited in Settings).
+// school name (top line) and class (bottom line) the teacher entered in
+// the first-use dialog (or later edited in Settings).
 function updateDashboardSubtitle(){
-  const el = document.getElementById("dashboardSubtitle");
-  if(!el) return;
+  const line1 = document.getElementById("dashboardSubtitleLine1");
+  const line2 = document.getElementById("dashboardSubtitleLine2");
+  if(!line1 || !line2) return;
   const setup = getAppSetup();
   if(setup && (setup.schoolName || setup.cls)){
     const opt = ASSESS_CLASS_OPTIONS.find(o=>o.value===setup.cls);
     const clsLabel = setup.cls ? (opt?opt.label:classLabel(setup.cls)) : "";
-    el.textContent = [setup.schoolName, clsLabel].filter(Boolean).join(" · ");
+    line1.textContent = setup.schoolName || "";
+    line2.textContent = clsLabel;
   } else {
-    el.textContent = "Everything at a glance";
+    line1.textContent = "Everything at a glance";
+    line2.textContent = "";
   }
 }
 
