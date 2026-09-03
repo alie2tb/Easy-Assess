@@ -746,7 +746,7 @@
 <div class="page" id="pageRecords">
   <p style="font-size:0.82rem;color:var(--muted);margin:0.4rem 0 1rem;">Keep track of learners' health and discipline incidents</p>
   <div class="class-grid">
-    <div class="class-card" onclick="switchPage('classes')">
+    <div class="class-card" onclick="openAssessFromSetup()">
       <span class="cls-icon">📋</span>
       <div class="cls-name">Assess</div>
       <div class="cls-count" id="assessClassCount">Manage classes &amp; marks</div>
@@ -1370,6 +1370,21 @@
 <div class="page" id="pageSettings">
 
   <div class="card">
+    <p class="form-title">🏫 School Info</p>
+    <p style="font-size:0.8rem;color:var(--muted);margin:0 0 1rem;">Used to auto-open your class from the Assess card.</p>
+    <div style="margin-bottom:0.8rem;">
+      <label for="settingsSchoolName" style="display:block;font-size:0.8rem;color:var(--muted);margin-bottom:4px;">School Name</label>
+      <input type="text" id="settingsSchoolName" placeholder="e.g. Chilomoni Primary School" oninput="saveSchoolInfoFromSettings()">
+    </div>
+    <div>
+      <label for="settingsClass" style="display:block;font-size:0.8rem;color:var(--muted);margin-bottom:4px;">Class</label>
+      <select id="settingsClass" onchange="saveSchoolInfoFromSettings()">
+        <option value="">— Select a Class —</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card">
     <p class="form-title">🎨 Appearance</p>
     <div class="theme-switch-row">
       <div>
@@ -1977,14 +1992,7 @@ function buildClassGrid(){
       <div class="cls-name">Standard ${cls}</div>
       <div class="cls-count">${count>0?count+" student"+(count>1?"s":""):"No students yet"}</div>
       ${count>0?`<span class="cls-badge">${count}</span>`:""}`;
-    card.addEventListener("click",()=>{
-      _currentClass = cls;
-      buildSubjectFields();
-      render();
-      updateExcelBtn();
-      updateBadge();
-      switchPage("list");
-    });
+    card.addEventListener("click",()=>selectAssessClass(cls));
     grid.appendChild(card);
   });
 
@@ -1999,14 +2007,7 @@ function buildClassGrid(){
       <div class="cls-name">SENIOR CLASSES</div>
       <div class="cls-count">${count>0?count+" student"+(count>1?"s":""):"No students yet"}</div>
       ${count>0?`<span class="cls-badge">${count}</span>`:""}`;
-    card.addEventListener("click",()=>{
-      _currentClass = cls;
-      buildSubjectFields();
-      render();
-      updateExcelBtn();
-      updateBadge();
-      switchPage("list");
-    });
+    card.addEventListener("click",()=>selectAssessClass(cls));
     grid.appendChild(card);
   }
 
@@ -2020,19 +2021,7 @@ function buildClassGrid(){
       <div class="cls-name">${exam.label}</div>
       <div class="cls-count">${count>0?count+" student"+(count>1?"s":""):"No students yet"}</div>
       ${count>0?`<span class="cls-badge">${count}</span>`:""}`;
-    card.addEventListener("click",()=>{
-      if(count > 0){
-        // Already has students — go straight to the list, like other classes
-        _currentClass = exam.key;
-        buildSubjectFields();
-        render();
-        updateExcelBtn();
-        updateBadge();
-        switchPage("list");
-      } else {
-        openExamSubjectSelect(exam.key);
-      }
-    });
+    card.addEventListener("click",()=>selectAssessClass(exam.key));
     grid.appendChild(card);
   });
 }
@@ -2991,6 +2980,109 @@ window.openHelp=openHelp;window.openAbout=openAbout;
 // ── Splash screen ─────────────────────────────────────────────────────────
 // (Custom splash removed — the OS/browser's native PWA splash screen,
 // generated from manifest.json, is now the only startup screen shown.)
+
+// ── First-run setup screen (School Name + Class) ─────────────────────────
+// Shown once, immediately after the native splash finishes, so the app can
+// remember which school & class the teacher is working with. The Assess
+// card on the Records page then jumps straight into that class.
+const SETUP_STORAGE_KEY = "easy_assess_setup_v1";
+
+// Same 7 options as the Assess class grid (buildClassGrid): Standard 1-4,
+// Senior Classes (Standard 5), Junior Certificate, MSCE.
+const ASSESS_CLASS_OPTIONS = [
+  {value:"1",    label:"Standard 1"},
+  {value:"2",    label:"Standard 2"},
+  {value:"3",    label:"Standard 3"},
+  {value:"4",    label:"Standard 4"},
+  {value:"5",    label:"Senior Classes (Standard 5+)"},
+  {value:"JC",   label:"Junior Certificate (JC)"},
+  {value:"MSCE", label:"MSCE"},
+];
+
+function assessClassOptionsHtml(){
+  return ASSESS_CLASS_OPTIONS.map(o=>`<option value="${o.value}">${o.label}</option>`).join("");
+}
+
+function populateAssessClassSelects(){
+  const el = document.getElementById("settingsClass");
+  if(el && el.options.length<=1){ el.insertAdjacentHTML("beforeend", assessClassOptionsHtml()); }
+}
+
+function getAppSetup(){
+  try{ return JSON.parse(localStorage.getItem(SETUP_STORAGE_KEY)||"null"); }
+  catch(e){ return null; }
+}
+function saveAppSetup(schoolName, cls){
+  localStorage.setItem(SETUP_STORAGE_KEY, JSON.stringify({schoolName, cls}));
+  updateAssessCardLabel();
+}
+
+// Called from the Settings > School Info fields to update the saved setup.
+function saveSchoolInfoFromSettings(){
+  const nameEl = document.getElementById("settingsSchoolName");
+  const clsEl  = document.getElementById("settingsClass");
+  const schoolName = (nameEl && nameEl.value ? nameEl.value.trim() : "");
+  const cls = clsEl ? clsEl.value : "";
+  const existing = getAppSetup() || {};
+  saveAppSetup(schoolName || existing.schoolName || "", cls || existing.cls || "");
+}
+window.saveSchoolInfoFromSettings = saveSchoolInfoFromSettings;
+
+// Reflects the chosen class on the Assess card's subtitle on the Records page.
+function updateAssessCardLabel(){
+  const el = document.getElementById("assessClassCount");
+  if(!el) return;
+  const setup = getAppSetup();
+  if(setup && setup.cls){
+    const opt = ASSESS_CLASS_OPTIONS.find(o=>o.value===setup.cls);
+    el.textContent = (opt?opt.label:classLabel(setup.cls)) + " · tap to open";
+  } else {
+    el.textContent = "Manage classes & marks";
+  }
+}
+
+// Shared logic for opening a specific class straight into its student list —
+// used by the class-grid cards on the Classes page AND by the Assess card
+// once a class has been chosen on the setup screen.
+function selectAssessClass(cls){
+  const count = getList(cls).length;
+  if(isExamLevel(cls) && count === 0){
+    openExamSubjectSelect(cls);
+  } else {
+    _currentClass = cls;
+    buildSubjectFields();
+    render();
+    updateExcelBtn();
+    updateBadge();
+    switchPage("list");
+  }
+}
+window.selectAssessClass = selectAssessClass;
+
+// Called by the Assess card on the Records page.
+function openAssessFromSetup(){
+  const setup = getAppSetup();
+  if(setup && setup.cls){
+    selectAssessClass(setup.cls);
+  } else {
+    // No school/class saved yet (setup was skipped or storage cleared) —
+    // fall back to the normal class picker.
+    switchPage("classes");
+  }
+}
+window.openAssessFromSetup = openAssessFromSetup;
+
+function initAppSetup(){
+  populateAssessClassSelects();
+  const setup = getAppSetup();
+  const sName = document.getElementById("settingsSchoolName");
+  const sCls  = document.getElementById("settingsClass");
+  if(setup){
+    if(sName && setup.schoolName) sName.value = setup.schoolName;
+    if(sCls  && setup.cls)        sCls.value  = setup.cls;
+  }
+  updateAssessCardLabel();
+}
 
 // ── Mode tabs ─────────────────────────────────────────────────────────────
 function setMode(mode){
@@ -4757,6 +4849,7 @@ function updateAdmissionEmptyHints(){
 window.updateAdmissionEmptyHints = updateAdmissionEmptyHints;
 
 function updateRecordsCounts(){
+  updateAssessCardLabel();
   const sickCount = getRecords("sick").length;
   const punCount  = getRecords("punishment").length;
   const transferCount = getRecords("transfer").length;
@@ -6437,6 +6530,7 @@ updateBadge();
 renderDashboard();
 populateAdmissionSpinners();
 loadNewsData();
+initAppSetup();
 
 // ── Google Analytics: PWA install tracking ──────────────────────────────
 // Fires once, on first load, so you can see how many sessions are already
