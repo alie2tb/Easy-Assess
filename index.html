@@ -44,12 +44,13 @@
   html.dark .notes-std-header{background:#2A2A2A;}
   html.dark #noteEditorModal{background:var(--card);}
   html.dark #notesArea{background:var(--card);}
-  html.dark #reportBox,html.dark #pdfBox,html.dark #shareBox,html.dark #settingsBox,html.dark #settingsModal>div{background:var(--card);color:var(--text);}
+  html.dark #reportBox,html.dark #pdfBox,html.dark #shareBox,html.dark #settingsBox,html.dark #settingsModal>div,html.dark #firstUseBox{background:var(--card);color:var(--text);}
   html.dark .menu-item{background:none;color:var(--text);}
   html.dark .menu-item:hover{background:#2A2A2A;}
   html.dark #overflowMenu{background:var(--card);border-color:var(--border);}
   html.dark .toggle-btn{background:var(--card);color:var(--muted);}
   html.dark .pass-input{background:var(--card);color:var(--text);border-color:var(--border);}
+  html.dark #firstUseBox input,html.dark #firstUseBox select{background:var(--card);color:var(--text);border-color:var(--border);}
   html.dark th{color:var(--muted);}
   html.dark tr:hover{background:#2A2A2A;}
   html.dark .pill.male{background:#1A3A5C;color:#7AB8F5;}
@@ -590,6 +591,19 @@
   #srBox label{font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;}
   #srBox input{width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:8px;font-size:0.95rem;margin-bottom:1rem;background:#fff;}
   #srBox input:focus{outline:none;border-color:var(--primary);}
+  /* first-use school setup dialog */
+  #firstUseModal{display:none;position:fixed;inset:0;z-index:9600;background:rgba(0,0,0,0.55);align-items:center;justify-content:center;padding:1.2rem;}
+  #firstUseModal.open{display:flex;}
+  #firstUseBox{background:#fff;border-radius:16px;width:100%;max-width:380px;padding:1.6rem;}
+  #firstUseBox .fu-icon{font-size:2.2rem;text-align:center;margin-bottom:0.5rem;}
+  #firstUseBox h3{font-size:1.05rem;font-weight:700;text-align:center;margin:0 0 0.3rem;color:var(--text);}
+  #firstUseBox .sub-note{font-size:0.82rem;color:var(--muted);text-align:center;margin:0 0 1.3rem;}
+  #firstUseBox label{font-size:0.8rem;color:var(--muted);display:block;margin-bottom:4px;font-weight:600;}
+  #firstUseBox .fu-field{margin-bottom:1rem;}
+  #firstUseBox input,#firstUseBox select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:0.95rem;background:#fff;font-family:inherit;}
+  #firstUseBox input:focus,#firstUseBox select:focus{outline:none;border-color:var(--primary);}
+  #firstUseBox .fu-error{color:var(--danger);font-size:0.8rem;margin:-0.5rem 0 0.9rem;display:none;}
+  #firstUseBox .fu-btn{width:100%;padding:12px;border:none;border-radius:10px;background:var(--primary);color:#fff;font-size:0.98rem;font-weight:700;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -606,7 +620,7 @@
 
 <!-- PAGE 0: DASHBOARD -->
 <div class="page active" id="pageDashboard">
-  <p style="font-size:0.82rem;color:var(--muted);margin:0.5rem 0 1rem;">Everything at a glance</p>
+  <p style="font-size:0.82rem;color:var(--muted);margin:0.5rem 0 1rem;" id="dashboardSubtitle">Everything at a glance</p>
   <div id="dashboardContent"></div>
 </div>
 
@@ -1428,6 +1442,30 @@
     </div>
   </div>
 </div>
+
+<!-- First-use school setup dialog -->
+<div id="firstUseModal">
+  <div id="firstUseBox">
+    <div class="fu-icon">🏫</div>
+    <h3>Welcome to Easy Assess</h3>
+    <p class="sub-note">Tell us your school name and the class you teach to get started.</p>
+    <form id="firstUseForm" onsubmit="handleFirstUseSubmit(event)">
+      <div class="fu-field">
+        <label for="fuSchoolName">School Name</label>
+        <input type="text" id="fuSchoolName" placeholder="e.g. Chilomoni Primary School" autocomplete="organization" required>
+      </div>
+      <div class="fu-field">
+        <label for="fuClass">Class Teaching</label>
+        <select id="fuClass" required>
+          <option value="">— Select a Class —</option>
+        </select>
+      </div>
+      <div class="fu-error" id="fuError">Please fill in the school name and select a class.</div>
+      <button type="submit" class="fu-btn">Get Started</button>
+    </form>
+  </div>
+</div>
+
 
 <!-- Report modal -->
 <div id="reportModal">
@@ -2358,6 +2396,7 @@ window.sowGeneratePDF = sowGeneratePDF;
 function renderDashboard(){
   const container = document.getElementById("dashboardContent");
   if(!container) return;
+  updateDashboardSubtitle();
 
   const allClasses = [1,2,3,4,5,6,7,8,"JC","MSCE"];
   let totalStudents=0, totalBoys=0, totalGirls=0, classesWithData=0, totalPass=0;
@@ -3004,8 +3043,10 @@ function assessClassOptionsHtml(){
 }
 
 function populateAssessClassSelects(){
-  const el = document.getElementById("settingsClass");
-  if(el && el.options.length<=1){ el.insertAdjacentHTML("beforeend", assessClassOptionsHtml()); }
+  ["settingsClass","fuClass"].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el && el.options.length<=1){ el.insertAdjacentHTML("beforeend", assessClassOptionsHtml()); }
+  });
 }
 
 function getAppSetup(){
@@ -3015,6 +3056,7 @@ function getAppSetup(){
 function saveAppSetup(schoolName, cls){
   localStorage.setItem(SETUP_STORAGE_KEY, JSON.stringify({schoolName, cls}));
   updateAssessCardLabel();
+  updateDashboardSubtitle();
 }
 
 // Called from the Settings > School Info fields to update the saved setup.
@@ -3041,9 +3083,25 @@ function updateAssessCardLabel(){
   }
 }
 
+// Replaces the "Everything at a glance" line on the Dashboard with the
+// school name and class the teacher entered in the first-use dialog
+// (or later edited in Settings).
+function updateDashboardSubtitle(){
+  const el = document.getElementById("dashboardSubtitle");
+  if(!el) return;
+  const setup = getAppSetup();
+  if(setup && (setup.schoolName || setup.cls)){
+    const opt = ASSESS_CLASS_OPTIONS.find(o=>o.value===setup.cls);
+    const clsLabel = setup.cls ? (opt?opt.label:classLabel(setup.cls)) : "";
+    el.textContent = [setup.schoolName, clsLabel].filter(Boolean).join(" · ");
+  } else {
+    el.textContent = "Everything at a glance";
+  }
+}
+
 // Shared logic for opening a specific class straight into its student list —
 // used by the class-grid cards on the Classes page AND by the Assess card
-// once a class has been chosen on the setup screen.
+// once a class has been chosen in Settings.
 function selectAssessClass(cls){
   const count = getList(cls).length;
   if(isExamLevel(cls) && count === 0){
@@ -3065,23 +3123,57 @@ function openAssessFromSetup(){
   if(setup && setup.cls){
     selectAssessClass(setup.cls);
   } else {
-    // No school/class saved yet (setup was skipped or storage cleared) —
-    // fall back to the normal class picker.
+    // No school/class saved yet — fall back to the normal class picker.
     switchPage("classes");
   }
 }
 window.openAssessFromSetup = openAssessFromSetup;
+
+// ── First-use school setup dialog ────────────────────────────────────────
+function showFirstUseDialog(){
+  const el = document.getElementById("firstUseModal");
+  if(el) el.classList.add("open");
+}
+function hideFirstUseDialog(){
+  const el = document.getElementById("firstUseModal");
+  if(el) el.classList.remove("open");
+}
+function handleFirstUseSubmit(e){
+  if(e) e.preventDefault();
+  const nameEl = document.getElementById("fuSchoolName");
+  const clsEl  = document.getElementById("fuClass");
+  const errEl  = document.getElementById("fuError");
+  const schoolName = (nameEl.value||"").trim();
+  const cls = clsEl.value;
+  if(!schoolName || !cls){
+    if(errEl) errEl.style.display = "block";
+    return;
+  }
+  if(errEl) errEl.style.display = "none";
+  saveAppSetup(schoolName, cls);
+  // Keep the Settings > School Info fields in sync for later editing.
+  const sName = document.getElementById("settingsSchoolName");
+  const sCls  = document.getElementById("settingsClass");
+  if(sName) sName.value = schoolName;
+  if(sCls)  sCls.value  = cls;
+  hideFirstUseDialog();
+}
+window.handleFirstUseSubmit = handleFirstUseSubmit;
 
 function initAppSetup(){
   populateAssessClassSelects();
   const setup = getAppSetup();
   const sName = document.getElementById("settingsSchoolName");
   const sCls  = document.getElementById("settingsClass");
-  if(setup){
-    if(sName && setup.schoolName) sName.value = setup.schoolName;
-    if(sCls  && setup.cls)        sCls.value  = setup.cls;
+  if(setup && setup.schoolName && setup.cls){
+    if(sName) sName.value = setup.schoolName;
+    if(sCls)  sCls.value  = setup.cls;
+  } else {
+    // First use — nothing saved yet, so prompt for it.
+    showFirstUseDialog();
   }
   updateAssessCardLabel();
+  updateDashboardSubtitle();
 }
 
 // ── Mode tabs ─────────────────────────────────────────────────────────────
