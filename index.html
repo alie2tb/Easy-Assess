@@ -764,11 +764,6 @@
 <div class="page" id="pageRecords">
   <p style="font-size:0.82rem;color:var(--muted);margin:0.4rem 0 1rem;">Keep track of learners' health and discipline incidents</p>
   <div class="class-grid">
-    <div class="class-card" onclick="openAssessFromSetup()">
-      <span class="cls-icon">📋</span>
-      <div class="cls-name">Assess</div>
-      <div class="cls-count" id="assessClassCount">Manage classes &amp; marks</div>
-    </div>
     <div class="class-card" onclick="switchPage('sickrecords')">
       <span class="cls-icon">🤒</span>
       <div class="cls-name">Sick Record</div>
@@ -783,16 +778,6 @@
       <span class="cls-icon">↗️</span>
       <div class="cls-name">Transfer Out Record</div>
       <div class="cls-count" id="transferRecordCount">No records yet</div>
-    </div>
-    <div class="class-card" onclick="switchPage('stockrecords')">
-      <span class="cls-icon">📦</span>
-      <div class="cls-name">Stock Record</div>
-      <div class="cls-count" id="stockRecordCount">No records yet</div>
-    </div>
-    <div class="class-card" onclick="switchPage('attendance')">
-      <span class="cls-icon">📅</span>
-      <div class="cls-name">Attendance Register</div>
-      <div class="cls-count" id="attendanceTodayCount">Mark today's attendance</div>
     </div>
   </div>
 </div>
@@ -2149,25 +2134,25 @@ function switchPage(page){
   if(target) target.classList.add("active");
 
   // Sidebar nav (About/Support live in the sidebar footer)
-  const navMap = {dashboard:"navDashboard", admissionrecords:"navStudents", records:"navRecords", resources:"navResources", calendar:"navCalendar", term1weeks:"navTerm1Weeks", news:"navNews", forum:"navForum", settings:"navSettings"};
-  ["navDashboard","navStudents","navRecords","navResources","navCalendar","navTerm1Weeks","navNews","navForum","navSettings"].forEach(id=>{
+  const navMap = {dashboard:"navDashboard", admissionrecords:"navStudents", classes:"navExaminations", examSubjects:"navExaminations", add:"navExaminations", list:"navExaminations", attendance:"navAttendance", stockrecords:"navStockRecords", records:"navRecords", resources:"navResources", calendar:"navCalendar", term1weeks:"navTerm1Weeks", news:"navNews", forum:"navForum", settings:"navSettings"};
+  ["navDashboard","navStudents","navAttendance","navStockRecords","navRecords","navResources","navCalendar","navTerm1Weeks","navNews","navForum","navSettings"].forEach(id=>{
     const el=document.getElementById(id); if(el) el.classList.remove("active");
   });
   const activeNav = navMap[page];
   if(activeNav){ const el=document.getElementById(activeNav); if(el) el.classList.add("active"); }
 
   // Back button: show on examSubjects, add, settings, profile (sub-page of settings), classes (now a Records card),
-  // and the two remaining record sub-pages. (admissionrecords/"Students", "news", and the per-class "list" page
-  // are reached from a card/menu and don't need a back button.)
+  // and the remaining record sub-pages. (admissionrecords/"Students", "news", "attendance", and the per-class "list"
+  // page are reached directly from the sidebar/a card/menu and don't need a back button.)
   const backBtn = document.getElementById("backBtn");
-  if(backBtn) backBtn.style.display=(page==="classes"||page==="examSubjects"||page==="add"||page==="settings"||page==="profile"||page==="sickrecords"||page==="punishmentrecords"||page==="transferrecords"||page==="stockrecords"||page==="attendance")?"inline-block":"none";
+  if(backBtn) backBtn.style.display=(page==="classes"||page==="examSubjects"||page==="add"||page==="settings"||page==="profile"||page==="sickrecords"||page==="punishmentrecords"||page==="transferrecords")?"inline-block":"none";
 
   const titles = {
     dashboard:"Home",
     classes:"Easy Assess", examSubjects:"Select Subjects",
     add:`${classLabel(_currentClass)} — Add Student`,
     list:`${classLabel(_currentClass)} — Students`,
-    records:"Records", admissionrecords:"Students", sickrecords:"Sick Record", punishmentrecords:"Punishment Records", transferrecords:"Transfer Out Record", stockrecords:"Stock Record", attendance:"Attendance Register",
+    records:"Teaching Records", admissionrecords:"Students", sickrecords:"Sick Record", punishmentrecords:"Punishment Records", transferrecords:"Transfer Out Record", stockrecords:"Stock Record", attendance:"Attendance Register",
     resources:"Resources", calendar:"School Calendar", term1weeks:"Term 1 Weeks", news:"News", forum:"Discussion Forum",
     profile:"My Profile", settings:"Settings"
   };
@@ -2240,14 +2225,12 @@ function goBack(){
   const sickActive         = document.getElementById("pageSickRecords").classList.contains("active");
   const punishmentActive   = document.getElementById("pagePunishmentRecords").classList.contains("active");
   const transferActive     = document.getElementById("pageTransferRecords").classList.contains("active");
-  const stockActive        = document.getElementById("pageStockRecords").classList.contains("active");
-  const attendanceActive   = document.getElementById("pageAttendance").classList.contains("active");
   if(profileActive)  switchPage("settings");   // Profile is sub-page of Settings
   else if(settingsActive) switchPage(_settingsReturnPage);
   else if(listActive) switchPage("add");
   else if(addActive)  switchPage("classes");
   else if(examSubjectsActive) switchPage("classes");
-  else if(sickActive || punishmentActive || transferActive || stockActive || attendanceActive) switchPage("records");
+  else if(sickActive || punishmentActive || transferActive) switchPage("records");
 }
 window.switchPage=switchPage;window.goBack=goBack;
 
@@ -6749,9 +6732,27 @@ if("serviceWorker" in navigator){
       </button>
     </div>
     <div class="nav-item-wrap">
+      <button class="nav-item" id="navExaminations" onclick="openAssessFromSetup();closeSidebar()">
+        <span class="nav-icon">📋</span>
+        <span>Examinations</span>
+      </button>
+    </div>
+    <div class="nav-item-wrap">
+      <button class="nav-item" id="navAttendance" onclick="switchPage('attendance');closeSidebar()">
+        <span class="nav-icon">📅</span>
+        <span>Attendance</span>
+      </button>
+    </div>
+    <div class="nav-item-wrap">
+      <button class="nav-item" id="navStockRecords" onclick="switchPage('stockrecords');closeSidebar()">
+        <span class="nav-icon">📦</span>
+        <span>Stock Records</span>
+      </button>
+    </div>
+    <div class="nav-item-wrap">
       <button class="nav-item" id="navRecords" onclick="switchPage('records');closeSidebar()">
         <span class="nav-icon">🗒️</span>
-        <span>Records</span>
+        <span>Teaching Records</span>
       </button>
     </div>
     <div class="nav-item-wrap">
