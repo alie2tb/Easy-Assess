@@ -2427,15 +2427,16 @@ function renderDashboard(){
   let totalStudents=0, totalBoys=0, totalGirls=0, classesWithData=0, totalPass=0;
 
   allClasses.forEach(cls=>{
-    const list = getList(cls);
-    if(list.length===0) return;
+    const admissionRecords = getRecords("admission").filter(r => r.class === cls.toString());
+    if(admissionRecords.length===0) return;
     classesWithData++;
     const subs = getSubjects(cls);
-    list.forEach(s=>{
+    admissionRecords.forEach(s=>{
       totalStudents++;
       if(s.sex==="Male") totalBoys++; else if(s.sex==="Female") totalGirls++;
-      const total = calcTotal(s,subs,cls);
-      if(getPassFail(total,cls,s,subs)==="PASS") totalPass++;
+      const assessment = getList(cls).find(a => a.name === s.name && a.sex === s.sex);
+      const total = assessment ? calcTotal(assessment, subs, cls) : 0;
+      if(total > 0 && getPassFail(total,cls,s,subs)==="PASS") totalPass++;
     });
   });
   const passRate = totalStudents>0 ? Math.round(totalPass/totalStudents*100) : 0;
