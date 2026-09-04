@@ -76,6 +76,12 @@
   /* pages */
   .page{display:none;padding:1rem;}
   .page.active{display:block;}
+  .students-required-overlay{display:none;position:fixed;top:57px;left:0;right:0;bottom:0;background:var(--bg);z-index:150;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem 1.6rem;}
+  .students-required-overlay.show{display:flex;}
+  .students-required-overlay .sro-icon{font-size:2.6rem;margin-bottom:0.7rem;}
+  .students-required-overlay .sro-title{font-size:1.15rem;font-weight:700;color:var(--text);margin-bottom:0.5rem;}
+  .students-required-overlay .sro-text{font-size:0.88rem;color:var(--muted);max-width:340px;line-height:1.5;margin-bottom:1.4rem;}
+  .students-required-overlay .sro-btn{background:var(--primary);color:#fff;border:none;border-radius:999px;padding:12px 26px;font-size:0.92rem;font-weight:700;cursor:pointer;}
   /* sidebar nav — Worksuite-style off-canvas drawer */
   .sidebar-backdrop{position:fixed;inset:0;background:rgba(15,10,40,0.45);z-index:390;opacity:0;pointer-events:none;transition:opacity 0.25s ease;}
   .sidebar-backdrop.show{opacity:1;pointer-events:auto;}
@@ -292,10 +298,6 @@
   /* dashboard */
   .dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.2rem;}
   .dash-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:1rem;text-align:center;}
-  .dash-onboard-banner{background:var(--primary);color:#fff;border-radius:14px;padding:1.1rem 1.2rem;margin-bottom:1rem;text-align:center;}
-  .dash-onboard-banner .dob-title{font-size:1.02rem;font-weight:700;margin:0 0 0.3rem;}
-  .dash-onboard-banner .dob-text{font-size:0.85rem;opacity:0.92;margin:0 0 0.9rem;line-height:1.4;}
-  .dash-onboard-banner .dob-btn{background:#fff;color:var(--primary-dark);border:none;border-radius:999px;padding:10px 20px;font-size:0.88rem;font-weight:700;cursor:pointer;}
   .dash-card.full-width{grid-column:1 / -1;}
   .dash-card-value{font-size:1.5rem;font-weight:800;color:var(--primary-dark);margin-bottom:4px;}
   .dash-card-label{font-size:0.72rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.02em;}
@@ -628,9 +630,11 @@
 <div class="page active" id="pageDashboard">
   <div style="font-size:1.2rem;line-height:1.2;color:var(--muted);margin:0.5rem 0 1rem;font-weight:600;" id="dashboardSubtitle">
     <div id="dashboardSubtitleLine1">Everything at a glance</div>
-    <div id="dashboardSubtitleLine2"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+      <div id="dashboardSubtitleLine2"></div>
+      <button id="dashShareIconBtn" title="Share dashboard summary via WhatsApp" onclick="shareDashboardWhatsApp()" style="background:#25D366;color:#fff;border:none;border-radius:50%;width:34px;height:34px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:1rem;cursor:pointer;">📱</button>
+    </div>
   </div>
-  <button class="share-btn whatsapp" style="width:100%;margin-bottom:1rem;" onclick="shareDashboardWhatsApp()">📱 Share Summary via WhatsApp</button>
   <div id="dashboardContent"></div>
 </div>
 
@@ -1441,6 +1445,14 @@
   </div>
 </div>
 
+<!-- Full-page advisory shown over Examinations / Attendance when no students exist yet -->
+<div id="studentsRequiredOverlay" class="students-required-overlay">
+  <div class="sro-icon">🧑‍🎓</div>
+  <div class="sro-title">Add Students First</div>
+  <div class="sro-text" id="studentsRequiredText">Add your learners under Students first — once they're added, they'll automatically appear here.</div>
+  <button class="sro-btn" onclick="switchPage('admissionrecords')">Add Students</button>
+</div>
+
 <!-- First-use school setup dialog -->
 <div id="firstUseModal">
   <div id="firstUseBox">
@@ -2142,6 +2154,22 @@ function switchPage(page){
   const target = document.getElementById(pageMap[page]);
   if(target) target.classList.add("active");
 
+  // Show a full-page advisory instead of Examinations/Attendance content when
+  // no students have been added yet — both pages need the Students roster to work.
+  const STUDENTS_REQUIRED_LABELS = { list:"Examinations", attendance:"Attendance" };
+  const overlayEl = document.getElementById("studentsRequiredOverlay");
+  if(overlayEl){
+    const label = STUDENTS_REQUIRED_LABELS[page];
+    if(label && getRecords("admission").length === 0){
+      const textEl = document.getElementById("studentsRequiredText");
+      if(textEl) textEl.textContent = `${label} needs student records to work. Add your learners under Students first — once they're added, they'll automatically appear here.`;
+      overlayEl.classList.add("show");
+    } else {
+      overlayEl.classList.remove("show");
+    }
+  }
+
+
   // Sidebar nav (About/Support live in the sidebar footer)
   const navMap = {dashboard:"navDashboard", admissionrecords:"navStudents", classes:"navExaminations", examSubjects:"navExaminations", add:"navExaminations", list:"navExaminations", attendance:"navAttendance", stockrecords:"navStockRecords", records:"navRecords", calendar:"navRecords", term1weeks:"navRecords", resources:"navResources", news:"navNews", forum:"navForum", settings:"navSettings"};
   ["navDashboard","navStudents","navAttendance","navStockRecords","navRecords","navResources","navNews","navForum","navSettings"].forEach(id=>{
@@ -2657,12 +2685,6 @@ function renderDashboard(){
   const dropoutTotal = dropoutBoys + dropoutGirls;
 
   container.innerHTML = `
-    ${totalStudents === 0 ? `
-    <div class="dash-onboard-banner">
-      <div class="dob-title">👋 Let's get started</div>
-      <div class="dob-text">Add your learners under Students first — once they're added, they'll automatically appear across Examinations, Attendance and all other records so you can add information on top of their names.</div>
-      <button class="dob-btn" onclick="switchPage('admissionrecords')">Add Students</button>
-    </div>` : ``}
     <div class="dash-grid">
       <div class="dash-card full-width">
         <div class="dash-card-value">${totalStudents}</div>
