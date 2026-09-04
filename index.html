@@ -838,13 +838,6 @@
             <option value="Female">Female</option>
           </select>
         </div>
-        <div class="adm-form-field" id="admClassField">
-          <label for="admClass">Class *</label>
-          <select id="admClass">
-            <option value="">Select class</option>
-          </select>
-          <p class="hint" style="color:var(--muted);font-size:0.72rem;margin:4px 0 0;">This class will be used for every student you add here. You'll only be asked once.</p>
-        </div>
         <div class="adm-form-field">
           <label for="admDob">Date of Birth *</label>
           <input type="date" id="admDob" onchange="calcAdmissionAge()">
@@ -5485,8 +5478,6 @@ function admissionClassOptionsHtml(){
 }
 
 function populateAdmissionSpinners(){
-  const classEl = document.getElementById("admClass");
-  if(classEl && classEl.options.length<=1){ classEl.insertAdjacentHTML("beforeend", admissionClassOptionsHtml()); }
   const edClassEl = document.getElementById("edAdmClass");
   if(edClassEl && edClassEl.options.length<=1){ edClassEl.insertAdjacentHTML("beforeend", admissionClassOptionsHtml()); }
   const distEl = document.getElementById("admDistrict");
@@ -5537,21 +5528,13 @@ function toggleOrphanStatus(which){
 }
 window.toggleOrphanStatus = toggleOrphanStatus;
 
-// Once at least one student has been saved, we already know which class this
-// device/dialog is being used for — so the Class field only needs to be asked
-// once. Every student added afterwards is silently saved under that same class.
-function getLockedAdmissionClass(){
-  const records = getRecords("admission");
-  return records.length ? records[0].class : null;
+// The Class is set once, in the Welcome / Settings dialog (getAppSetup().cls),
+// so every student added here is automatically saved under that same class —
+// there's no need to ask for it again on this form.
+function getAdmissionClass(){
+  const setup = getAppSetup();
+  return (setup && setup.cls) || null;
 }
-function updateAdmClassFieldVisibility(){
-  const fieldWrap = document.getElementById("admClassField");
-  const classSel  = document.getElementById("admClass");
-  const hasStudents = getRecords("admission").length > 0;
-  if(fieldWrap) fieldWrap.style.display = hasStudents ? "none" : "";
-  if(classSel)  classSel.required = !hasStudents;
-}
-window.updateAdmClassFieldVisibility = updateAdmClassFieldVisibility;
 
 // Students fragment only accepts students between 6 and 30 years old.
 // Age is derived from Date of Birth, so DOB effectively becomes required.
@@ -5575,8 +5558,7 @@ window.validateStudentAge = validateStudentAge;
 function addAdmissionRecord(){
   const name        = document.getElementById("admName").value.trim();
   const sex         = document.getElementById("admSex").value;
-  const lockedClass = getLockedAdmissionClass();
-  const cls         = lockedClass || document.getElementById("admClass").value;
+  const cls         = getAdmissionClass();
   const dob         = document.getElementById("admDob").value;
   const age         = document.getElementById("admAge").value;
   const orphan      = document.getElementById("admOrphanSingle").checked ? "Single"
@@ -5592,7 +5574,7 @@ function addAdmissionRecord(){
 
   if(!name){ alert("Please enter the student's name."); return; }
   if(!sex){ alert("Please select sex."); return; }
-  if(!cls){ alert("Please select the student's class (needed for Attendance Register)."); return; }
+  if(!cls){ alert("No class is set up yet. Please set your class under Settings first."); return; }
   const ageCheck = validateStudentAge(age);
   if(!ageCheck.valid){ alert(ageCheck.message); return; }
 
@@ -5605,7 +5587,6 @@ function addAdmissionRecord(){
 
   document.getElementById("admName").value="";
   document.getElementById("admSex").value="";
-  document.getElementById("admClass").value="";
   document.getElementById("admDob").value="";
   document.getElementById("admAge").value="";
   document.getElementById("admOrphanSingle").checked=false;
@@ -5619,7 +5600,6 @@ function addAdmissionRecord(){
   document.getElementById("admGuardian").value="";
   document.getElementById("admWhatsapp").value="";
 
-  updateAdmClassFieldVisibility();
   renderAdmissionRecords();
   updateRecordsCounts();
   closeAddStudentModal();
@@ -5630,11 +5610,9 @@ window.addAdmissionRecord = addAdmissionRecord;
 function openAddStudentModal(){
   document.getElementById("addStudentModal").style.display = "flex";
   populateAdmissionSpinners();
-  updateAdmClassFieldVisibility();
   // Clear form fields
   document.getElementById("admName").value = "";
   document.getElementById("admSex").value = "";
-  document.getElementById("admClass").value = "";
   document.getElementById("admDob").value = "";
   document.getElementById("admAge").value = "";
   document.getElementById("admOrphanSingle").checked = false;
