@@ -98,6 +98,7 @@
   .sidebar-footer{display:flex;align-items:center;gap:8px;padding:0.8rem 0.9rem 1rem;border-top:1px solid rgba(255,255,255,0.12);}
   .sf-avatar{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.18);color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.95rem;flex-shrink:0;border:none;cursor:pointer;}
   .sf-icon-btn{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.12);border:none;color:#fff;display:flex;align-items:center;justify-content:center;font-size:0.95rem;cursor:pointer;flex-shrink:0;}
+  .sf-about-dev{background:rgba(255,255,255,0.14);color:#fff;border:1px solid rgba(255,255,255,0.35);border-radius:999px;padding:6px 12px;font-size:0.78rem;font-weight:700;display:flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap;}
   .sf-support{margin-left:auto;background:rgba(255,255,255,0.14);color:#fff;border:1px solid rgba(255,255,255,0.35);border-radius:999px;padding:6px 12px;font-size:0.78rem;font-weight:700;display:flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap;}
   .hamburger-btn{background:none;border:none;color:var(--primary-dark);font-size:1.35rem;line-height:1;padding:4px 8px;cursor:pointer;}
   .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem;margin-bottom:1rem;}
@@ -291,6 +292,10 @@
   /* dashboard */
   .dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.2rem;}
   .dash-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:1rem;text-align:center;}
+  .dash-onboard-banner{background:var(--primary);color:#fff;border-radius:14px;padding:1.1rem 1.2rem;margin-bottom:1rem;text-align:center;}
+  .dash-onboard-banner .dob-title{font-size:1.02rem;font-weight:700;margin:0 0 0.3rem;}
+  .dash-onboard-banner .dob-text{font-size:0.85rem;opacity:0.92;margin:0 0 0.9rem;line-height:1.4;}
+  .dash-onboard-banner .dob-btn{background:#fff;color:var(--primary-dark);border:none;border-radius:999px;padding:10px 20px;font-size:0.88rem;font-weight:700;cursor:pointer;}
   .dash-card.full-width{grid-column:1 / -1;}
   .dash-card-value{font-size:1.5rem;font-weight:800;color:var(--primary-dark);margin-bottom:4px;}
   .dash-card-label{font-size:0.72rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:0.02em;}
@@ -621,10 +626,11 @@
 
 <!-- PAGE 0: DASHBOARD -->
 <div class="page active" id="pageDashboard">
-  <div style="font-size:2.46rem;line-height:1.2;color:var(--muted);margin:0.5rem 0 1rem;font-weight:600;" id="dashboardSubtitle">
+  <div style="font-size:1.2rem;line-height:1.2;color:var(--muted);margin:0.5rem 0 1rem;font-weight:600;" id="dashboardSubtitle">
     <div id="dashboardSubtitleLine1">Everything at a glance</div>
     <div id="dashboardSubtitleLine2"></div>
   </div>
+  <button class="share-btn whatsapp" style="width:100%;margin-bottom:1rem;" onclick="shareDashboardWhatsApp()">📱 Share Summary via WhatsApp</button>
   <div id="dashboardContent"></div>
 </div>
 
@@ -778,6 +784,16 @@
       <span class="cls-icon">↗️</span>
       <div class="cls-name">Transfer Out Record</div>
       <div class="cls-count" id="transferRecordCount">No records yet</div>
+    </div>
+    <div class="class-card" onclick="switchPage('calendar')">
+      <span class="cls-icon">📅</span>
+      <div class="cls-name">School Calendar</div>
+      <div class="cls-count">View calendar</div>
+    </div>
+    <div class="class-card" onclick="switchPage('term1weeks')">
+      <span class="cls-icon">📆</span>
+      <div class="cls-name">Term 1 Weeks</div>
+      <div class="cls-count">View weeks</div>
     </div>
   </div>
 </div>
@@ -2134,8 +2150,8 @@ function switchPage(page){
   if(target) target.classList.add("active");
 
   // Sidebar nav (About/Support live in the sidebar footer)
-  const navMap = {dashboard:"navDashboard", admissionrecords:"navStudents", classes:"navExaminations", examSubjects:"navExaminations", add:"navExaminations", list:"navExaminations", attendance:"navAttendance", stockrecords:"navStockRecords", records:"navRecords", resources:"navResources", calendar:"navCalendar", term1weeks:"navTerm1Weeks", news:"navNews", forum:"navForum", settings:"navSettings"};
-  ["navDashboard","navStudents","navAttendance","navStockRecords","navRecords","navResources","navCalendar","navTerm1Weeks","navNews","navForum","navSettings"].forEach(id=>{
+  const navMap = {dashboard:"navDashboard", admissionrecords:"navStudents", classes:"navExaminations", examSubjects:"navExaminations", add:"navExaminations", list:"navExaminations", attendance:"navAttendance", stockrecords:"navStockRecords", records:"navRecords", calendar:"navRecords", term1weeks:"navRecords", resources:"navResources", news:"navNews", forum:"navForum", settings:"navSettings"};
+  ["navDashboard","navStudents","navAttendance","navStockRecords","navRecords","navResources","navNews","navForum","navSettings"].forEach(id=>{
     const el=document.getElementById(id); if(el) el.classList.remove("active");
   });
   const activeNav = navMap[page];
@@ -2145,7 +2161,7 @@ function switchPage(page){
   // and the remaining record sub-pages. (admissionrecords/"Students", "news", "attendance", and the per-class "list"
   // page are reached directly from the sidebar/a card/menu and don't need a back button.)
   const backBtn = document.getElementById("backBtn");
-  if(backBtn) backBtn.style.display=(page==="classes"||page==="examSubjects"||page==="add"||page==="settings"||page==="profile"||page==="sickrecords"||page==="punishmentrecords"||page==="transferrecords")?"inline-block":"none";
+  if(backBtn) backBtn.style.display=(page==="classes"||page==="examSubjects"||page==="add"||page==="settings"||page==="profile"||page==="sickrecords"||page==="punishmentrecords"||page==="transferrecords"||page==="calendar"||page==="term1weeks")?"inline-block":"none";
 
   const titles = {
     dashboard:"Home",
@@ -2206,7 +2222,7 @@ let _settingsReturnPage = "dashboard";
 function getCurrentPageKey(){
   const map = {pageDashboard:"dashboard", pageClasses:"classes", pageExamSubjects:"examSubjects", pageAdd:"add", pageList:"list",
     pageRecords:"records", pageAdmissionRecords:"admissionrecords", pageSickRecords:"sickrecords", pagePunishmentRecords:"punishmentrecords", pageTransferRecords:"transferrecords", pageStockRecords:"stockrecords", pageAttendance:"attendance",
-    pageResources:"resources", pageNews:"news", pageForum:"forum",
+    pageResources:"resources", pageCalendar:"calendar", pageTerm1Weeks:"term1weeks", pageNews:"news", pageForum:"forum",
     pageProfile:"profile", pageSettings:"settings"};
   for(const domId in map){
     const el = document.getElementById(domId);
@@ -2225,12 +2241,14 @@ function goBack(){
   const sickActive         = document.getElementById("pageSickRecords").classList.contains("active");
   const punishmentActive   = document.getElementById("pagePunishmentRecords").classList.contains("active");
   const transferActive     = document.getElementById("pageTransferRecords").classList.contains("active");
+  const calendarActive     = document.getElementById("pageCalendar").classList.contains("active");
+  const term1weeksActive   = document.getElementById("pageTerm1Weeks").classList.contains("active");
   if(profileActive)  switchPage("settings");   // Profile is sub-page of Settings
   else if(settingsActive) switchPage(_settingsReturnPage);
   else if(listActive) switchPage("add");
   else if(addActive)  switchPage("classes");
   else if(examSubjectsActive) switchPage("classes");
-  else if(sickActive || punishmentActive || transferActive) switchPage("records");
+  else if(sickActive || punishmentActive || transferActive || calendarActive || term1weeksActive) switchPage("records");
 }
 window.switchPage=switchPage;window.goBack=goBack;
 
@@ -2613,7 +2631,45 @@ function renderDashboard(){
   const girlsAvgAttendance = girlsTotal > 0 ? Math.round((girlsPresent / girlsTotal) * 100) : 0;
   const monthlyAttendanceRecorded = boysTotal > 0 || girlsTotal > 0;
 
+  // Dropout Outs: admitted students whose Attendance Register entries over the
+  // last 30 days show them marked Absent every time they were recorded, i.e.
+  // never marked Present in that window (only counted once they've actually
+  // been marked at least once, so students with no attendance history at all
+  // aren't flagged).
+  const dropoutCutoff = new Date();
+  dropoutCutoff.setDate(dropoutCutoff.getDate() - 29);
+  dropoutCutoff.setHours(0,0,0,0);
+
+  const attendanceByStudent = {}; // studentId -> {present, marked}
+  Object.keys(attData).forEach(key=>{
+    const record = attData[key];
+    if(!record || !record.date) return;
+    const recDate = new Date(record.date);
+    if(isNaN(recDate) || recDate < dropoutCutoff) return;
+    Object.entries(record.entries||{}).forEach(([studentId, status])=>{
+      if(!attendanceByStudent[studentId]) attendanceByStudent[studentId] = {present:0, marked:0};
+      attendanceByStudent[studentId].marked++;
+      if(status === "Present") attendanceByStudent[studentId].present++;
+    });
+  });
+
+  let dropoutBoys = 0, dropoutGirls = 0;
+  admRecords.forEach(r=>{
+    const rec = attendanceByStudent[r.id] || attendanceByStudent[r.name];
+    if(rec && rec.marked > 0 && rec.present === 0){
+      if(r.sex === "Male") dropoutBoys++;
+      else if(r.sex === "Female") dropoutGirls++;
+    }
+  });
+  const dropoutTotal = dropoutBoys + dropoutGirls;
+
   container.innerHTML = `
+    ${totalStudents === 0 ? `
+    <div class="dash-onboard-banner">
+      <div class="dob-title">👋 Let's get started</div>
+      <div class="dob-text">Add your learners under Students first — once they're added, they'll automatically appear across Examinations, Attendance and all other records so you can add information on top of their names.</div>
+      <button class="dob-btn" onclick="switchPage('admissionrecords')">Add Students</button>
+    </div>` : ``}
     <div class="dash-grid">
       <div class="dash-card full-width">
         <div class="dash-card-value">${totalStudents}</div>
@@ -2649,6 +2705,15 @@ function renderDashboard(){
           <div class="dash-att-pill present">Boys: ${boysAvgAttendance}%</div>
           <div class="dash-att-pill present">Girls: ${girlsAvgAttendance}%</div>
         </div>` : `<div class="dash-empty">No attendance recorded yet this month.</div>`}
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Dropout Outs</div>
+      <div class="dash-attendance-row">
+        <div class="dash-att-pill present">Boys: ${dropoutBoys}</div>
+        <div class="dash-att-pill absent">Girls: ${dropoutGirls}</div>
+        <div class="dash-att-pill sick">Total: ${dropoutTotal}</div>
+      </div>
     </div>
 
     <div class="dash-section">
@@ -2925,6 +2990,112 @@ function renderDashboard(){
 }
 window.renderDashboard = renderDashboard;
 
+// ── Share Dashboard summary (PDF) via WhatsApp ──────────────────────────────
+function shareDashboardWhatsApp(){
+  const container = document.getElementById("dashboardContent");
+  if(!container){ alert("Dashboard isn't ready yet."); return; }
+
+  const setup = getAppSetup() || {};
+  const schoolName = setup.schoolName || "School";
+  const opt = (typeof ASSESS_CLASS_OPTIONS!=="undefined") ? ASSESS_CLASS_OPTIONS.find(o=>o.value===setup.cls) : null;
+  const clsLabel = setup.cls ? (opt?opt.label:classLabel(setup.cls)) : "";
+
+  const {jsPDF} = window.jspdf;
+  const doc = new jsPDF();
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let y = 18;
+
+  doc.setFont("helvetica","bold");
+  doc.setFontSize(16);
+  doc.text(schoolName, pageWidth/2, y, {align:"center"});
+  y += 8;
+  if(clsLabel){
+    doc.setFont("helvetica","normal");
+    doc.setFontSize(12);
+    doc.text(clsLabel, pageWidth/2, y, {align:"center"});
+    y += 7;
+  }
+  doc.setFontSize(10);
+  doc.setTextColor(120);
+  doc.text(`Dashboard Summary  ·  ${new Date().toLocaleDateString()}`, pageWidth/2, y, {align:"center"});
+  doc.setTextColor(0);
+  y += 10;
+
+  // Headline cards: Total Students / Boys / Girls
+  const cards = container.querySelectorAll(".dash-card");
+  if(cards.length){
+    const rows = Array.from(cards).map(c=>{
+      const val   = c.querySelector(".dash-card-value")?.textContent.trim() || "";
+      const label = c.querySelector(".dash-card-label")?.textContent.trim() || "";
+      return [label, val];
+    });
+    doc.autoTable({
+      startY:y,
+      head:[["Summary","Count"]],
+      body:rows,
+      theme:"grid",
+      headStyles:{fillColor:[15,110,86]},
+      margin:{left:14,right:14}
+    });
+    y = doc.lastAutoTable.finalY + 8;
+  }
+
+  // Remaining numeric sections (Attendance, Sick/Punishment/Transfer records, demographics, etc.)
+  const sections = container.querySelectorAll(".dash-section");
+  const rows2 = [];
+  sections.forEach(sec=>{
+    const title = sec.querySelector(".dash-section-title")?.textContent.trim() || "";
+    if(!title || title === "Latest Updates") return; // skip the non-numeric news preview
+    const pills = sec.querySelectorAll(".dash-att-pill");
+    if(pills.length){
+      rows2.push([title, Array.from(pills).map(p=>p.textContent.trim()).join("   |   ")]);
+    } else {
+      const empty = sec.querySelector(".dash-empty");
+      if(empty) rows2.push([title, empty.textContent.trim()]);
+    }
+  });
+  if(rows2.length){
+    doc.autoTable({
+      startY:y,
+      head:[["Category","Details"]],
+      body:rows2,
+      theme:"striped",
+      headStyles:{fillColor:[15,110,86]},
+      styles:{fontSize:8},
+      columnStyles:{0:{cellWidth:55},1:{cellWidth:"auto"}},
+      margin:{left:14,right:14}
+    });
+    y = doc.lastAutoTable.finalY + 8;
+  }
+
+  doc.setFontSize(9);
+  doc.setTextColor(140);
+  doc.text("Generated by Easy Assess", pageWidth/2, doc.internal.pageSize.getHeight()-10, {align:"center"});
+
+  const fileName = `${schoolName.replace(/[^a-z0-9]/gi,"_")}-Dashboard-Summary.pdf`;
+  const pdfBlob  = doc.output("blob");
+
+  // Prefer the native share sheet with the PDF attached (lets the user pick WhatsApp directly)
+  try{
+    const file = new File([pdfBlob], fileName, {type:"application/pdf"});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      navigator.share({
+        files:[file],
+        title:`${schoolName} Dashboard Summary`,
+        text:`${schoolName}${clsLabel?" — "+clsLabel:""} dashboard summary`
+      }).catch(()=>{});
+      return;
+    }
+  }catch(e){/* fall through to fallback below */}
+
+  // Fallback for browsers without file-sharing support: download the PDF,
+  // then open WhatsApp so the user can attach the downloaded file manually.
+  doc.save(fileName);
+  const msg = encodeURIComponent(`${schoolName}${clsLabel?" — "+clsLabel:""} Dashboard Summary\n\nThe PDF has been downloaded to your device — please attach it here.`);
+  window.open(`https://wa.me/?text=${msg}`, "_blank");
+}
+window.shareDashboardWhatsApp = shareDashboardWhatsApp;
+
 
 function updateBadge(){
   const count = getList(_currentClass).length;
@@ -2981,11 +3152,13 @@ function openHelp(){
   closeAppMenu();
   showInfoModal("❓ Help", `
     <p><strong>Getting started</strong></p>
-    <p>Tap a class card on the Assess tab to open its student list. Use the + button to add students and enter their scores.</p>
+    <p>Tap Students in the menu and add your learners there first. Once added, each student automatically appears across the app's other records — Examinations, Attendance, Teaching Records and more — so you just add information (scores, attendance, etc.) on top of the names already listed.</p>
     <p><strong>Junior Certificate &amp; MSCE</strong></p>
     <p>The first time you open JCE or MSCE, you'll choose which subjects to assess — English plus at least 5 others is required. Once students are added, tapping the card goes straight to the list.</p>
-    <p><strong>Resources &amp; Tools</strong></p>
-    <p>Find notes and syllabuses under Resources, and the Lesson Plan builder under Tools.</p>
+    <p><strong>Attendance &amp; Records</strong></p>
+    <p>Mark daily attendance under Attendance, manage stock under Stock Records, and track sick, punishment and transfer records plus the school calendar and term weeks under Teaching Records.</p>
+    <p><strong>Resources</strong></p>
+    <p>Find notes, syllabuses, and the Lesson Plan builder under Resources.</p>
     <p><strong>Need more help?</strong></p>
     <p>Contact the developer via WhatsApp from the Profile menu.</p>
   `);
@@ -6762,18 +6935,6 @@ if("serviceWorker" in navigator){
       </button>
     </div>
     <div class="nav-item-wrap">
-      <button class="nav-item" id="navCalendar" onclick="switchPage('calendar');closeSidebar()">
-        <span class="nav-icon">📅</span>
-        <span>School Calendar</span>
-      </button>
-    </div>
-    <div class="nav-item-wrap">
-      <button class="nav-item" id="navTerm1Weeks" onclick="switchPage('term1weeks');closeSidebar()">
-        <span class="nav-icon">📆</span>
-        <span>Term 1 Weeks</span>
-      </button>
-    </div>
-    <div class="nav-item-wrap">
       <button class="nav-item" id="navNews" onclick="switchPage('news');closeSidebar()">
         <span class="nav-icon">📰</span>
         <span>News</span>
@@ -6793,9 +6954,8 @@ if("serviceWorker" in navigator){
     </div>
   </div>
   <div class="sidebar-footer">
-    <button class="sf-avatar" title="Profile" onclick="closeSidebar();_settingsReturnPage=getCurrentPageKey();switchPage('settings')">👤</button>
-    <button class="sf-icon-btn" title="About" onclick="closeSidebar();openAbout()">ℹ️</button>
-    <button class="sf-support" title="Help" onclick="closeSidebar();openHelp()">❓ Support</button>
+    <button class="sf-about-dev" title="About Developer" onclick="closeSidebar();openAbout()">🧑‍💻 About Developer</button>
+    <button class="sf-support" title="Help" onclick="closeSidebar();openHelp()">❓ Help</button>
   </div>
 </nav>
 
