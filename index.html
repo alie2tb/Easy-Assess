@@ -128,6 +128,10 @@
   th,td{padding:8px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;}
   th{color:var(--muted);font-weight:600;font-size:0.8rem;}
   tr:hover{background:#fafafa;}
+  tr.row-fail{background:#FDF1EC;border-left:3px solid var(--danger);}
+  tr.row-fail:hover{background:#FBE6DE;}
+  html.dark tr.row-fail{background:#3A2018;}
+  html.dark tr.row-fail:hover{background:#452619;}
   .total{font-weight:600;}
   .empty{text-align:center;color:var(--muted);padding:1.5rem 0;}
   .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:0.75rem;background:#E1F5EE;color:var(--primary-dark);}
@@ -174,6 +178,47 @@
   #stockDetailBox{background:#fff;border-radius:14px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;padding:1.5rem;}
   html.dark #stockDetailBox{background:var(--card);color:var(--text);}
   #stockDetailItems{display:flex;flex-direction:column;gap:10px;margin:0.4rem 0 1rem;max-height:50vh;overflow-y:auto;}
+
+  #deleteAllStudentsModal{display:none;position:fixed;inset:0;z-index:8888;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;padding:1rem;}
+  #deleteAllStudentsModal.open{display:flex;}
+  #deleteAllStudentsBox{background:#fff;border-radius:14px;width:100%;max-width:420px;max-height:90vh;overflow-y:auto;padding:1.5rem;}
+  html.dark #deleteAllStudentsBox{background:var(--card);color:var(--text);}
+  #deleteAllStudentsBox h3{margin:0 0 0.6rem;font-size:1.05rem;color:var(--danger);display:flex;align-items:center;gap:8px;}
+  #deleteAllStudentsBox p{font-size:0.85rem;color:var(--muted);line-height:1.5;margin:0 0 0.9rem;}
+  #deleteAllStudentsBox .dasm-list{font-size:0.82rem;color:var(--muted);margin:0 0 0.9rem;padding-left:1.1rem;line-height:1.6;}
+  #deleteAllConfirmInput{margin-bottom:1rem;}
+  #deleteAllConfirmBtn:disabled{opacity:0.5;cursor:not-allowed;}
+
+  .trend-btn{background:none;border:none;cursor:pointer;font-size:1.05rem;padding:2px 6px;color:var(--primary-dark);border-radius:6px;line-height:1;}
+  .trend-btn:hover{background:rgba(29,158,117,0.12);}
+  #trendModal{display:none;position:fixed;inset:0;z-index:8888;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;padding:1rem;}
+  #trendModal.open{display:flex;}
+  #trendBox{background:#fff;border-radius:14px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;padding:1.3rem 1.4rem;}
+  html.dark #trendBox{background:var(--card);color:var(--text);}
+  #trendChartWrap{margin:0.8rem 0;background:var(--bg);border-radius:10px;padding:0.6rem 0.4rem;}
+  #trendSummary{font-size:0.83rem;color:var(--muted);line-height:1.6;margin-bottom:0.9rem;}
+  #trendSummary strong{color:var(--text);}
+  .trend-table{width:100%;border-collapse:collapse;font-size:0.82rem;}
+  .trend-table th{color:var(--muted);font-weight:600;font-size:0.72rem;text-align:left;padding:5px 6px;border-bottom:1px solid var(--border);}
+  .trend-table td{padding:5px 6px;border-bottom:1px solid var(--border);}
+  .trend-table tr.trend-empty td{color:var(--muted);}
+
+  #bulkShareModal{display:none;position:fixed;inset:0;z-index:8888;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;padding:1rem;}
+  #bulkShareModal.open{display:flex;}
+  #bulkShareBox{background:#fff;border-radius:14px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;padding:1.3rem 1.4rem;}
+  html.dark #bulkShareBox{background:var(--card);color:var(--text);}
+  #bulkShareProgress{font-size:0.82rem;color:var(--muted);font-weight:600;}
+  #bulkShareList{max-height:52vh;overflow-y:auto;margin-top:0.4rem;}
+  .bulk-share-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 2px;border-bottom:1px solid var(--border);}
+  .bulk-share-row:last-child{border-bottom:none;}
+  .bsr-name{font-weight:600;font-size:0.86rem;display:flex;align-items:center;gap:6px;}
+  .bsr-phone{font-size:0.73rem;color:var(--muted);margin-top:1px;}
+  .bsr-actions{display:flex;gap:6px;flex-shrink:0;}
+  .bsr-btn{border:none;border-radius:8px;padding:6px 8px;font-size:0.72rem;font-weight:700;cursor:pointer;white-space:nowrap;}
+  .bsr-btn.wa{background:#DCF8E9;color:#0F6E56;}
+  .bsr-btn.sms{background:#E6F1FB;color:#0C447C;}
+  .bsr-btn.sent{background:var(--primary);color:#fff;}
+  .bsr-btn:disabled{opacity:0.4;cursor:not-allowed;}
 
   .lp-frame{width:100%;height:calc(100vh - 210px);min-height:520px;border:none;border-radius:12px;background:#fff;display:block;}
   .report-header{text-align:center;border-bottom:2px solid #1D9E75;padding-bottom:1rem;margin-bottom:1rem;}
@@ -621,7 +666,7 @@
   <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleSidebar()" title="Menu">&#9776;</button>
   <button class="gear-btn" id="backBtn" onclick="goBack()" style="display:none;">&#8592;</button>
   <h1 id="topTitle">Easy Assess</h1>
-  <button class="gear-btn" onclick="shareApp()" title="Share this app">
+  <button class="gear-btn" id="topActionBtn" onclick="shareApp()" title="Share this app">
     <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
   </button>
 </div>
@@ -745,9 +790,8 @@
           <button class="menu-item" id="exportXlsBtn">📊 Export to Excel</button>
           <button class="menu-item" id="summaryBtn">📈 Summary</button>
           <button class="menu-item" id="schoolReportsBtn">📋 School Reports</button>
+          <button class="menu-item" id="bulkShareBtn">📲 Bulk Share Reports</button>
           <button class="menu-item" id="filterBtn">🔍 Filter by Subject</button>
-          <div style="height:1px;background:var(--border);margin:2px 0;"></div>
-          <button class="menu-item danger" id="deleteAllBtn">🗑️ Delete All</button>
         </div>
       </div>
     </div>
@@ -760,17 +804,23 @@
   <div style="margin-bottom:1rem; display:flex; align-items:center; gap:1rem;">
     <label for="examSpinner" style="font-weight:600;color:var(--text);font-size:0.95rem;">Examination:</label>
     <select id="examSpinner" onchange="changeExam(this.value)" style="padding:8px 12px; border-radius:8px; border:1px solid var(--border); background:var(--card); color:var(--text); font-size:0.95rem; cursor:pointer; min-width:150px;">
-      <option value="Week 2">Week 2</option>
-      <option value="Week 4">Week 4</option>
-      <option value="Week 8">Week 8</option>
-      <option value="Week 10">Week 10</option>
-      <option value="FINAL EXAM" selected>FINAL EXAM</option>
+      <option value="WEEK 1">WEEK 1</option>
+      <option value="WEEK 2">WEEK 2</option>
+      <option value="WEEK 3">WEEK 3</option>
+      <option value="WEEK 4">WEEK 4</option>
+      <option value="WEEK 5">WEEK 5</option>
+      <option value="WEEK 6">WEEK 6</option>
+      <option value="WEEK 7">WEEK 7</option>
+      <option value="WEEK 8">WEEK 8</option>
+      <option value="WEEK 9">WEEK 9</option>
+      <option value="WEEK 10">WEEK 10</option>
+      <option value="FINAL EXAMS" selected>FINAL EXAMS</option>
     </select>
   </div>
   <div class="table-wrap">
     <table>
       <thead>
-        <tr><th>#</th><th>Name</th><th>Sex</th><th>Total</th><th id="levelColHeader">Level</th><th>Remarks</th></tr>
+        <tr><th>#</th><th>Name</th><th>Sex</th><th>Total</th><th id="levelColHeader">Level</th><th>Remarks</th><th>Trend</th></tr>
       </thead>
       <tbody id="studentTable"></tbody>
     </table>
@@ -1618,6 +1668,70 @@
   </div>
 </div>
 
+<!-- Delete ALL students confirmation modal -->
+<div id="deleteAllStudentsModal">
+  <div id="deleteAllStudentsBox">
+    <h3>🗑️ Delete All Students</h3>
+    <p>This will permanently delete <strong>every student</strong> and all of their data across the entire app, including:</p>
+    <ul class="dasm-list">
+      <li>Admission / Students records</li>
+      <li>Exam scores (all classes &amp; exam periods)</li>
+      <li>Attendance register entries</li>
+      <li>Sick records</li>
+      <li>Punishment records</li>
+      <li>Transfer out records</li>
+    </ul>
+    <p><strong>This cannot be undone.</strong> Type <strong>DELETE</strong> below to confirm.</p>
+    <input type="text" id="deleteAllConfirmInput" placeholder="Type DELETE to confirm" autocomplete="off" autocapitalize="characters">
+    <div class="modal-actions">
+      <button class="btn-danger btn-small" id="deleteAllConfirmBtn" disabled onclick="performDeleteAllStudents()">Delete Everything</button>
+      <button class="btn-secondary btn-small" onclick="closeDeleteAllStudentsModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Student trend view modal -->
+<div id="trendModal">
+  <div id="trendBox">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+      <div>
+        <h3 id="trendStudentName" style="margin:0 0 0.15rem;font-size:1.05rem;"></h3>
+        <p id="trendStudentSub" style="font-size:0.78rem;color:var(--muted);margin:0;"></p>
+      </div>
+      <button class="gear-btn" onclick="closeTrendModal()" title="Close" style="font-size:1.1rem;padding:2px 8px;">✕</button>
+    </div>
+    <div id="trendChartWrap"></div>
+    <div id="trendSummary"></div>
+    <div class="table-wrap">
+      <table class="trend-table">
+        <thead><tr><th>Exam</th><th>Score</th><th>Result</th></tr></thead>
+        <tbody id="trendTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Bulk Share Reports modal -->
+<div id="bulkShareModal">
+  <div id="bulkShareBox">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;">
+      <div>
+        <h3 style="margin:0 0 0.15rem;font-size:1.05rem;">📲 Bulk Share Reports</h3>
+        <p id="bulkShareSub" style="font-size:0.78rem;color:var(--muted);margin:0;"></p>
+      </div>
+      <button class="gear-btn" onclick="closeBulkShareModal()" title="Close" style="font-size:1.1rem;padding:2px 8px;">✕</button>
+    </div>
+    <p style="font-size:0.78rem;color:var(--muted);margin:0.6rem 0 0;">Tap WhatsApp or SMS next to each student to send their report to their guardian. Use SMS for guardians who don't have WhatsApp.</p>
+    <div id="bulkShareProgress" style="margin:0.6rem 0 0.2rem;"></div>
+    <div id="bulkShareList"></div>
+    <div class="modal-actions" style="margin-top:0.8rem;">
+      <button class="btn-secondary btn-small" onclick="resetBulkShareSentMarks()">Reset sent marks</button>
+      <button class="btn-secondary btn-small" onclick="closeBulkShareModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+
 <!-- Share modal -->
 <div id="shareModal">
   <div id="shareBox">
@@ -2033,7 +2147,7 @@ function saveList(cls,arr){db[cls]=arr;localStorage.setItem(STORAGE_KEY,JSON.str
 // ── Splash ────────────────────────────────────────────────────────────────
 // ── Page navigation ───────────────────────────────────────────────────────
 let _currentClass = 1;
-let _selectedExam = "FINAL EXAM"; // Track which exam period is being entered
+let _selectedExam = "FINAL EXAMS"; // Track which exam period is being entered
 function currentClass(){ return _currentClass; }
 
 function buildClassGrid(){
@@ -2194,7 +2308,7 @@ function switchPage(page){
   if(backBtn) backBtn.style.display=(page==="classes"||page==="examSubjects"||page==="add"||page==="settings"||page==="profile"||page==="sickrecords"||page==="punishmentrecords"||page==="transferrecords"||page==="calendar"||page==="term1weeks")?"inline-block":"none";
 
   const titles = {
-    dashboard:"Home",
+    dashboard:"Dashboard",
     classes:"Easy Assess", examSubjects:"Select Subjects",
     add:`${classLabel(_currentClass)} — Add Student`,
     list:`${classLabel(_currentClass)} — Students`,
@@ -2204,6 +2318,21 @@ function switchPage(page){
   };
   const titleEl = document.getElementById("topTitle");
   if(titleEl) titleEl.textContent = titles[page]||"Easy Assess";
+
+  // Top-bar action button: shows Share on most pages, but a "delete all students"
+  // bin icon on the Students (admission records) page instead.
+  const topActionBtn = document.getElementById("topActionBtn");
+  if(topActionBtn){
+    if(page==="admissionrecords"){
+      topActionBtn.title = "Delete all students";
+      topActionBtn.setAttribute("onclick","openDeleteAllStudentsModal()");
+      topActionBtn.innerHTML = '<svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zM9.5 3h5l1 2H19v2H5V5h3.5l1-2zM9 10v8h2v-8H9zm4 0v8h2v-8h-2z"/></svg>';
+    } else {
+      topActionBtn.title = "Share this app";
+      topActionBtn.setAttribute("onclick","shareApp()");
+      topActionBtn.innerHTML = '<svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>';
+    }
+  }
 
   if(page==="dashboard") renderDashboard();
   if(page==="classes")  buildClassGrid();
@@ -3399,6 +3528,7 @@ function render(){
     const assessment = assessmentData.find(a => a.name === adm.name && a.sex === adm.sex);
     return {
       id: assessment?.id || adm.id,
+      admissionRecordId: adm.id,
       name: adm.name,
       sex: adm.sex,
       class: adm.class,
@@ -3459,17 +3589,129 @@ function render(){
     const tr = document.createElement("tr");
     tr.style.cursor = "pointer";
     tr.title = "Click to view report";
+    if(passFail === "FAIL") tr.classList.add("row-fail");
     tr.innerHTML = `
       <td style="color:var(--muted);font-weight:600;">${pos}</td>
       <td>${escapeHtml(s.name)}</td>
       <td><span class="pill ${s.sex === "Male" ? "male" : "female"}">${s.sex === "Male" ? "M" : "F"}</span></td>
       <td class="total">${totalDisplay}</td>
       <td style="font-weight:600;color:var(--primary-dark);">${gradeDisplay}</td>
-      <td><span style="padding:2px 10px;border-radius:999px;font-size:0.78rem;font-weight:700;background:${passBg};color:${passColor};">${passFail}</span></td>`;
+      <td><span style="padding:2px 10px;border-radius:999px;font-size:0.78rem;font-weight:700;background:${passBg};color:${passColor};">${passFail}</span></td>
+      <td><button class="trend-btn" title="View trend across exams">📈</button></td>`;
     tr.addEventListener("click", () => showReport(s.id));
+    const trendBtn = tr.querySelector(".trend-btn");
+    if(trendBtn) trendBtn.addEventListener("click", (e)=>{
+      e.stopPropagation();
+      openStudentTrend(s.admissionRecordId, s.name, s.sex);
+    });
     tbody.appendChild(tr);
   });
 }
+
+// ── Student Trend View: score across all exam periods for one student ──────
+const EXAM_PERIOD_ORDER = ["WEEK 1","WEEK 2","WEEK 3","WEEK 4","WEEK 5","WEEK 6","WEEK 7","WEEK 8","WEEK 9","WEEK 10","FINAL EXAMS"];
+function trendPeriodShort(period){
+  if(period==="FINAL EXAMS") return "Final";
+  return period.replace("WEEK ","W");
+}
+
+function getStudentTrendData(admissionRecordId, name, sex, cls){
+  const subs = getSubjects(cls);
+  const maxTotal = getMaxTotal(subs, cls);
+  const allRecords = getList(cls);
+  return EXAM_PERIOD_ORDER.map(period=>{
+    const rec = allRecords.find(r => r.examPeriod===period && (
+      (admissionRecordId && r.admissionId === admissionRecordId) ||
+      (!r.admissionId && r.name===name && r.sex===sex)
+    ));
+    if(!rec) return {period, hasData:false};
+    const total = calcTotal(rec, subs, cls);
+    const pct = maxTotal ? Math.round((total/maxTotal)*1000)/10 : 0;
+    const pf = getPassFail(total, cls, rec, subs);
+    return {period, hasData:true, total, maxTotal, pct, pf};
+  });
+}
+
+function buildTrendChartSVG(dataPoints){
+  const width=520, height=190, padL=30, padR=12, padT=12, padB=26;
+  const plotW=width-padL-padR, plotH=height-padT-padB;
+  const n=dataPoints.length;
+  const stepX = n>1 ? plotW/(n-1) : 0;
+  const xFor = i => padL+stepX*i;
+  const yFor = pct => padT + plotH - (pct/100)*plotH;
+
+  let grid="";
+  [0,50,100].forEach(v=>{
+    const y=yFor(v);
+    grid += `<line x1="${padL}" y1="${y}" x2="${width-padR}" y2="${y}" stroke="var(--border)" stroke-width="1"/>`;
+    grid += `<text x="${padL-6}" y="${y+3}" font-size="8.5" fill="var(--muted)" text-anchor="end">${v}</text>`;
+  });
+
+  const pts = dataPoints.map((d,i)=>({...d, x:xFor(i), y:d.hasData?yFor(d.pct):null}));
+  let pathD="", drawing=false;
+  pts.forEach(p=>{
+    if(p.y===null){ drawing=false; return; }
+    pathD += (drawing?"L":"M")+p.x+","+p.y+" ";
+    drawing=true;
+  });
+
+  const dots = pts.filter(p=>p.y!==null).map(p=>{
+    const color = p.pf==="PASS" ? "#1D9E75" : p.pf==="FAIL" ? "#D85A30" : "#999";
+    return `<circle cx="${p.x}" cy="${p.y}" r="4" fill="${color}"><title>${escapeHtml(trendPeriodShort(p.period))}: ${p.pct}% (${p.pf})</title></circle>`;
+  }).join("");
+
+  const labels = pts.map(p=>`<text x="${p.x}" y="${height-8}" font-size="8.5" fill="var(--muted)" text-anchor="middle">${escapeHtml(trendPeriodShort(p.period))}</text>`).join("");
+
+  return `<svg viewBox="0 0 ${width} ${height}" style="width:100%;height:auto;display:block;">
+    ${grid}
+    <path d="${pathD.trim()}" fill="none" stroke="var(--primary)" stroke-width="2.5"/>
+    ${dots}
+    ${labels}
+  </svg>`;
+}
+
+function openStudentTrend(admissionRecordId, name, sex){
+  const cls = currentClass();
+  const data = getStudentTrendData(admissionRecordId, name, sex, cls);
+
+  document.getElementById("trendStudentName").textContent = name;
+  document.getElementById("trendStudentSub").textContent = `${classLabel(cls)} — Score trend across all exams`;
+  document.getElementById("trendChartWrap").innerHTML = buildTrendChartSVG(data);
+
+  const withData = data.filter(d=>d.hasData);
+  const summaryEl = document.getElementById("trendSummary");
+  if(withData.length===0){
+    summaryEl.innerHTML = "No exam scores recorded yet for this student.";
+  } else if(withData.length===1){
+    summaryEl.innerHTML = `Only one exam recorded so far: <strong>${trendPeriodShort(withData[0].period)}</strong> (${withData[0].pct}%).`;
+  } else {
+    const first = withData[0], last = withData[withData.length-1];
+    const diff = Math.round((last.pct-first.pct)*10)/10;
+    const best = withData.reduce((a,b)=>b.pct>a.pct?b:a);
+    const worst = withData.reduce((a,b)=>b.pct<a.pct?b:a);
+    let trendLine;
+    if(diff>0) trendLine = `📈 Improved by <strong>${diff} pts</strong> (${trendPeriodShort(first.period)} → ${trendPeriodShort(last.period)})`;
+    else if(diff<0) trendLine = `📉 Dropped by <strong>${Math.abs(diff)} pts</strong> (${trendPeriodShort(first.period)} → ${trendPeriodShort(last.period)})`;
+    else trendLine = `➖ Steady (${trendPeriodShort(first.period)} → ${trendPeriodShort(last.period)})`;
+    summaryEl.innerHTML = `${trendLine}<br>Best: <strong>${trendPeriodShort(best.period)}</strong> (${best.pct}%) · Weakest: <strong>${trendPeriodShort(worst.period)}</strong> (${worst.pct}%)`;
+  }
+
+  const tbody = document.getElementById("trendTableBody");
+  tbody.innerHTML = data.map(d=>{
+    if(!d.hasData) return `<tr class="trend-empty"><td>${escapeHtml(d.period)}</td><td>—</td><td>—</td></tr>`;
+    const color = d.pf==="PASS" ? "#085041" : "#D85A30";
+    const bg = d.pf==="PASS" ? "#E1F5EE" : "#FAECE7";
+    return `<tr><td>${escapeHtml(d.period)}</td><td>${d.total}/${d.maxTotal} (${d.pct}%)</td><td><span style="padding:2px 8px;border-radius:999px;font-size:0.72rem;font-weight:700;background:${bg};color:${color};">${d.pf}</span></td></tr>`;
+  }).join("");
+
+  document.getElementById("trendModal").classList.add("open");
+}
+window.openStudentTrend = openStudentTrend;
+
+function closeTrendModal(){
+  document.getElementById("trendModal").classList.remove("open");
+}
+window.closeTrendModal = closeTrendModal;
 
 // ── Handle Save (global, called directly from button onclick) ─────────────
 function handleSave(e){
@@ -3622,6 +3864,14 @@ document.addEventListener("DOMContentLoaded", ()=>{
   const searchEl = document.getElementById("search");
   if(searchEl) searchEl.addEventListener("input", render);
 
+  const deleteAllConfirmInput = document.getElementById("deleteAllConfirmInput");
+  const deleteAllConfirmBtn = document.getElementById("deleteAllConfirmBtn");
+  if(deleteAllConfirmInput && deleteAllConfirmBtn){
+    deleteAllConfirmInput.addEventListener("input", ()=>{
+      deleteAllConfirmBtn.disabled = deleteAllConfirmInput.value.trim() !== "DELETE";
+    });
+  }
+
   const exportPdfBtn = document.getElementById("exportPdfBtn");
   if(exportPdfBtn) exportPdfBtn.addEventListener("click",()=>{
     closeMenu();
@@ -3661,6 +3911,9 @@ document.addEventListener("DOMContentLoaded", ()=>{
     document.getElementById("srModal").classList.add("open");
     document.getElementById("srSchool").focus();
   });
+
+  const bulkShareBtn = document.getElementById("bulkShareBtn");
+  if(bulkShareBtn) bulkShareBtn.addEventListener("click",()=>{ closeMenu(); openBulkShareModal(); });
 
   // Notes auto-save
   const notesArea = document.getElementById("notesArea");
@@ -3955,6 +4208,53 @@ function printReport(){
   setTimeout(()=>{win.print();},400);
 }
 
+// Shared message text builder — used by both the single-report WhatsApp share
+// and the Bulk Share modal (WhatsApp + SMS), so the wording always matches.
+function buildReportMessage(student, cls, subs, examPeriod){
+  const hasScores = !!student._hasScores;
+  const total = calcTotal(student, subs, cls);
+  const maxTotal = getMaxTotal(subs, cls);
+  const { level, remark } = getLevelAndRemark(total, maxTotal);
+  const pf = getPassFail(total, cls, student, subs);
+
+  let gradeValue, remarkValue;
+  if(cls==="MSCE"){
+    const totalDisp = displayTotal(total, cls);
+    gradeValue = getMsceGrade(totalDisp);
+    remarkValue = pf;
+  } else if(cls==="JC"){
+    const totalDisp = displayTotal(total, cls);
+    gradeValue = getJceGrade(totalDisp);
+    remarkValue = pf;
+  } else {
+    gradeValue = level;
+    remarkValue = remark;
+  }
+
+  let message = `*${classLabel(cls)} - Academic Report (${examPeriod})*\n\n`;
+  message += `*Student:* ${student.name}\n`;
+  message += `*Date:* ${new Date().toLocaleDateString()}\n`;
+  if(hasScores){
+    message += `*Total Score:* ${total} / ${maxTotal}\n`;
+    message += `*Grade/Level:* ${gradeValue}\n`;
+    message += `*Result:* ${pf}\n`;
+    message += `*Remarks:* ${remarkValue}\n`;
+  } else {
+    message += `*Status:* No scores recorded yet\n`;
+  }
+
+  if(hasScores && subs.length > 0){
+    message += `\n*Subject Scores:*\n`;
+    subs.forEach(sub => {
+      const score = student[sub.key] || 0;
+      message += `${sub.label}: ${score}\n`;
+    });
+  }
+
+  message += `\n_Sent from Easy Assess_`;
+  return message;
+}
+
 function shareReportWhatsApp(){
   const cls = currentClass();
   const subs = getSubjects(cls);
@@ -3988,50 +4288,7 @@ function shareReportWhatsApp(){
     return;
   }
   
-  // Get report details
-  const hasScores = !!student._hasScores;
-  const total = calcTotal(student, subs, cls);
-  const maxTotal = getMaxTotal(subs, cls);
-  const { level, remark } = getLevelAndRemark(total, maxTotal);
-  const pf = getPassFail(total, cls, student, subs);
-  
-  let gradeValue, remarkValue;
-  if(cls==="MSCE"){
-    const totalDisp = displayTotal(total, cls);
-    gradeValue = getMsceGrade(totalDisp);
-    remarkValue = pf;
-  } else if(cls==="JC"){
-    const totalDisp = displayTotal(total, cls);
-    gradeValue = getJceGrade(totalDisp);
-    remarkValue = pf;
-  } else {
-    gradeValue = level;
-    remarkValue = remark;
-  }
-  
-  // Build message with exam period included
-  let message = `*${classLabel(cls)} - Academic Report (${_selectedExam})*\n\n`;
-  message += `*Student:* ${student.name}\n`;
-  message += `*Date:* ${new Date().toLocaleDateString()}\n`;
-  if(hasScores){
-    message += `*Total Score:* ${total} / ${maxTotal}\n`;
-    message += `*Grade/Level:* ${gradeValue}\n`;
-    message += `*Result:* ${pf}\n`;
-    message += `*Remarks:* ${remarkValue}\n`;
-  } else {
-    message += `*Status:* No scores recorded yet\n`;
-  }
-  
-  // Add subject scores
-  if(hasScores && subs.length > 0){
-    message += `\n*Subject Scores:*\n`;
-    subs.forEach(sub => {
-      const score = student[sub.key] || 0;
-      message += `${sub.label}: ${score}\n`;
-    });
-  }
-  
-  message += `\n_Sent from Easy Assess_`;
+  const message = buildReportMessage(student, cls, subs, _selectedExam);
   
   // Format phone number (remove non-numeric chars if needed) and open WhatsApp
   const phoneNumber = student.whatsapp.replace(/\D/g, '');
@@ -4042,6 +4299,124 @@ function shareReportWhatsApp(){
   const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
   window.open(whatsappUrl, '_blank');
 }
+
+// ── Bulk Share Reports (WhatsApp + SMS fallback) ────────────────────────────
+const BULK_SENT_KEY = "ea33_bulk_share_sent";
+function getBulkSentMap(){ return JSON.parse(localStorage.getItem(BULK_SENT_KEY)||"{}"); }
+function saveBulkSentMap(m){ localStorage.setItem(BULK_SENT_KEY, JSON.stringify(m)); }
+function bulkShareStudentKey(s){ return s.admissionRecordId || (s.name+"_"+s.sex); }
+
+function getBulkShareMergedList(cls, subs){
+  const admissionRecords = getRecords("admission").filter(r => r.class === cls.toString());
+  const assessmentData = getList(cls).filter(a => a.examPeriod === _selectedExam);
+  return admissionRecords.map(adm => {
+    const assessment = assessmentData.find(a => a.name === adm.name && a.sex === adm.sex);
+    return {
+      id: assessment?.id || adm.id,
+      admissionRecordId: adm.id,
+      name: adm.name,
+      sex: adm.sex,
+      class: adm.class,
+      whatsapp: adm.whatsapp,
+      _hasScores: !!assessment,
+      ...assessment
+    };
+  }).sort((a,b)=>calcTotal(b,subs,cls)-calcTotal(a,subs,cls));
+}
+
+function openBulkShareModal(){
+  renderBulkShareList();
+  document.getElementById("bulkShareModal").classList.add("open");
+}
+window.openBulkShareModal = openBulkShareModal;
+
+function closeBulkShareModal(){
+  document.getElementById("bulkShareModal").classList.remove("open");
+}
+window.closeBulkShareModal = closeBulkShareModal;
+
+function renderBulkShareList(){
+  const cls = currentClass();
+  const subs = getSubjects(cls);
+  const mergedList = getBulkShareMergedList(cls, subs);
+
+  document.getElementById("bulkShareSub").textContent = `${classLabel(cls)} — ${_selectedExam}`;
+  const listEl = document.getElementById("bulkShareList");
+  const progressEl = document.getElementById("bulkShareProgress");
+
+  if(mergedList.length===0){
+    listEl.innerHTML = `<p style="font-size:0.85rem;color:var(--muted);text-align:center;padding:1.2rem 0;">No students in this class yet.</p>`;
+    progressEl.textContent = "";
+    return;
+  }
+
+  const sentMap = getBulkSentMap();
+  let sentCount = 0;
+  listEl.innerHTML = mergedList.map(s=>{
+    const key = `${cls}_${_selectedExam}_${bulkShareStudentKey(s)}`;
+    const entry = sentMap[key] || {};
+    if(entry.whatsapp || entry.sms) sentCount++;
+    const phone = (s.whatsapp||"").trim();
+    const phoneDisplay = phone || "No phone number on file";
+    return `<div class="bulk-share-row" data-key="${escapeHtml(key)}">
+      <div>
+        <div class="bsr-name">${escapeHtml(s.name)} <span class="pill ${s.sex==="Male"?"male":"female"}">${s.sex==="Male"?"M":"F"}</span></div>
+        <div class="bsr-phone">${escapeHtml(phoneDisplay)}</div>
+      </div>
+      <div class="bsr-actions">
+        <button class="bsr-btn wa ${entry.whatsapp?'sent':''}" ${!phone?'disabled':''} data-channel="whatsapp">📱 WhatsApp${entry.whatsapp?' ✓':''}</button>
+        <button class="bsr-btn sms ${entry.sms?'sent':''}" ${!phone?'disabled':''} data-channel="sms">✉️ SMS${entry.sms?' ✓':''}</button>
+      </div>
+    </div>`;
+  }).join("");
+  progressEl.textContent = `${sentCount} of ${mergedList.length} contacted`;
+
+  listEl.querySelectorAll(".bulk-share-row").forEach(row=>{
+    const key = row.getAttribute("data-key");
+    const student = mergedList.find(s => `${cls}_${_selectedExam}_${bulkShareStudentKey(s)}` === key);
+    if(!student) return;
+    row.querySelectorAll(".bsr-btn").forEach(btn=>{
+      btn.addEventListener("click", ()=>{
+        sendBulkShare(student, cls, subs, btn.getAttribute("data-channel"), key);
+      });
+    });
+  });
+}
+window.renderBulkShareList = renderBulkShareList;
+
+function sendBulkShare(student, cls, subs, channel, key){
+  const phone = (student.whatsapp||"").replace(/\D/g,'');
+  if(!phone) return;
+  const message = buildReportMessage(student, cls, subs, _selectedExam);
+  const encoded = encodeURIComponent(message);
+  if(channel==="whatsapp"){
+    window.open(`https://wa.me/${phone}?text=${encoded}`, '_blank');
+  } else {
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    window.open(`sms:${phone}${isIOS ? "&" : "?"}body=${encoded}`, '_blank');
+  }
+  const sentMap = getBulkSentMap();
+  sentMap[key] = sentMap[key] || {};
+  sentMap[key][channel] = true;
+  sentMap[key].ts = Date.now();
+  saveBulkSentMap(sentMap);
+  renderBulkShareList();
+}
+
+function resetBulkShareSentMarks(){
+  const cls = currentClass();
+  if(!confirm(`Clear "sent" marks for ${classLabel(cls)} — ${_selectedExam}?`)) return;
+  const sentMap = getBulkSentMap();
+  const prefix = `${cls}_${_selectedExam}_`;
+  Object.keys(sentMap).forEach(k=>{ if(k.startsWith(prefix)) delete sentMap[k]; });
+  saveBulkSentMap(sentMap);
+  renderBulkShareList();
+}
+window.resetBulkShareSentMarks = resetBulkShareSentMarks;
+
+document.getElementById("bulkShareModal").addEventListener("click",function(e){if(e.target===this)closeBulkShareModal();});
+
+
 
 document.getElementById("reportModal").addEventListener("click",function(e){if(e.target===this)closeReport();});
 
@@ -5092,7 +5467,7 @@ const RESOURCE_TABS = [
 ];
 
 // ── Records: Sick / Punishment ──────────────────────────────────────────────
-const RECORDS_KEY = {admission:"ea33_admission_records", sick:"ea33_sick_records", punishment:"ea33_punishment_records", stock:"ea33_stock_records"};
+const RECORDS_KEY = {admission:"ea33_admission_records", sick:"ea33_sick_records", punishment:"ea33_punishment_records", stock:"ea33_stock_records", transfer:"ea33_transfer_records"};
 
 function getRecords(type){
   return JSON.parse(localStorage.getItem(RECORDS_KEY[type])||"[]");
@@ -5100,6 +5475,52 @@ function getRecords(type){
 function saveRecords(type, arr){
   localStorage.setItem(RECORDS_KEY[type], JSON.stringify(arr));
 }
+
+// ── Delete ALL students (and every piece of student data across the app) ────
+function openDeleteAllStudentsModal(){
+  const input = document.getElementById("deleteAllConfirmInput");
+  const btn = document.getElementById("deleteAllConfirmBtn");
+  if(input) input.value = "";
+  if(btn) btn.disabled = true;
+  const modal = document.getElementById("deleteAllStudentsModal");
+  if(modal) modal.classList.add("open");
+  if(input) setTimeout(()=>input.focus(), 50);
+}
+window.openDeleteAllStudentsModal = openDeleteAllStudentsModal;
+
+function closeDeleteAllStudentsModal(){
+  const modal = document.getElementById("deleteAllStudentsModal");
+  if(modal) modal.classList.remove("open");
+}
+window.closeDeleteAllStudentsModal = closeDeleteAllStudentsModal;
+
+function performDeleteAllStudents(){
+  const input = document.getElementById("deleteAllConfirmInput");
+  if(!input || input.value.trim() !== "DELETE") return;
+
+  // Exam scores for every class (all exam periods live inside this single db object)
+  db = {};
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+
+  // Admission roster, plus every student-linked record type
+  saveRecords("admission", []);
+  saveRecords("sick", []);
+  saveRecords("punishment", []);
+  saveRecords("transfer", []);
+
+  // Attendance register entries
+  localStorage.setItem(ATTENDANCE_KEY, JSON.stringify({}));
+
+  closeDeleteAllStudentsModal();
+  resetForm();
+  render();
+  buildClassGrid();
+  renderAdmissionRecords();
+  updateBadge();
+  updateAdmissionEmptyHints();
+  alert("All students and their data have been deleted.");
+}
+window.performDeleteAllStudents = performDeleteAllStudents;
 
 // ── Shared helper: any form needing a student's Name & Sex pulls from Admission Records ──
 function populateAdmissionNameDropdown(selectId){
@@ -6940,7 +7361,7 @@ if("serviceWorker" in navigator){
     <div class="nav-item-wrap">
       <button class="nav-item active" id="navDashboard" onclick="switchPage('dashboard');closeSidebar()">
         <span class="nav-icon">🏠</span>
-        <span>Home</span>
+        <span>Dashboard</span>
       </button>
     </div>
     <div class="nav-item-wrap">
