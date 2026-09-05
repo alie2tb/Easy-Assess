@@ -757,6 +757,16 @@
     <div class="counter-pill girls">&#128103; Girls: <strong id="countGirls">0</strong></div>
     <div class="counter-pill total-c">&#128101; Total: <strong id="countTotal">0</strong></div>
   </div>
+  <div style="margin-bottom:1rem; display:flex; align-items:center; gap:1rem;">
+    <label for="examSpinner" style="font-weight:600;color:var(--text);font-size:0.95rem;">Examination:</label>
+    <select id="examSpinner" onchange="changeExam(this.value)" style="padding:8px 12px; border-radius:8px; border:1px solid var(--border); background:var(--card); color:var(--text); font-size:0.95rem; cursor:pointer; min-width:150px;">
+      <option value="Week 2">Week 2</option>
+      <option value="Week 4">Week 4</option>
+      <option value="Week 8">Week 8</option>
+      <option value="Week 10">Week 10</option>
+      <option value="FINAL EXAM" selected>FINAL EXAM</option>
+    </select>
+  </div>
   <div class="table-wrap">
     <table>
       <thead>
@@ -2023,6 +2033,7 @@ function saveList(cls,arr){db[cls]=arr;localStorage.setItem(STORAGE_KEY,JSON.str
 // ── Splash ────────────────────────────────────────────────────────────────
 // ── Page navigation ───────────────────────────────────────────────────────
 let _currentClass = 1;
+let _selectedExam = "FINAL EXAM"; // Track which exam period is being entered
 function currentClass(){ return _currentClass; }
 
 function buildClassGrid(){
@@ -3380,10 +3391,10 @@ function render(){
   // Get students from ADMISSION RECORDS for this class
   const admissionRecords = getRecords("admission").filter(r => r.class === cls.toString());
   
-  // Get assessment data for this class
-  const assessmentData = getList(cls);
+  // Get assessment data for this class, filtered by selected exam period
+  const assessmentData = getList(cls).filter(a => a.examPeriod === _selectedExam);
   
-  // Merge: use admission records as base, overlay assessment data
+  // Merge: use admission records as base, overlay assessment data from selected exam
   const mergedList = admissionRecords.map(adm => {
     const assessment = assessmentData.find(a => a.name === adm.name && a.sex === adm.sex);
     return {
@@ -3482,7 +3493,7 @@ function handleSave(e){
   }
   if(!studentName){ alert("Please select the student from Admission Records."); return; }
   if(!studentSex) { alert("Please select sex.");           return; }
-  const data = { name: studentName, sex: studentSex, admissionId };
+  const data = { name: studentName, sex: studentSex, admissionId, examPeriod: _selectedExam };
   subs.forEach(sub=>{
     const el = document.getElementById(sub.key);
     data[sub.key] = el ? Number(el.value)||0 : 0;
@@ -3503,7 +3514,7 @@ function handleSave(e){
   if(sexEl)  sexEl.value="";
   subs.forEach(sub=>{ const el=document.getElementById(sub.key); if(el) el.value=""; });
   if(eId) eId.value="";
-  const ft = document.getElementById("formTitle"); if(ft) ft.textContent="Add student";
+  const ft = document.getElementById("formTitle"); if(ft) ft.textContent=`Add student — ${_selectedExam}`;
   const sb = document.getElementById("submitBtn"); if(sb) sb.textContent="Save";
   const cb = document.getElementById("cancelBtn"); if(cb) cb.style.display="none";
   setStudentFieldsMode(false);
@@ -3515,6 +3526,41 @@ function handleSave(e){
   switchPage('list');
 }
 window.handleSave = handleSave;
+
+// ── Handle Exam Selection ──────────────────────────────────────────────────
+function changeExam(examPeriod){
+  _selectedExam = examPeriod;
+  localStorage.setItem("selectedExam", examPeriod);
+  console.log("Exam period changed to:", examPeriod);
+  
+  // Update page title to show exam period
+  const titleEl = document.getElementById("topTitle");
+  if(titleEl){
+    const cls = currentClass();
+    titleEl.textContent = `${classLabel(cls)} — Students (${examPeriod})`;
+  }
+  
+  // Refresh the student list to show scores from selected exam
+  if(document.getElementById("studentTable")){
+    render();
+  }
+  
+  // Update form title to show exam
+  const formTitle = document.getElementById("formTitle");
+  if(formTitle){
+    formTitle.textContent = `Add student — ${examPeriod}`;
+  }
+}
+window.changeExam = changeExam;
+
+// Load saved exam selection on page load
+document.addEventListener("DOMContentLoaded", ()=>{
+  const savedExam = localStorage.getItem("selectedExam");
+  if(savedExam && document.getElementById("examSpinner")){
+    _selectedExam = savedExam;
+    document.getElementById("examSpinner").value = savedExam;
+  }
+});
 
 // ── Manual form ───────────────────────────────────────────────────────────
 let form, editId, submitBtn, cancelBtn, formTitle;
@@ -3535,11 +3581,11 @@ document.addEventListener("DOMContentLoaded", ()=>{
       if(!nameEl || !nameEl.value){ alert("Please select the student from Admission Records."); return; }
       let data;
       if(nameEl.value === "__legacy__"){
-        data = { name: nameEl.dataset.legacyName || "", sex: sexEl ? sexEl.value : "", admissionId: null };
+        data = { name: nameEl.dataset.legacyName || "", sex: sexEl ? sexEl.value : "", admissionId: null, examPeriod: _selectedExam };
       } else {
         const rec = getAdmissionRecordById(nameEl.value);
         if(!rec){ alert("Please select a valid student from Admission Records."); return; }
-        data = { name: rec.name, sex: rec.sex, admissionId: rec.id };
+        data = { name: rec.name, sex: rec.sex, admissionId: rec.id, examPeriod: _selectedExam };
       }
       if(!data.name){alert("Please select the student from Admission Records.");return;}
       if(!data.sex){alert("Please select sex.");return;}
@@ -3737,9 +3783,9 @@ let activeReportId = null;
 function showReport(id){
   const cls=currentClass(),subs=getSubjects(cls);
   
-  // Get students from merged data (admission records + assessment data)
+  // Get students from merged data (admission records + assessment data for selected exam only)
   const admissionRecords = getRecords("admission").filter(r => r.class === cls.toString());
-  const assessmentData = getList(cls);
+  const assessmentData = getList(cls).filter(a => a.examPeriod === _selectedExam);
   const mergedList = admissionRecords.map(adm => {
     const assessment = assessmentData.find(a => a.name === adm.name && a.sex === adm.sex);
     return {
@@ -3763,7 +3809,7 @@ function showReport(id){
   const uniqueTotals = [...new Set(mergedList.map(x=>calcTotal(x,subs,cls)||0))].sort((a,b)=>b-a);
   const pos = uniqueTotals.indexOf(total||0) + 1;
 
-  document.getElementById("rClass").textContent=`${classLabel(cls)} — Academic Report`;
+  document.getElementById("rClass").textContent=`${classLabel(cls)} — Academic Report (${_selectedExam})`;
   document.getElementById("rName").textContent=s.name;
   document.getElementById("rSex").textContent=s.sex==="Male"?"M":"F";
   document.getElementById("rPosition").textContent = hasScores ? `${pos} of ${mergedList.length}` : "—";
@@ -3859,15 +3905,15 @@ function editFromReport(){
 
 function deleteFromReport(){
   const cls=currentClass();
-  const existing = getList(cls).find(s=>s.id===activeReportId);
+  const existing = getList(cls).find(s=>s.id===activeReportId && s.examPeriod===_selectedExam);
   if(!existing){
-    // This student has never had scores entered — there's no assessment record to
+    // This student has never had scores entered for this exam — there's no assessment record to
     // delete here. Deleting the student entirely is done from Students (Admission Records).
-    alert("This student has no scores recorded yet, so there's nothing to delete here. To remove the student entirely, delete them from the Students tab (Admission Records).");
+    alert("This student has no scores recorded yet for "+_selectedExam+", so there's nothing to delete here. To remove the student entirely, delete them from the Students tab (Admission Records).");
     return;
   }
-  if(!confirm("Delete this student record?")) return;
-  saveList(cls, getList(cls).filter(s=>s.id!==activeReportId));
+  if(!confirm("Delete this student record for "+_selectedExam+"?")) return;
+  saveList(cls, getList(cls).filter(s=>!(s.id===activeReportId && s.examPeriod===_selectedExam)));
   closeReport();
   render();
   buildClassGrid();
@@ -3913,9 +3959,9 @@ function shareReportWhatsApp(){
   const cls = currentClass();
   const subs = getSubjects(cls);
   
-  // Get merged list to find student details
+  // Get merged list to find student details (filtered by selected exam period)
   const admissionRecords = getRecords("admission").filter(r => r.class === cls.toString());
-  const assessmentData = getList(cls);
+  const assessmentData = getList(cls).filter(a => a.examPeriod === _selectedExam);
   const mergedList = admissionRecords.map(adm => {
     const assessment = assessmentData.find(a => a.name === adm.name && a.sex === adm.sex);
     return {
@@ -3963,8 +4009,8 @@ function shareReportWhatsApp(){
     remarkValue = remark;
   }
   
-  // Build message
-  let message = `*${classLabel(cls)} - Academic Report*\n\n`;
+  // Build message with exam period included
+  let message = `*${classLabel(cls)} - Academic Report (${_selectedExam})*\n\n`;
   message += `*Student:* ${student.name}\n`;
   message += `*Date:* ${new Date().toLocaleDateString()}\n`;
   if(hasScores){
