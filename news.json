@@ -1,24 +1,24 @@
 {
   "announcements": [
-    
-    { "title": "MANEB has released the 2026 MSCE exam results. To access the results, candidates should visit https://maneb.malawi265.com/ExamResults/ ", "date": "Sept 8, 2026" }, 
+    { "title": "MANEB has released the 2026 MSCE exam results. To access the results, candidates should visit https://maneb.malawi265.com/ExamResults/", "date": "Sept 8, 2026" },
     { "title": "Standard 1 2026 Registration commences — August 31th", "date": "August 31 2026" }
-  ] 
-     
+  ],
   "articles": [
     {
       "id": "duwana-muhammad-donation",
       "tag": "Community",
       "headline": "Donors Pledge Over K1.2 Million to Support Determined Young Learner",
-      "preview": "Government officials and business leaders rallied behind 16-year-old Duwana Muhammad of Mangale Primary School at the National Youth Summit in Lilongwe, pledging combined support of more than K1.2 million after her determination to stay in school inspired those in attendance. Standard Bank Malawi also committed to opening an education savings account to help safeguard the funds for her studies.",
+      "preview": "Government officials and business leaders rallied behind 16-year-old Duwana Muhammad of Mangale Primary School at the National Youth Summit in Lilongwe, pledging combined support of more than K1.2 million.",
+      "content": "Government officials and business leaders rallied behind 16-year-old Duwana Muhammad of Mangale Primary School at the National Youth Summit in Lilongwe, pledging combined support of more than K1.2 million after her determination to stay in school inspired those in attendance.\n\nStandard Bank Malawi also committed to opening an education savings account to help safeguard the funds for her studies.",
       "date": "2026-08-18"
     },
     {
       "id": "curriculum-framework",
       "tag": "Bank Fraud",
-      "headline": "Primary school teacher arrested in Kasungu ",
-      "preview": "Police have arrested a primary school teacher in Kasungu for allegedly forging documents to make it appear that he had died in an attempt to have his outstanding bank loan cancelled.According to information available, the teacher allegedly submitted the fake death documents to the bank, prompting the institution to sympathise with his family and write off the loan.The unusual case came to light four years later when the teacher reportedly returned to the same bank to apply for another loan. The bank’s system flagged his application after indicating that he was already registered as deceased.Kasungu Police spokesperson Miracle Hauli has confirmed the arrest but declined to provide further details.Police are expected to provide more information as investigations continue. ",
+      "headline": "Primary school teacher arrested in Kasungu",
+      "preview": "Police have arrested a primary school teacher in Kasungu for allegedly forging documents to make it appear that he had died in an attempt to have his outstanding bank loan cancelled.",
+      "content": "Police have arrested a primary school teacher in Kasungu for allegedly forging documents to make it appear that he had died in an attempt to have his outstanding bank loan cancelled.\n\nAccording to information available, the teacher allegedly submitted the fake death documents to the bank, prompting the institution to sympathise with his family and write off the loan.\n\nThe unusual case came to light four years later when the teacher reportedly returned to the same bank to apply for another loan. The bank's system flagged his application after indicating that he was already registered as deceased.\n\nKasungu Police spokesperson Miracle Hauli has confirmed the arrest but declined to provide further details. Police are expected to provide more information as investigations continue.",
       "date": "2026-09-04"
     }
-   ]
+  ]
 }
