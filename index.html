@@ -68,7 +68,7 @@
   input:checked+.slider{background:var(--primary);}
   input:checked+.slider:before{transform:translateX(24px);}
   body{margin:0;font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);padding:0;}
-  h1{font-size:1.4rem;font-weight:600;margin:0 0 0.3rem;}
+  h1{font-size:1.525rem;font-weight:600;margin:0 0 0.3rem;}
   /* top bar */
   .top-bar{position:sticky;top:0;z-index:200;background:#fff;border-bottom:1px solid var(--border);padding:0.6rem 1rem;display:flex;align-items:center;gap:10px;}
   .top-bar h1{font-size:1.2rem;font-weight:700;margin:0;white-space:nowrap;color:var(--primary-dark);flex:1;}
@@ -2702,71 +2702,6 @@ function renderDashboard(){
     }
   });
 
-  // Count denominations by gender
-  let catholicBoys = 0, catholicGirls = 0, ccapBoys = 0, ccapGirls = 0, anglicianBoys = 0, anglicianGirls = 0,
-      adventistBoys = 0, adventistGirls = 0, baptistBoys = 0, baptistGirls = 0, pentecostalBoys = 0, pentecostalGirls = 0,
-      aogBoys = 0, aogGirls = 0, jwBoys = 0, jwGirls = 0, islamBoys = 0, islamGirls = 0, zionBoys = 0, zionGirls = 0,
-      nazareneBoys = 0, nazareneGirls = 0, otherChristianBoys = 0, otherChristianGirls = 0, otherReligionBoys = 0, otherReligionGirls = 0, noneBoys = 0, noneGirls = 0;
-
-  admissionRecords.forEach(rec => {
-    if(rec.denomination === "Roman Catholic") {
-      if(rec.sex === "Male") catholicBoys++;
-      else if(rec.sex === "Female") catholicGirls++;
-    }
-    if(rec.denomination === "CCAP (Presbyterian)") {
-      if(rec.sex === "Male") ccapBoys++;
-      else if(rec.sex === "Female") ccapGirls++;
-    }
-    if(rec.denomination === "Anglican") {
-      if(rec.sex === "Male") anglicianBoys++;
-      else if(rec.sex === "Female") anglicianGirls++;
-    }
-    if(rec.denomination === "Seventh-day Adventist") {
-      if(rec.sex === "Male") adventistBoys++;
-      else if(rec.sex === "Female") adventistGirls++;
-    }
-    if(rec.denomination === "Baptist") {
-      if(rec.sex === "Male") baptistBoys++;
-      else if(rec.sex === "Female") baptistGirls++;
-    }
-    if(rec.denomination === "Pentecostal") {
-      if(rec.sex === "Male") pentecostalBoys++;
-      else if(rec.sex === "Female") pentecostalGirls++;
-    }
-    if(rec.denomination === "Assemblies of God") {
-      if(rec.sex === "Male") aogBoys++;
-      else if(rec.sex === "Female") aogGirls++;
-    }
-    if(rec.denomination === "Jehovah's Witness") {
-      if(rec.sex === "Male") jwBoys++;
-      else if(rec.sex === "Female") jwGirls++;
-    }
-    if(rec.denomination === "Islam") {
-      if(rec.sex === "Male") islamBoys++;
-      else if(rec.sex === "Female") islamGirls++;
-    }
-    if(rec.denomination === "Zion") {
-      if(rec.sex === "Male") zionBoys++;
-      else if(rec.sex === "Female") zionGirls++;
-    }
-    if(rec.denomination === "Nazarene") {
-      if(rec.sex === "Male") nazareneBoys++;
-      else if(rec.sex === "Female") nazareneGirls++;
-    }
-    if(rec.denomination === "Other Christian") {
-      if(rec.sex === "Male") otherChristianBoys++;
-      else if(rec.sex === "Female") otherChristianGirls++;
-    }
-    if(rec.denomination === "Other Religion") {
-      if(rec.sex === "Male") otherReligionBoys++;
-      else if(rec.sex === "Female") otherReligionGirls++;
-    }
-    if(rec.denomination === "None") {
-      if(rec.sex === "Male") noneBoys++;
-      else if(rec.sex === "Female") noneGirls++;
-    }
-  });
-
   const latestAnnouncement = (typeof NEWS_ANNOUNCEMENTS!=="undefined" && NEWS_ANNOUNCEMENTS.length) ? NEWS_ANNOUNCEMENTS[0] : null;
   const latestArticle      = (typeof NEWS_ARTICLES!=="undefined" && NEWS_ARTICLES.length) ? NEWS_ARTICLES[0] : null;
 
@@ -3022,132 +2957,6 @@ function renderDashboard(){
         <div class="dash-att-pill present">Boys: ${otherDisabilityBoys}</div>
         <div class="dash-att-pill absent">Girls: ${otherDisabilityGirls}</div>
         <div class="dash-att-pill sick">Total: ${otherDisabilityBoys + otherDisabilityGirls}</div>
-      </div>
-    </div>
-
-    <div class="dash-section">
-      <div class="dash-section-title">Roman Catholic</div>
-      <div class="dash-attendance-row">
-        <div class="dash-att-pill present">Boys: ${catholicBoys}</div>
-        <div class="dash-att-pill absent">Girls: ${catholicGirls}</div>
-        <div class="dash-att-pill sick">Total: ${catholicBoys + catholicGirls}</div>
-      </div>
-    </div>
-
-    <div class="dash-section">
-      <div class="dash-section-title">CCAP (Presbyterian)</div>
-      <div class="dash-attendance-row">
-        <div class="dash-att-pill present">Boys: ${ccapBoys}</div>
-        <div class="dash-att-pill absent">Girls: ${ccapGirls}</div>
-        <div class="dash-att-pill sick">Total: ${ccapBoys + ccapGirls}</div>
-      </div>
-    </div>
-
-    <div class="dash-section">
-      <div class="dash-section-title">Anglican</div>
-      <div class="dash-attendance-row">
-        <div class="dash-att-pill present">Boys: ${anglicianBoys}</div>
-        <div class="dash-att-pill absent">Girls: ${anglicianGirls}</div>
-        <div class="dash-att-pill sick">Total: ${anglicianBoys + anglicianGirls}</div>
-      </div>
-    </div>
-
-    <div class="dash-section">
-      <div class="dash-section-title">Seventh-day Adventist</div>
-      <div class="dash-attendance-row">
-        <div class="dash-att-pill present">Boys: ${adventistBoys}</div>
-        <div class="dash-att-pill absent">Girls: ${adventistGirls}</div>
-        <div class="dash-att-pill sick">Total: ${adventistBoys + adventistGirls}</div>
-      </div>
-    </div>
-
-    <div class="dash-section">
-      <div class="dash-section-title">Baptist</div>
-      <div class="dash-attendance-row">
-        <div class="dash-att-pill present">Boys: ${baptistBoys}</div>
-        <div class="dash-att-pill absent">Girls: ${baptistGirls}</div>
-        <div class="dash-att-pill sick">Total: ${baptistBoys + baptistGirls}</div>
-      </div>
-    </div>
-
-    <div class="dash-section">
-      <div class="dash-section-title">Pentecostal</div>
-      <div class="dash-attendance-row">
-        <div class="dash-att-pill present">Boys: ${pentecostalBoys}</div>
-        <div class="dash-att-pill absent">Girls: ${pentecostalGirls}</div>
-        <div class="dash-att-pill sick">Total: ${pentecostalBoys + pentecostalGirls}</div>
-      </div>
-    </div>
-
-    <div class="dash-section">
-      <div class="dash-section-title">Assemblies of God</div>
-      <div class="dash-attendance-row">
-        <div class="dash-att-pill present">Boys: ${aogBoys}</div>
-        <div class="dash-att-pill absent">Girls: ${aogGirls}</div>
-        <div class="dash-att-pill sick">Total: ${aogBoys + aogGirls}</div>
-      </div>
-    </div>
-
-    <div class="dash-section">
-      <div class="dash-section-title">Jehovah's Witness</div>
-      <div class="dash-attendance-row">
-        <div class="dash-att-pill present">Boys: ${jwBoys}</div>
-        <div class="dash-att-pill absent">Girls: ${jwGirls}</div>
-        <div class="dash-att-pill sick">Total: ${jwBoys + jwGirls}</div>
-      </div>
-    </div>
-
-    <div class="dash-section">
-      <div class="dash-section-title">Islam</div>
-      <div class="dash-attendance-row">
-        <div class="dash-att-pill present">Boys: ${islamBoys}</div>
-        <div class="dash-att-pill absent">Girls: ${islamGirls}</div>
-        <div class="dash-att-pill sick">Total: ${islamBoys + islamGirls}</div>
-      </div>
-    </div>
-
-    <div class="dash-section">
-      <div class="dash-section-title">Zion</div>
-      <div class="dash-attendance-row">
-        <div class="dash-att-pill present">Boys: ${zionBoys}</div>
-        <div class="dash-att-pill absent">Girls: ${zionGirls}</div>
-        <div class="dash-att-pill sick">Total: ${zionBoys + zionGirls}</div>
-      </div>
-    </div>
-
-    <div class="dash-section">
-      <div class="dash-section-title">Nazarene</div>
-      <div class="dash-attendance-row">
-        <div class="dash-att-pill present">Boys: ${nazareneBoys}</div>
-        <div class="dash-att-pill absent">Girls: ${nazareneGirls}</div>
-        <div class="dash-att-pill sick">Total: ${nazareneBoys + nazareneGirls}</div>
-      </div>
-    </div>
-
-    <div class="dash-section">
-      <div class="dash-section-title">Other Christian</div>
-      <div class="dash-attendance-row">
-        <div class="dash-att-pill present">Boys: ${otherChristianBoys}</div>
-        <div class="dash-att-pill absent">Girls: ${otherChristianGirls}</div>
-        <div class="dash-att-pill sick">Total: ${otherChristianBoys + otherChristianGirls}</div>
-      </div>
-    </div>
-
-    <div class="dash-section">
-      <div class="dash-section-title">Other Religion</div>
-      <div class="dash-attendance-row">
-        <div class="dash-att-pill present">Boys: ${otherReligionBoys}</div>
-        <div class="dash-att-pill absent">Girls: ${otherReligionGirls}</div>
-        <div class="dash-att-pill sick">Total: ${otherReligionBoys + otherReligionGirls}</div>
-      </div>
-    </div>
-
-    <div class="dash-section">
-      <div class="dash-section-title">No Denomination</div>
-      <div class="dash-attendance-row">
-        <div class="dash-att-pill present">Boys: ${noneBoys}</div>
-        <div class="dash-att-pill absent">Girls: ${noneGirls}</div>
-        <div class="dash-att-pill sick">Total: ${noneBoys + noneGirls}</div>
       </div>
     </div>
 
