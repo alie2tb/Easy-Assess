@@ -1,42 +1,31 @@
 {
   "announcements": [
     {
-      "title": "MSCE 2025 Registration Deadline — April 30th",
-      "date": "Apr 20, 2025"
+      "title": "MSCE 2026 Results out",
+      "date": "Sept 8, 2026"
     },
     {
-      "title": "Teachers' In-Service Training: May 12–16, Lilongwe",
-      "date": "Apr 18, 2025"
-    },
-    {
-      "title": "New CPD Module Available: Inclusive Education",
-      "date": "Apr 15, 2025"
-    }
+      "title": "Standard 1 Registration started 0n 31 August",
+      "date": "August 31 2026"
+    }   
   ],
   "articles": [
     {
       "tag": "Policy",
-      "headline": "Ministry of Education Launches New Curriculum Framework for Primary Schools",
-      "preview": "The Malawi Ministry of Education has unveiled a new curriculum framework aimed at improving literacy and numeracy outcomes across primary schools nationwide.",
-      "date": "Apr 20, 2025",
+      "headline": "Fourteen learners from Chikwawa South East Constituency who have been selected to boarding secondary schools",
+      "preview": "Fourteen learners from Chikwawa South East Constituency who have been selected to boarding secondary schools across the country",
+      "date": "Sept 12, 2026",
       "image": "https://example.com/image1.jpg",
-      "content": "The Malawi Ministry of Education has unveiled a new curriculum framework aimed at improving literacy and numeracy outcomes across primary schools nationwide.\n\nThe framework, developed in consultation with teachers' unions and education researchers, places a stronger emphasis on foundational reading and mathematics skills in the early grades, with revised teaching guides expected to reach schools ahead of the next academic year.\n\nOfficials say the changes respond directly to national assessment data showing gaps in early-grade literacy, and that additional teacher training will accompany the rollout."
+      "content": "Fourteen learners from Chikwawa South East Constituency who have been selected to boarding secondary schools across the country have received learning materials from Member of Parliament Susan Dossi. Dossi made the donation today, saying the gesture is intended to recognise the learners’ hard work and encourage them to remain committed to their education. The support includes school bags, notebooks and other essential learning materials. Dossi says the initiative also seeks to continue the legacy of her late father, Moses Dossi, who supported learners in the constituency during his time as MP. The beneficiaries include learners selected to Blantyre Secondary School, Mzuzu Government Secondary School and Ngabu Secondary School, among others. Meanwhile, Dossi says the identification of learners to benefit from school-fee support through the Constituency Development Fund (CDF) is progressing well and will soon be completed in the constituency."
     },
     {
       "tag": "Funding",
-      "headline": "Government Announces Increased Bursary Support for Rural Teachers",
-      "preview": "New funding will help cover accommodation and transport costs for teachers posted to hard-to-reach rural schools starting next term.",
-      "date": "Apr 18, 2025",
+      "headline": "Shadric Namalomba today officially opened a girls’ hostel",
+      "preview": "Mangochi South East Member of Parliament and Minister of Information Shadric Namalomba has today officially opened a girls’ hostel",
+      "date": "Sept 12, 2026",
       "image": "https://example.com/image2.jpg",
-      "content": "New funding will help cover accommodation and transport costs for teachers posted to hard-to-reach rural schools starting next term.\n\nThe support package is intended to ease the burden on teachers serving in remote areas, where housing and transport have long been cited as major barriers to staff retention.\n\nEducation officials say the initiative is part of a broader effort to reduce teacher turnover in rural districts."
-    },
-    {
-      "tag": "Exams",
-      "headline": "PSLCE Marking Guidelines Updated for 2025",
-      "preview": "MANEB has released updated marking guidelines for the Primary School Leaving Certificate Examination, with revised rubrics for continuous assessment.",
-      "date": "Apr 15, 2025",
-      "image": "https://example.com/image3.jpg",
-      "content": "MANEB has released updated marking guidelines for the Primary School Leaving Certificate Examination, with revised rubrics for continuous assessment.\n\nThe changes are designed to bring greater consistency to how continuous assessment marks are combined with final examination scores.\n\nSchools have been asked to review the new guidelines ahead of the next marking cycle."
+      "content": "Mangochi South East Member of Parliament and Minister of Information Shadric Namalomba has today officially opened a girls’ hostel at Chilipa Community Day Secondary School in Mangochi. Constructed with funding from the Governance to Enable Service Delivery (GESD) programme, the hostel has capacity to accommodate more than 50 girls. The facility is expected to improve girls’ access to secondary education by providing accommodation closer to the school, particularly for learners who previously travelled long distances to attend classes."
     }
+   
   ]
 }
