@@ -1,24 +1,42 @@
 {
   "announcements": [
-    { "title": "MANEB has released the 2026 MSCE exam results.", "date": "Sept 8, 2026" },
-    { "title": "Standard 1 2026 Registration commenced on August 31th 2026", "date": "August 31 2026" }
+    {
+      "title": "MSCE 2025 Registration Deadline — April 30th",
+      "date": "Apr 20, 2025"
+    },
+    {
+      "title": "Teachers' In-Service Training: May 12–16, Lilongwe",
+      "date": "Apr 18, 2025"
+    },
+    {
+      "title": "New CPD Module Available: Inclusive Education",
+      "date": "Apr 15, 2025"
+    }
   ],
   "articles": [
     {
-      "id": "duwana-muhammad-donation",
-      "tag": "Community",
-      "headline": "Donors Pledge Over K1.2 Million to Support Determined Young Learner",
-      "preview": "Government officials and business leaders rallied behind 16-year-old Duwana Muhammad of Mangale Primary School at the National Youth Summit in Lilongwe, pledging combined support of more than K1.2 million.",
-      "content": "Government officials and business leaders rallied behind 16-year-old Duwana Muhammad of Mangale Primary School at the National Youth Summit in Lilongwe, pledging combined support of more than K1.2 million after her determination to stay in school inspired those in attendance.\n\nStandard Bank Malawi also committed to opening an education savings account to help safeguard the funds for her studies.",
-      "date": "2026-08-18"
+      "tag": "Policy",
+      "headline": "Ministry of Education Launches New Curriculum Framework for Primary Schools",
+      "preview": "The Malawi Ministry of Education has unveiled a new curriculum framework aimed at improving literacy and numeracy outcomes across primary schools nationwide.",
+      "date": "Apr 20, 2025",
+      "image": "https://example.com/image1.jpg",
+      "content": "The Malawi Ministry of Education has unveiled a new curriculum framework aimed at improving literacy and numeracy outcomes across primary schools nationwide.\n\nThe framework, developed in consultation with teachers' unions and education researchers, places a stronger emphasis on foundational reading and mathematics skills in the early grades, with revised teaching guides expected to reach schools ahead of the next academic year.\n\nOfficials say the changes respond directly to national assessment data showing gaps in early-grade literacy, and that additional teacher training will accompany the rollout."
     },
     {
-      "id": "curriculum-framework",
-      "tag": "Bank Fraud",
-      "headline": "Primary school teacher arrested in Kasungu",
-      "preview": "Police have arrested a primary school teacher in Kasungu for allegedly forging documents to make it appear that he had died in an attempt to have his outstanding bank loan cancelled.",
-      "content": "Police have arrested a primary school teacher in Kasungu for allegedly forging documents to make it appear that he had died in an attempt to have his outstanding bank loan cancelled.\n\nAccording to information available, the teacher allegedly submitted the fake death documents to the bank, prompting the institution to sympathise with his family and write off the loan.\n\nThe unusual case came to light four years later when the teacher reportedly returned to the same bank to apply for another loan. The bank's system flagged his application after indicating that he was already registered as deceased.\n\nKasungu Police spokesperson Miracle Hauli has confirmed the arrest but declined to provide further details. Police are expected to provide more information as investigations continue.",
-      "date": "2026-09-04"
+      "tag": "Funding",
+      "headline": "Government Announces Increased Bursary Support for Rural Teachers",
+      "preview": "New funding will help cover accommodation and transport costs for teachers posted to hard-to-reach rural schools starting next term.",
+      "date": "Apr 18, 2025",
+      "image": "https://example.com/image2.jpg",
+      "content": "New funding will help cover accommodation and transport costs for teachers posted to hard-to-reach rural schools starting next term.\n\nThe support package is intended to ease the burden on teachers serving in remote areas, where housing and transport have long been cited as major barriers to staff retention.\n\nEducation officials say the initiative is part of a broader effort to reduce teacher turnover in rural districts."
+    },
+    {
+      "tag": "Exams",
+      "headline": "PSLCE Marking Guidelines Updated for 2025",
+      "preview": "MANEB has released updated marking guidelines for the Primary School Leaving Certificate Examination, with revised rubrics for continuous assessment.",
+      "date": "Apr 15, 2025",
+      "image": "https://example.com/image3.jpg",
+      "content": "MANEB has released updated marking guidelines for the Primary School Leaving Certificate Examination, with revised rubrics for continuous assessment.\n\nThe changes are designed to bring greater consistency to how continuous assessment marks are combined with final examination scores.\n\nSchools have been asked to review the new guidelines ahead of the next marking cycle."
     }
   ]
 }

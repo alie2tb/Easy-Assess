@@ -594,7 +594,7 @@
   .forum-search-wrap{position:relative;margin-bottom:0.9rem;}
   .forum-search-wrap .fs-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.95rem;pointer-events:none;}
   .forum-search{width:100%;padding:11px 14px 11px 38px;border:1px solid var(--border);border-radius:12px;font-size:0.92rem;background:var(--grey-100);color:var(--text);}
-  .forum-tabs{display:flex;gap:1.4rem;border-bottom:1px solid var(--border);margin-bottom:1rem;}
+  .forum-tabs{display:flex;gap:1.4rem;border-bottom:1px solid var(--border);margin-bottom:1rem;justify-content:space-between;align-items:center;}
   .forum-tab{background:none;border:none;padding:0 0 0.7rem;font-size:0.85rem;font-weight:700;letter-spacing:0.03em;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;text-transform:uppercase;}
   .forum-tab.active{color:var(--primary-dark);border-bottom-color:var(--primary-dark);}
   .forum-post-card{background:var(--card);border-radius:14px;padding:1.1rem;margin-bottom:1rem;box-shadow:0 1px 4px rgba(0,0,0,0.07);cursor:pointer;transition:transform 0.15s;}
@@ -6501,52 +6501,30 @@ window.renderLessonPlanCode = renderLessonPlanCode;
 
 // Sample announcements & news content — used as an initial/offline fallback
 // until news.json (a separate, editable data file) loads successfully.
-let NEWS_ANNOUNCEMENTS = [
-  { title:"MSCE 2025 Registration Deadline — April 30th", date:"Apr 20, 2025" },
-  { title:"Teachers' In-Service Training: May 12–16, Lilongwe", date:"Apr 18, 2025" },
-  { title:"New CPD Module Available: Inclusive Education", date:"Apr 15, 2025" }
-];
-
-let NEWS_ARTICLES = [
-  {
-    tag:"Policy",
-    headline:"Ministry of Education Launches New Curriculum Framework for Primary Schools",
-    preview:"The Malawi Ministry of Education has unveiled a new curriculum framework aimed at improving literacy and numeracy outcomes across primary schools nationwide.",
-    date:"Apr 20, 2025",
-    content:"The Malawi Ministry of Education has unveiled a new curriculum framework aimed at improving literacy and numeracy outcomes across primary schools nationwide.\n\nThe framework, developed in consultation with teachers' unions and education researchers, places a stronger emphasis on foundational reading and mathematics skills in the early grades, with revised teaching guides expected to reach schools ahead of the next academic year.\n\nOfficials say the changes respond directly to national assessment data showing gaps in early-grade literacy, and that additional teacher training will accompany the rollout."
-  },
-  {
-    tag:"Funding",
-    headline:"Government Announces Increased Bursary Support for Rural Teachers",
-    preview:"New funding will help cover accommodation and transport costs for teachers posted to hard-to-reach rural schools starting next term.",
-    date:"Apr 18, 2025",
-    content:"New funding will help cover accommodation and transport costs for teachers posted to hard-to-reach rural schools starting next term.\n\nThe support package is intended to ease the burden on teachers serving in remote areas, where housing and transport have long been cited as major barriers to staff retention.\n\nEducation officials say the initiative is part of a broader effort to reduce teacher turnover in rural districts."
-  },
-  {
-    tag:"Exams",
-    headline:"PSLCE Marking Guidelines Updated for 2025",
-    preview:"MANEB has released updated marking guidelines for the Primary School Leaving Certificate Examination, with revised rubrics for continuous assessment.",
-    date:"Apr 15, 2025",
-    content:"MANEB has released updated marking guidelines for the Primary School Leaving Certificate Examination, with revised rubrics for continuous assessment.\n\nThe changes are designed to bring greater consistency to how continuous assessment marks are combined with final examination scores.\n\nSchools have been asked to review the new guidelines ahead of the next marking cycle."
-  }
-];
-
+let NEWS_ANNOUNCEMENTS = [];
+let NEWS_ARTICLES = [];
 
 // Loads news.json (a standalone, easy-to-edit data file shipped alongside
 // index.html) and refreshes both the News page and the Home "Latest Updates"
-// preview once it's available. If it can't be loaded (e.g. opened directly as
-// a local file without a server), the hardcoded fallback content above is used.
+// preview once it's available. If it can't be loaded or is empty, a fallback
+// message is displayed.
 async function loadNewsData(){
   try{
     const res = await fetch("news.json", {cache:"no-store"});
-    if(!res.ok) return;
+    if(!res.ok) {
+      renderNewsPage();
+      renderDashboard();
+      return;
+    }
     const data = await res.json();
     if(Array.isArray(data.announcements) && data.announcements.length) NEWS_ANNOUNCEMENTS = data.announcements;
     if(Array.isArray(data.articles) && data.articles.length) NEWS_ARTICLES = data.articles;
     renderNewsPage();
     renderDashboard();
   } catch(e){
-    // Offline / opened as a local file without a server — keep fallback content.
+    // Error loading news.json — show fallback message
+    renderNewsPage();
+    renderDashboard();
   }
 }
 window.loadNewsData = loadNewsData;
@@ -6554,6 +6532,14 @@ window.loadNewsData = loadNewsData;
 function renderNewsPage(){
   const annContainer = document.getElementById("newsAnnouncementsList");
   const artContainer = document.getElementById("newsArticlesList");
+  
+  // Show fallback message if no news data is available
+  if((!NEWS_ANNOUNCEMENTS || NEWS_ANNOUNCEMENTS.length === 0) && (!NEWS_ARTICLES || NEWS_ARTICLES.length === 0)){
+    if(annContainer) annContainer.innerHTML = `<div style="padding:2rem;text-align:center;color:var(--muted);">⏳ LOADING LATEST NEWS</div>`;
+    if(artContainer) artContainer.innerHTML = `<div style="padding:2rem;text-align:center;color:var(--muted);">⏳ LOADING LATEST NEWS</div>`;
+    return;
+  }
+  
   if(annContainer){
     annContainer.innerHTML = NEWS_ANNOUNCEMENTS.map(a=>`
       <div class="news-announce-card">
