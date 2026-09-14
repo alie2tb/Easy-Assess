@@ -114,6 +114,9 @@
   html.dark tr.row-fail:hover{background:#452619;}
   .total{font-weight:600;}
   .empty{text-align:center;color:var(--muted);padding:1.5rem 0;}
+  .chart-loading{display:flex;align-items:center;justify-content:center;min-height:200px;background:var(--bg);border-radius:8px;color:var(--muted);font-size:0.9rem;}
+  .chart-error{display:flex;align-items:center;justify-content:center;min-height:200px;background:#fff3f0;border-radius:8px;color:var(--danger);font-size:0.9rem;border:1px solid #fce4ec;padding:1rem;}
+  html.dark .chart-error{background:#3a2018;border-color:#5a3a28;color:#ff9a7a;}
   .pill{display:inline-block;padding:2px 8px;border-radius:999px;font-size:0.75rem;background:#E1F5EE;color:var(--primary-dark);}
   .pill.male{background:#E6F1FB;color:#0C447C;}
   .pill.female{background:#FBEAF0;color:#72243E;}
@@ -1913,7 +1916,23 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+// Fallback if Chart.js fails to load from primary CDN
+if(typeof Chart === 'undefined'){
+  const fallbackScript = document.createElement('script');
+  fallbackScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js';
+  fallbackScript.onerror = function(){
+    console.error('⚠️ Chart.js failed to load from both CDNs. Charts will not display.');
+    // Set a flag so we can show an offline message
+    window._chartsDisabled = true;
+  };
+  fallbackScript.onload = function(){
+    console.log('✓ Chart.js loaded from fallback CDN');
+  };
+  document.head.appendChild(fallbackScript);
+}
+</script>
 <script>
 
 // ── Subject totals settings (Std 1–3) ────────────────────────────────────
@@ -2729,6 +2748,20 @@ function renderDashboard(){
     }
   });
 
+  // Count religion/denomination by gender
+  const religionCounts = {}; // denomination -> {boys, girls}
+  admissionRecords.forEach(rec => {
+    const denom = rec.denomination;
+    if(!denom) return;
+    if(!religionCounts[denom]) religionCounts[denom] = {boys:0, girls:0};
+    if(rec.sex === "Male") religionCounts[denom].boys++;
+    else if(rec.sex === "Female") religionCounts[denom].girls++;
+  });
+  const religionLabels = Object.keys(religionCounts);
+  const religionBoysData = religionLabels.map(l=>religionCounts[l].boys);
+  const religionGirlsData = religionLabels.map(l=>religionCounts[l].girls);
+  const hasReligionData = religionLabels.length > 0;
+
   const latestAnnouncement = (typeof NEWS_ANNOUNCEMENTS!=="undefined" && NEWS_ANNOUNCEMENTS.length) ? NEWS_ANNOUNCEMENTS[0] : null;
   const latestArticle      = (typeof NEWS_ARTICLES!=="undefined" && NEWS_ARTICLES.length) ? NEWS_ARTICLES[0] : null;
 
@@ -2869,20 +2902,18 @@ function renderDashboard(){
     <div class="dash-section">
       <div class="dash-section-title">Student Movement &amp; Status</div>
       <div class="dash-chart-wrap"><canvas id="movementBarChart"></canvas></div>
-      <div class="dash-attendance-row" style="grid-template-columns:repeat(3,1fr);gap:6px;margin-top:0.6rem;font-size:0.72rem;">
-        <div class="dash-att-pill sick">Dropouts: ${dropoutTotal}</div>
-        <div class="dash-att-pill sick">Transfer Out: ${transferTotalCount}</div>
-        <div class="dash-att-pill sick">Transfer In: ${transferInCount}</div>
-        <div class="dash-att-pill sick">Single Orphans: ${singleOrphanCount}</div>
-        <div class="dash-att-pill sick">Double Orphans: ${doubleOrphanCount}</div>
-        <div class="dash-att-pill sick">Repeaters: ${repeaterCount}</div>
-      </div>
     </div>
 
     <div class="dash-section">
       <div class="dash-section-title">Disability Breakdown</div>
       ${(visualBoys+visualGirls+hearingBoys+hearingGirls+physicalBoys+physicalGirls+intellectualBoys+intellectualGirls+albinismBoys+albinismGirls+multipleBoys+multipleGirls+otherDisabilityBoys+otherDisabilityGirls) > 0 ? `
         <div class="dash-chart-wrap"><canvas id="disabilityBarChart"></canvas></div>` : `<div class="dash-empty">No disability data recorded yet.</div>`}
+    </div>
+
+    <div class="dash-section">
+      <div class="dash-section-title">Religion Breakdown</div>
+      ${hasReligionData ? `
+        <div class="dash-chart-wrap"><canvas id="religionBarChart"></canvas></div>` : `<div class="dash-empty">No religion/denomination data recorded yet.</div>`}
     </div>
 
     <div class="dash-section">
@@ -2914,7 +2945,8 @@ function renderDashboard(){
     doubleOrphanBoys, doubleOrphanGirls, repeaterBoys, repeaterGirls,
     visualBoys, visualGirls, hearingBoys, hearingGirls, physicalBoys, physicalGirls,
     intellectualBoys, intellectualGirls, albinismBoys, albinismGirls,
-    multipleBoys, multipleGirls, otherDisabilityBoys, otherDisabilityGirls
+    multipleBoys, multipleGirls, otherDisabilityBoys, otherDisabilityGirls,
+    religionLabels, religionBoysData, religionGirlsData
   });
 }
 window.renderDashboard = renderDashboard;
@@ -2931,7 +2963,10 @@ function dashChartTextColor(){
   return getComputedStyle(document.documentElement).getPropertyValue("--text").trim() || "#2C2C2A";
 }
 function drawDashboardCharts(d){
-  if(typeof Chart === "undefined") return; // library not loaded (e.g. offline)
+  if(typeof Chart === "undefined"){
+    console.warn("⚠️ Chart.js library is not available. Charts cannot be rendered. Check your internet connection.");
+    return; // library not loaded (e.g. offline)
+  }
   const textColor = dashChartTextColor();
   Chart.defaults.color = textColor;
   Chart.defaults.font.family = "-apple-system,Segoe UI,Roboto,Arial,sans-serif";
@@ -3014,6 +3049,24 @@ function drawDashboardCharts(d){
         datasets:[
           { label:"Boys", data:[d.visualBoys, d.hearingBoys, d.physicalBoys, d.intellectualBoys, d.albinismBoys, d.multipleBoys, d.otherDisabilityBoys], backgroundColor:boyColor },
           { label:"Girls", data:[d.visualGirls, d.hearingGirls, d.physicalGirls, d.intellectualGirls, d.albinismGirls, d.multipleGirls, d.otherDisabilityGirls], backgroundColor:girlColor }
+        ]
+      },
+      options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:"bottom", labels:{ boxWidth:12, font:{size:11} } } },
+        scales:{ x:{ ticks:{ font:{size:9} } }, y:{ beginAtZero:true, ticks:{ precision:0 } } } }
+    });
+  }
+
+  // Religion Breakdown (grouped bar)
+  destroyDashChart("religion");
+  const religionCanvas = document.getElementById("religionBarChart");
+  if(religionCanvas && d.religionLabels && d.religionLabels.length){
+    window._dashCharts.religion = new Chart(religionCanvas, {
+      type: "bar",
+      data: {
+        labels: d.religionLabels,
+        datasets:[
+          { label:"Boys", data:d.religionBoysData, backgroundColor:boyColor },
+          { label:"Girls", data:d.religionGirlsData, backgroundColor:girlColor }
         ]
       },
       options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:"bottom", labels:{ boxWidth:12, font:{size:11} } } },
@@ -3220,16 +3273,22 @@ window.openHelp=openHelp;window.openAbout=openAbout;
 // card on the Records page then jumps straight into that class.
 const SETUP_STORAGE_KEY = "easy_assess_setup_v1";
 
-// Same 7 options as the Assess class grid (buildClassGrid): Standard 1-4,
-// Senior Classes (Standard 5), Junior Certificate, MSCE.
+// Standard 1-8 (primary school), then Form 1-4 (secondary school). Form 1 & 2
+// feed into the Junior Certificate (JC) assessment level, and Form 3 & 4 feed
+// into the MSCE assessment level, matching Malawi's exam structure.
 const ASSESS_CLASS_OPTIONS = [
   {value:"1",    label:"Standard 1"},
   {value:"2",    label:"Standard 2"},
   {value:"3",    label:"Standard 3"},
   {value:"4",    label:"Standard 4"},
-  {value:"5",    label:"Senior Classes (Standard 5+)"},
-  {value:"JC",   label:"Junior Certificate (JC)"},
-  {value:"MSCE", label:"MSCE"},
+  {value:"5",    label:"Standard 5"},
+  {value:"6",    label:"Standard 6"},
+  {value:"7",    label:"Standard 7"},
+  {value:"8",    label:"Standard 8"},
+  {value:"JC",   label:"Form 1"},
+  {value:"JC",   label:"Form 2"},
+  {value:"MSCE", label:"Form 3"},
+  {value:"MSCE", label:"Form 4"},
 ];
 
 function assessClassOptionsHtml(){
@@ -3247,8 +3306,13 @@ function getAppSetup(){
   try{ return JSON.parse(localStorage.getItem(SETUP_STORAGE_KEY)||"null"); }
   catch(e){ return null; }
 }
-function saveAppSetup(schoolName, cls){
-  localStorage.setItem(SETUP_STORAGE_KEY, JSON.stringify({schoolName, cls}));
+// clsLabel/clsIndex are optional: since Form 1/2 share the "JC" value and
+// Form 3/4 share the "MSCE" value, we also remember exactly which option
+// text and index the teacher picked, so the right label (and the right
+// pre-selected option) can be restored later instead of always falling
+// back to the first option that matches the stored value.
+function saveAppSetup(schoolName, cls, clsLabel, clsIndex){
+  localStorage.setItem(SETUP_STORAGE_KEY, JSON.stringify({schoolName, cls, clsLabel, clsIndex}));
   updateAssessCardLabel();
   updateDashboardSubtitle();
 }
@@ -3259,10 +3323,21 @@ function saveSchoolInfoFromSettings(){
   const clsEl  = document.getElementById("settingsClass");
   const schoolName = (nameEl && nameEl.value ? nameEl.value.trim() : "");
   const cls = clsEl ? clsEl.value : "";
+  const clsLabel = (clsEl && clsEl.selectedIndex > 0) ? clsEl.options[clsEl.selectedIndex].text : "";
+  const clsIndex = (clsEl && clsEl.selectedIndex > 0) ? clsEl.selectedIndex - 1 : undefined;
   const existing = getAppSetup() || {};
-  saveAppSetup(schoolName || existing.schoolName || "", cls || existing.cls || "");
+  saveAppSetup(schoolName || existing.schoolName || "", cls || existing.cls || "",
+    clsLabel || existing.clsLabel || "", cls ? clsIndex : existing.clsIndex);
 }
 window.saveSchoolInfoFromSettings = saveSchoolInfoFromSettings;
+
+function assessClassLabelFor(setup){
+  if(!setup || !setup.cls) return "";
+  if(setup.clsLabel) return setup.clsLabel;
+  if(typeof setup.clsIndex === "number" && ASSESS_CLASS_OPTIONS[setup.clsIndex]) return ASSESS_CLASS_OPTIONS[setup.clsIndex].label;
+  const opt = ASSESS_CLASS_OPTIONS.find(o=>o.value===setup.cls);
+  return opt ? opt.label : classLabel(setup.cls);
+}
 
 // Reflects the chosen class on the Assess card's subtitle on the Records page.
 function updateAssessCardLabel(){
@@ -3270,8 +3345,7 @@ function updateAssessCardLabel(){
   if(!el) return;
   const setup = getAppSetup();
   if(setup && setup.cls){
-    const opt = ASSESS_CLASS_OPTIONS.find(o=>o.value===setup.cls);
-    el.textContent = (opt?opt.label:classLabel(setup.cls)) + " · tap to open";
+    el.textContent = assessClassLabelFor(setup) + " · tap to open";
   } else {
     el.textContent = "Manage classes & marks";
   }
@@ -3286,10 +3360,8 @@ function updateDashboardSubtitle(){
   if(!line1 || !line2) return;
   const setup = getAppSetup();
   if(setup && (setup.schoolName || setup.cls)){
-    const opt = ASSESS_CLASS_OPTIONS.find(o=>o.value===setup.cls);
-    const clsLabel = setup.cls ? (opt?opt.label:classLabel(setup.cls)) : "";
     line1.textContent = setup.schoolName || "";
-    line2.textContent = clsLabel;
+    line2.textContent = assessClassLabelFor(setup);
   } else {
     line1.textContent = "Everything at a glance";
     line2.textContent = "";
@@ -3347,12 +3419,14 @@ function handleFirstUseSubmit(e){
     return;
   }
   if(errEl) errEl.style.display = "none";
-  saveAppSetup(schoolName, cls);
+  const clsLabel = clsEl.selectedIndex > 0 ? clsEl.options[clsEl.selectedIndex].text : "";
+  const clsIndex = clsEl.selectedIndex > 0 ? clsEl.selectedIndex - 1 : undefined;
+  saveAppSetup(schoolName, cls, clsLabel, clsIndex);
   // Keep the Settings > School Info fields in sync for later editing.
   const sName = document.getElementById("settingsSchoolName");
   const sCls  = document.getElementById("settingsClass");
   if(sName) sName.value = schoolName;
-  if(sCls)  sCls.value  = cls;
+  if(sCls && typeof clsIndex === "number") sCls.selectedIndex = clsIndex + 1;
   hideFirstUseDialog();
 }
 window.handleFirstUseSubmit = handleFirstUseSubmit;
@@ -3364,7 +3438,10 @@ function initAppSetup(){
   const sCls  = document.getElementById("settingsClass");
   if(setup && setup.schoolName && setup.cls){
     if(sName) sName.value = setup.schoolName;
-    if(sCls)  sCls.value  = setup.cls;
+    if(sCls){
+      if(typeof setup.clsIndex === "number") sCls.selectedIndex = setup.clsIndex + 1;
+      else sCls.value = setup.cls;
+    }
   } else {
     // First use — nothing saved yet, so prompt for it.
     showFirstUseDialog();
