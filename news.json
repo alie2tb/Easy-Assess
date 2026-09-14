@@ -1,13 +1,15 @@
 {
   "announcements": [
+  {
+      "title": "Schools opens for 1st term",
+      "date": "Sept 14, 2026"
+    },
+    
     {
       "title": "MSCE 2026 Results out",
       "date": "Sept 8, 2026"
-    },
-    {
-      "title": "Standard 1 Registration started 0n 31 August",
-      "date": "August 31 2026"
-    }   
+    }
+    
   ],
   
   "articles": [
