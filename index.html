@@ -32,9 +32,6 @@
   html.dark .card{background:var(--card);}
   html.dark input,html.dark select,html.dark textarea{background:var(--card);color:var(--text);border-color:var(--border);}
   html.dark .class-card{background:var(--card);}
-  html.dark #updateDialogBox{background:var(--card);}
-  html.dark #updateDialogFooter{border-color:var(--border);}
-  html.dark .upd-btn.later{background:var(--card);color:var(--muted);}
   html.dark .btn-secondary{background:#3A3A38;color:var(--text);}
   html.dark .mode-tab{background:var(--card);color:var(--muted);}
   html.dark .mode-tab.active{background:var(--primary);color:#fff;}
@@ -459,27 +456,6 @@
   #notesArea{flex:1;width:100%;border:1px solid var(--border);border-radius:10px;padding:0.9rem;font-size:0.95rem;font-family:inherit;resize:none;box-sizing:border-box;color:var(--text);background:#fff;}
   #notesArea:focus{outline:none;border-color:var(--primary);}
   #notesSaved{font-size:0.8rem;color:var(--primary);min-height:1.4em;margin-top:0.5rem;text-align:right;}
-  /* update toast */
-  /* update dialog */
-  #updateDialog{position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;padding:1.5rem;}
-  #updateDialog.show{display:flex;}
-  #updateDialogBox{background:#fff;border-radius:16px;width:100%;max-width:340px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
-  #updateDialogHeader{background:var(--primary-dark);padding:1.5rem;text-align:center;}
-  #updateDialogHeader .upd-icon{font-size:2.5rem;display:block;margin-bottom:0.5rem;}
-  #updateDialogHeader h3{color:#fff;margin:0;font-size:1.1rem;font-weight:700;}
-  #updateDialogHeader p{color:rgba(255,255,255,0.8);margin:0.3rem 0 0;font-size:0.82rem;}
-  #updateDialogBody{padding:1.2rem 1.5rem;}
-  #updateDialogBody p{font-size:0.88rem;color:var(--muted);line-height:1.6;margin:0 0 1rem;}
-  .upd-features{list-style:none;padding:0;margin:0 0 1.2rem;}
-  .upd-features li{font-size:0.85rem;color:var(--text);padding:5px 0;display:flex;gap:8px;align-items:flex-start;}
-  .upd-features li::before{content:'✓';color:var(--primary);font-weight:700;flex-shrink:0;}
-  #updateDialogFooter{display:flex;border-top:1px solid var(--border);}
-  .upd-btn{flex:1;padding:14px;border:none;font-size:0.9rem;font-weight:600;cursor:pointer;transition:background 0.15s;}
-  .upd-btn.later{background:#fff;color:var(--muted);}
-  .upd-btn.later:hover{background:var(--grey-100,#f5f6f8);}
-  .upd-btn.update{background:var(--primary);color:#fff;}
-  .upd-btn.update:hover{background:var(--primary-dark);}
-  .upd-btn-divider{width:1px;background:var(--border);}
   /* profile */
   .profile-hero{background:var(--primary-dark);padding:2rem 1rem 1.5rem;text-align:center;margin:-1rem -0rem 0;border-radius:0;}
   .profile-avatar-wrap{margin-bottom:1rem;}
@@ -7295,43 +7271,26 @@ window.addEventListener("appinstalled", ()=>{
   if(typeof gtag === "function") gtag("event", "pwa_installed");
 });
 
-let _pendingNewSW = null;
-
-function showUpdateDialog(){
-  document.getElementById("updateDialog").classList.add("show");
-}
-function dismissUpdate(){
-  document.getElementById("updateDialog").classList.remove("show");
-}
-function applyUpdate(){
-  document.getElementById("updateDialog").classList.remove("show");
-  if(_pendingNewSW){
-    _pendingNewSW.postMessage({type:"SKIP_WAITING"});
-  }
-}
-window.dismissUpdate = dismissUpdate;
-window.applyUpdate   = applyUpdate;
+// Service worker auto-update: silently activate new versions in the
+// background and reload once to pick them up — no "Update Available"
+// dialog, no user interaction required. The service worker itself calls
+// self.skipWaiting() as soon as it installs, so the new version takes
+// over almost immediately; we just need to reload the page once when it
+// does, guarded so a reload can only ever happen one time per page load.
+let _swRefreshing = false;
 
 if("serviceWorker" in navigator){
   const isPreview = window.location.hostname.includes("claudeusercontent.com");
   if(!isPreview){
     window.addEventListener("load", async ()=>{
       try {
-        const reg = await navigator.serviceWorker.register("./service-worker.js", {scope: "./"});
+        await navigator.serviceWorker.register("./service-worker.js", {scope: "./"});
 
-        reg.addEventListener("updatefound", ()=>{
-          const newSW = reg.installing;
-          newSW.addEventListener("statechange", ()=>{
-            if(newSW.state === "installed" && navigator.serviceWorker.controller){
-              // New version ready — show update dialog
-              _pendingNewSW = newSW;
-              showUpdateDialog();
-            }
-          });
-        });
-
-        // When SW takes control, reload to apply update
+        // When the new service worker takes control, silently reload once
+        // to pick up the latest app + data. Guarded against firing twice.
         navigator.serviceWorker.addEventListener("controllerchange", ()=>{
+          if(_swRefreshing) return;
+          _swRefreshing = true;
           window.location.reload();
         });
 
@@ -7340,30 +7299,6 @@ if("serviceWorker" in navigator){
   }
 }
 </script>
-
-<!-- Update dialog (Al Jazeera style) -->
-<div id="updateDialog">
-  <div id="updateDialogBox">
-    <div id="updateDialogHeader">
-      <span class="upd-icon">🚀</span>
-      <h3>Update Available</h3>
-      <p>A new version of Easy Assess is ready</p>
-    </div>
-    <div id="updateDialogBody">
-      <p>New features and improvements are available. Update now to get the best experience.</p>
-      <ul class="upd-features">
-        <li>Latest assessment tools and bug fixes</li>
-        <li>Improved performance and stability</li>
-        <li>New features added by the developer</li>
-      </ul>
-    </div>
-    <div id="updateDialogFooter">
-      <button class="upd-btn later" onclick="dismissUpdate()">Later</button>
-      <div class="upd-btn-divider"></div>
-      <button class="upd-btn update" onclick="applyUpdate()">Update Now</button>
-    </div>
-  </div>
-</div>
 
 <!-- Sidebar Navigation (off-canvas drawer) -->
 <!-- Bottom navigation bar (5 tabs) — reuses the exact same page-switching

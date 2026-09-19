@@ -1,4 +1,4 @@
-const CACHE_NAME = "score-manager-v116";
+const CACHE_NAME = "score-manager-v82";
 
 const STATIC_ASSETS = [
   "./",
@@ -66,7 +66,8 @@ self.addEventListener("install", event => {
           ...PDF_ASSETS.map(url => cache.add(url).catch(()=>{}))
         ])
       )
-    )
+    ).then(() => self.skipWaiting()) // activate a new version immediately —
+                                      // no waiting on the user, no dialog
   );
 });
 
@@ -75,7 +76,7 @@ self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys().then(keys =>
       Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
-    ).then(() => self.clients.claim())
+    ).then(() => self.clients.claim()) // take over open tabs right away too
   );
 });
 
@@ -86,7 +87,24 @@ self.addEventListener("fetch", event => {
   if(url.hostname === "api.anthropic.com") return;
   if(url.hostname === "www.googletagmanager.com" || url.hostname === "www.google-analytics.com" || url.hostname === "analytics.google.com" || url.hostname === "region1.google-analytics.com") return;
 
-  // Cache-first for everything
+  // Network-first for news.json: it's edited independently of app releases,
+  // so it must never be stuck on a cached copy waiting for the next
+  // CACHE_NAME bump. We still cache the latest successful response so the
+  // News page has something to show when the device is offline.
+  if(url.pathname.endsWith("news.json")){
+    event.respondWith(
+      fetch(event.request, {cache:"no-store"}).then(response => {
+        if(response && response.status === 200){
+          const clone = response.clone();
+          event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone)));
+        }
+        return response;
+      }).catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // Cache-first for everything else
   event.respondWith(
     caches.match(event.request).then(cached => {
       if(cached) return cached;
