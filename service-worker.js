@@ -1,4 +1,4 @@
-const CACHE_NAME = "score-manager-v282";
+const CACHE_NAME = "score-manager-v83";
 
 const STATIC_ASSETS = [
   "./",
@@ -87,11 +87,19 @@ self.addEventListener("fetch", event => {
   if(url.hostname === "api.anthropic.com") return;
   if(url.hostname === "www.googletagmanager.com" || url.hostname === "www.google-analytics.com" || url.hostname === "analytics.google.com" || url.hostname === "region1.google-analytics.com") return;
 
-  // Network-first for news.json: it's edited independently of app releases,
-  // so it must never be stuck on a cached copy waiting for the next
-  // CACHE_NAME bump. We still cache the latest successful response so the
-  // News page has something to show when the device is offline.
-  if(url.pathname.endsWith("news.json")){
+  // Only the fixed app-shell/PDF/CDN files are safe to treat as cache-first:
+  // their content never changes at the same URL between versions (a new
+  // version ships under a new CACHE_NAME anyway). Anything else — most
+  // importantly news.json and any photo it references — can have its
+  // content replaced at the very same URL (a new article reusing an old
+  // image filename, an edited announcement, etc.), so cache-first would
+  // silently keep serving stale/mismatched content forever. Those all get
+  // network-first instead, falling back to cache only when offline.
+  const isPrecached = STATIC_ASSETS.some(a => new URL(a, self.location).href === url.href)
+    || PDF_ASSETS.some(a => new URL(a, self.location).href === url.href)
+    || CDN_ASSETS.includes(url.href);
+
+  if(!isPrecached){
     event.respondWith(
       fetch(event.request, {cache:"no-store"}).then(response => {
         if(response && response.status === 200){
@@ -99,12 +107,12 @@ self.addEventListener("fetch", event => {
           event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.put(event.request, clone)));
         }
         return response;
-      }).catch(() => caches.match(event.request))
+      }).catch(() => caches.match(event.request).then(cached => cached || caches.match("./index.html")))
     );
     return;
   }
 
-  // Cache-first for everything else
+  // Cache-first for the known, fixed app-shell/PDF/CDN files
   event.respondWith(
     caches.match(event.request).then(cached => {
       if(cached) return cached;
