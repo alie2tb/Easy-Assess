@@ -77,13 +77,6 @@
   .students-required-overlay .sro-title{font-size:1.15rem;font-weight:700;color:var(--text);margin-bottom:0.5rem;}
   .students-required-overlay .sro-text{font-size:0.88rem;color:var(--muted);max-width:340px;line-height:1.5;margin-bottom:1.4rem;}
   .students-required-overlay .sro-btn{background:var(--primary);color:#fff;border:none;border-radius:999px;padding:12px 26px;font-size:0.92rem;font-weight:700;cursor:pointer;}
-  /* Dashboard first-time onboarding banner (shown only while there is no student data yet) */
-  .dash-onboard-banner{display:flex;gap:0.8rem;align-items:flex-start;background:var(--primary-dark);color:#fff;border-radius:14px;padding:1rem 1.1rem;margin-bottom:1rem;}
-  .dash-onboard-banner .dob-icon{font-size:1.6rem;line-height:1;flex-shrink:0;}
-  .dash-onboard-banner .dob-title{font-weight:700;font-size:0.95rem;margin-bottom:0.3rem;}
-  .dash-onboard-banner .dob-text{font-size:0.84rem;line-height:1.5;opacity:0.92;margin-bottom:0.7rem;}
-  .dash-onboard-banner .dob-text b{font-weight:700;opacity:1;}
-  .dash-onboard-banner .dob-btn{background:#fff;color:var(--primary-dark);border:none;border-radius:999px;padding:9px 18px;font-size:0.84rem;font-weight:700;cursor:pointer;}
   /* bottom navigation (5 tabs) */
   .bottom-nav{position:fixed;left:0;right:0;bottom:0;height:64px;background:var(--card);border-top:1px solid var(--border);display:flex;z-index:200;padding-bottom:env(safe-area-inset-bottom,0);}
   html.dark .bottom-nav{background:var(--card);}
@@ -2831,15 +2824,6 @@ function renderDashboard(){
   const dropoutTotal = dropoutBoys + dropoutGirls;
 
   container.innerHTML = `
-    ${totalStudents===0 ? `
-    <div class="dash-onboard-banner">
-      <div class="dob-icon">👋</div>
-      <div>
-        <div class="dob-title">Let's get your Dashboard set up</div>
-        <div class="dob-text">Tap <b>Records</b>, then <b>Students</b>, and add your learners there. Come back to <b>Dashboard</b> afterwards and their information will show up here automatically as charts.</div>
-        <button class="dob-btn" onclick="switchPage('admissionrecords')">Go to Students</button>
-      </div>
-    </div>` : ``}
     <div class="dash-grid">
       <div class="dash-card full-width">
         <div class="dash-card-value">${totalStudents}</div>
