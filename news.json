@@ -1,4 +1,4 @@
-Got it — here’s your JSON file updated with the teacher promotion story added as an article in the same format as the others:jsonCopy{
+
   "announcements": [
     {
       "title": "Schools opened for 1st term on 14 September 2026",
@@ -36,4 +36,4 @@ Got it — here’s your JSON file updated with the teacher promotion story adde
       "content": "A hardworking teacher should not have to remain on the same grade year after year while their exceptional performance is rewarded with nothing more than a certificate. If a teacher consistently delivers outstanding results, transforms learners’ performance and goes beyond the call of duty, that achievement should be recognised through meaningful career progression. Promote teachers who excel. Reward performance with opportunity. When hard work has a clear path to promotion, teachers have a greater incentive to give their best, and the education system stands to benefit."
     }
   ]
-}I slotted the story neatly into the "articles" array with a tag, headline, preview, date, image, and the full content field — just like the others.Would you like me to also add a thumbnail image reference (e.g., "teacher.jpg") so it visually matches the other articles?
+
