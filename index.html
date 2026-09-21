@@ -651,17 +651,9 @@
   <button class="gear-btn" id="backBtn" onclick="goBack()" style="display:none;">&#8592;</button>
   <button class="sidebar-menu-btn" id="sidebarMenuBtn" onclick="openSidebar()" title="Menu">&#9776;</button>
   <h1 id="topTitle">Easy Assess</h1>
-  <button class="gear-btn" id="topActionBtn" onclick="shareApp()" title="Share this app">
-    <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
+  <button class="gear-btn" id="topActionBtn" onclick="openDeleteAllStudentsModal()" title="Delete all students" style="display:none;">
+    <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zM9.5 3h5l1 2H19v2H5V5h3.5l1-2zM9 10v8h2v-8H9zm4 0v8h2v-8h-2z"/></svg>
   </button>
-  <div style="position:relative;">
-    <button class="hamburger-btn" id="optionMenuBtn" onclick="toggleOptionMenu()" title="Menu">&#8942;</button>
-    <div id="optionMenu" style="display:none;position:absolute;right:0;top:110%;background:var(--card);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.15);min-width:190px;z-index:500;overflow:hidden;">
-      <button class="menu-item" onclick="closeOptionMenu();_settingsReturnPage=getCurrentPageKey();switchPage('settings')">⚙️ Settings</button>
-      <button class="menu-item" onclick="closeOptionMenu();openAbout()">🧑‍💻 About Developer</button>
-      <button class="menu-item" onclick="closeOptionMenu();openHelp()">❓ Help</button>
-    </div>
-  </div>
 </div>
 
 
@@ -2402,19 +2394,11 @@ function switchPage(page){
   const titleEl = document.getElementById("topTitle");
   if(titleEl) titleEl.textContent = titles[page]||"Easy Assess";
 
-  // Top-bar action button: shows Share on most pages, but a "delete all students"
-  // bin icon on the Students (admission records) page instead.
+  // Top-bar action button: only used for "delete all students" on the
+  // Students (admission records) page now — Share moved into the sidebar.
   const topActionBtn = document.getElementById("topActionBtn");
   if(topActionBtn){
-    if(page==="admissionrecords"){
-      topActionBtn.title = "Delete all students";
-      topActionBtn.setAttribute("onclick","openDeleteAllStudentsModal()");
-      topActionBtn.innerHTML = '<svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zM9.5 3h5l1 2H19v2H5V5h3.5l1-2zM9 10v8h2v-8H9zm4 0v8h2v-8h-2z"/></svg>';
-    } else {
-      topActionBtn.title = "Share this app";
-      topActionBtn.setAttribute("onclick","shareApp()");
-      topActionBtn.innerHTML = '<svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>';
-    }
+    topActionBtn.style.display = (page==="admissionrecords") ? "" : "none";
   }
 
   if(page==="dashboard") renderDashboard();
@@ -2493,26 +2477,6 @@ function goBack(){
   else if(sickActive || punishmentActive || transferActive || calendarActive || term1weeksActive) switchPage("records");
 }
 window.switchPage=switchPage;window.goBack=goBack;
-
-// ── Top-bar option menu (Settings / About Developer / Help) ────────────────
-function openOptionMenu(){
-  document.getElementById("optionMenu").style.display = "block";
-}
-function closeOptionMenu(){
-  document.getElementById("optionMenu").style.display = "none";
-}
-function toggleOptionMenu(){
-  const el = document.getElementById("optionMenu");
-  if(el.style.display === "block") closeOptionMenu(); else openOptionMenu();
-}
-window.openOptionMenu=openOptionMenu;window.closeOptionMenu=closeOptionMenu;window.toggleOptionMenu=toggleOptionMenu;
-document.addEventListener("click", function(e){
-  const menu = document.getElementById("optionMenu");
-  const btn = document.getElementById("optionMenuBtn");
-  if(!menu || menu.style.display!=="block") return;
-  if(!menu.contains(e.target) && e.target!==btn) closeOptionMenu();
-});
-
 
 // ── Schemes of Work System ──
 let sowCurrentStd = null;
@@ -7323,8 +7287,8 @@ if("serviceWorker" in navigator){
 <!-- Reuses the exact same page-switching function the old bottom nav used,
      so no navigation logic changes. Students and Assessment (formerly
      "Examinations") each have their own top-level entry now (moved out of
-     the Records hub). Settings/About Developer/Help still live in the
-     top-bar option menu. -->
+     the Records hub). Share, Settings, About Developer, and Help have been
+     moved here from the old top-bar option menu / Share button. -->
 <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 <nav class="sidebar-drawer" id="sidebarDrawer">
   <div class="sidebar-header">
@@ -7353,6 +7317,19 @@ if("serviceWorker" in navigator){
     </button>
     <button class="sidebar-item" id="sidebarNavNews" onclick="switchPage('news')">
       <span class="si-icon">📰</span><span>News</span>
+    </button>
+    <div style="border-top:1px solid var(--border);margin:0.4rem 0;"></div>
+    <button class="sidebar-item" id="sidebarNavShare" onclick="closeSidebar();shareApp()">
+      <span class="si-icon">🔗</span><span>Share</span>
+    </button>
+    <button class="sidebar-item" id="sidebarNavSettings" onclick="closeSidebar();_settingsReturnPage=getCurrentPageKey();switchPage('settings')">
+      <span class="si-icon">⚙️</span><span>Settings</span>
+    </button>
+    <button class="sidebar-item" id="sidebarNavAbout" onclick="closeSidebar();openAbout()">
+      <span class="si-icon">🧑‍💻</span><span>About Developer</span>
+    </button>
+    <button class="sidebar-item" id="sidebarNavHelp" onclick="closeSidebar();openHelp()">
+      <span class="si-icon">❓</span><span>Help</span>
     </button>
   </div>
 </nav>
