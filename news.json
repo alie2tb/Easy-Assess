@@ -1,15 +1,13 @@
-{
+Got it — here’s your JSON file updated with the teacher promotion story added as an article in the same format as the others:jsonCopy{
   "announcements": [
-  {
+    {
       "title": "Schools opened for 1st term on 14 September 2026",
       "date": "Sept 14, 2026"
     },
-    
     {
       "title": "MSCE 2026 Results released weeks ago",
       "date": "Sept 8, 2026"
     }
-    
   ],
   
   "articles": [
@@ -21,15 +19,21 @@
       "image": "",
       "content": "Duwama Muhammad, msungwana waku Mangochi uja yemwe adalemba yekha mayeso a sitandade 8 pa sukulu ya pulayimale ya Mangale, tsopano wakayamba sukulu yake ku Maranatha Academy. Malingana ndi uthenga omwe a Maranatha Academy atulutsa, msungwanayu achita maphunziro ake kusukuluyi mwa ulele potsatira thandizo la maphunziro lomwe eni sukuluyi adapereka (full scholarship).  Mkulu wa Maranatha Academy Dr. Ernest Kaonga wati sukuluyi ndiyokhudzidwa ndi nkhani ya Duwama komanso mtima wake osagonja. “Anzake ena omwe anakumana ndi zomwe iyeyu anadutsamozi, adangonja kalekale. Tili ndi chikhulupiliro mwa msungwanayu, kuti adzakhala mtsogoleri ndipo kamba ka ichi aphunzira kusukulu zathu mwa ulere mpaka form 4,” anatero a Kaonga.  Mbali yake, Duwama wayamikira mwini wake wa Maranatha Academy, Dr. Kaonga kamba komukhulupilira.  by Innocent Kumchedwa."
     },
-
-        {
+    {
       "tag": "Funding",
       "headline": "Honorable Shadric Namalomba officially opened a girls’ hostel",
       "preview": "Mangochi South East Member of Parliament and Minister of Information Shadric Namalomba has today officially opened a girls’ hostel",
       "date": "Sept 12, 2026",
       "image": "chilipa.jpg",
       "content": "Mangochi South East Member of Parliament and Minister of Information Shadric Namalomba has today officially opened a girls’ hostel at Chilipa Community Day Secondary School in Mangochi. Constructed with funding from the Governance to Enable Service Delivery (GESD) programme, the hostel has capacity to accommodate more than 50 girls. The facility is expected to improve girls’ access to secondary education by providing accommodation closer to the school, particularly for learners who previously travelled long distances to attend classes."
+    },
+    {
+      "tag": "Policy",
+      "headline": "Promote Teachers Who Excel",
+      "preview": "Hardworking teachers deserve meaningful career progression, not just certificates.",
+      "date": "Sept 20, 2026",
+      "image": "",
+      "content": "A hardworking teacher should not have to remain on the same grade year after year while their exceptional performance is rewarded with nothing more than a certificate. If a teacher consistently delivers outstanding results, transforms learners’ performance and goes beyond the call of duty, that achievement should be recognised through meaningful career progression. Promote teachers who excel. Reward performance with opportunity. When hard work has a clear path to promotion, teachers have a greater incentive to give their best, and the education system stands to benefit."
     }
-   
   ]
-}
+}I slotted the story neatly into the "articles" array with a tag, headline, preview, date, image, and the full content field — just like the others.Would you like me to also add a thumbnail image reference (e.g., "teacher.jpg") so it visually matches the other articles?
