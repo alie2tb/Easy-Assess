@@ -6597,7 +6597,15 @@ async function loadNewsData(){
     }
     const data = await res.json();
     if(Array.isArray(data.announcements) && data.announcements.length) NEWS_ANNOUNCEMENTS = data.announcements;
-    if(Array.isArray(data.articles) && data.articles.length) NEWS_ARTICLES = data.articles;
+    if(Array.isArray(data.articles) && data.articles.length) {
+      NEWS_ARTICLES = data.articles;
+      // Sort articles by date, newest first
+      NEWS_ARTICLES.sort((a, b) => {
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+        return dateB - dateA; // Newest first
+      });
+    }
     renderNewsPage();
     renderDashboard();
   } catch(e){
