@@ -1,16 +1,32 @@
 {
 "announcements": [
     {
-      "title": "Schools opened for 1st term on 14 September 2026",
-      "date": "Sept 14, 2026"
+      "title": "The teaching fraternity is mourning the sudden death of Crissy Mwale, a newly recruited teacher who studied teaching at St. Joseph Teacher Training College under the IPTE 17 programme.",
+      "date": "Sept 27, 2026"
     },
     {
-      "title": "MSCE 2026 Results released weeks ago",
-      "date": "Sept 8, 2026"
+      "title": "It is with deep sadness that we announce the death of Alinafe Maulana, a Standard 7 learner at Tione Private School in Ngokwe, Machinga District. She tragically passed away on Wednesday evening after being hit by a motorcycle.",
+      "date": "Sept 27, 2026"
     }
   ],
   
   "articles": [
+    {
+      "tag": "School",
+      "headline": "Mzimayi Wagonekedwa Pachipatala Ataphwasamuka Kuchokera Padenga ku Ntchisi",
+      "preview": "Mzimayi wazaka 32 wagonekedwa pachipatala ndipo akuyang'aniridwa ndi apolisi ku Ntchisi ataphwasamuka kuchokera padenga pomwe amayesera kuthawa atalowa m'khola la nkhuku pa nyumba ya mphunzitsi pa Sukulu ya Pulayimale ya Kanyenda.",
+      "date": "Sept 25, 2026",
+      "image": "",
+      "content": "Mzimayi wazaka 32 wagonekedwa pachipatala ndipo akuyang'aniridwa ndi apolisi ku Ntchisi ataphwasamuka kuchokera padenga pomwe amayesera kuthawa pambuyo poti akuti analowa m'khola la nkhuku pa nyumba ina ya mphunzitsi pa Sukulu ya Pulayimale ya Kanyenda ndicholinga chofuna kubamo. Mneneri wa apolisi ku Ntchisi, Salomy Zgambo, wati izi zinachitika pakati pa usiku wa pa 24 ndi 25 September 2026."
+    },
+    {
+      "tag": "School",
+      "headline": "Mulanje Rolls Out Measures After PSLCE Pass Rate Drops to 81.39 Percent",
+      "preview": "Mulanje District Education Office has rolled out measures to improve primary school performance after the district's PSLCE pass rate dropped from 87.8 percent in 2025 to 81.39 percent this year.",
+      "date": "Sept 27, 2026",
+      "image": "",
+      "content": "Mulanje District Education Office says it has rolled out measures to improve primary school performance after the district's PSLCE pass rate dropped from 87.8 percent in 2025 to 81.39 percent this year. Speaking to Zodiak Online today, Director of Education and Sports in the district Enock Chumachawo said the office is reviewing factors behind the decline and developing strategies to improve the district's 2027 results. Chumachawo said the measures include increased use of mock examinations, continuous learner assessment and collaboration with partners to provide teaching and learning materials. Life Skills and Mathematics recorded the highest failures, at 3,681 and 1,679 respectively. Meanwhile, Ulongwe Zone Quality Assurance Officer Maggie Mwakabanga has urged teachers to build positive relationships with learners, while education managers and school leaders should strengthen supervision and work together to improve learning outcomes. The 2026 results show that 9,094 of the 11,174 candidates who sat the examinations passed, while only 12 schools attained a 100 percent pass rate, down from 19 last year."
+    },
     {
       "tag": "School",
       "headline": "Mufti Abbas Primary School Parents Meet Over Learners' Challenges",
