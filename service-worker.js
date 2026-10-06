@@ -1,4 +1,4 @@
-const CACHE_NAME = "score-manager-v197";
+const CACHE_NAME = "score-manager-v198";
 
 const STATIC_ASSETS = [
   "./",
