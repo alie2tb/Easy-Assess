@@ -166,6 +166,14 @@
   #reportModal.open{display:flex;}
   #reportBox{background:#fff;border-radius:14px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;padding:1.5rem;}
 
+  .ea-dialog-overlay{display:none;position:fixed;inset:0;z-index:9100;background:rgba(0,0,0,0.55);align-items:center;justify-content:center;padding:1rem;}
+  .ea-dialog-overlay.open{display:flex;}
+  .ea-dialog-box{background:#fff;color:var(--text);border-radius:14px;width:100%;max-width:380px;padding:1.4rem;max-height:85vh;overflow-y:auto;}
+  html.dark .ea-dialog-box{background:var(--card);}
+  .td-row{display:flex;flex-direction:column;gap:2px;padding:0.55rem 0;border-bottom:1px solid var(--border);}
+  .td-row:last-child{border-bottom:none;}
+  .td-row span{font-size:0.78rem;color:var(--muted);}
+  .td-row strong{font-size:1rem;word-break:break-word;}
   #removeStudentModal{display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.55);align-items:center;justify-content:center;padding:1rem;}
   #removeStudentModal.open{display:flex;}
   #removeStudentBox{background:#fff;color:var(--text);border-radius:14px;width:100%;max-width:380px;padding:1.4rem;}
@@ -874,6 +882,16 @@
         <span class="cls-icon">↗️</span>
         <div class="cls-name">Transfer Out Record</div>
         <div class="cls-count" id="transferRecordCount">No records yet</div>
+      </div>
+      <div class="class-card" onclick="switchPage('calendar')">
+        <span class="cls-icon">📅</span>
+        <div class="cls-name">School Calendar</div>
+        <div class="cls-count">View calendar</div>
+      </div>
+      <div class="class-card" onclick="switchPage('term1weeks')">
+        <span class="cls-icon">📆</span>
+        <div class="cls-name">Term 1 Weeks</div>
+        <div class="cls-count">View weeks</div>
       </div>
       <div class="class-card" onclick="openRecordsResourcesTab('schemes')">
         <span class="cls-icon">📋</span>
@@ -1605,6 +1623,37 @@
   </div>
 </div>
 
+<!-- Reason for transfer modal -->
+<div id="transferReasonModal" class="ea-dialog-overlay">
+  <div class="ea-dialog-box">
+    <h3 style="margin:0 0 0.4rem;">Reason for transfer</h3>
+    <p style="margin:0 0 0.8rem;color:var(--muted);font-size:0.95rem;">Why is <strong id="transferReasonName"></strong> transferring to another school?</p>
+    <select id="transferReasonSelect" onchange="onTransferReasonChange()" style="width:100%;box-sizing:border-box;padding:0.7rem;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);font:inherit;">
+      <option value="">Select reason</option>
+      <option value="Parental request">Parental request</option>
+      <option value="Dismissed">Dismissed</option>
+      <option value="Other">Other</option>
+    </select>
+    <div id="transferReasonOtherWrap" style="display:none;margin-top:0.7rem;">
+      <input id="transferReasonInput" type="text" maxlength="24" placeholder="Type the reason (max 24 characters)" oninput="document.getElementById('transferReasonCount').textContent=this.value.length+'/24'" style="width:100%;box-sizing:border-box;padding:0.7rem;border:1px solid var(--border);border-radius:10px;background:var(--card);color:var(--text);font:inherit;">
+      <div id="transferReasonCount" style="text-align:right;font-size:0.75rem;color:var(--muted);margin-top:2px;">0/24</div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:1rem;">
+      <button class="btn-secondary" style="flex:1;" onclick="closeTransferReason()">Cancel</button>
+      <button class="btn-primary" style="flex:1;" onclick="submitTransferReason()">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- Transfer detail modal -->
+<div id="transferDetailModal" class="ea-dialog-overlay" onclick="if(event.target===this)closeTransferDetail()">
+  <div class="ea-dialog-box">
+    <h3 style="margin:0 0 0.8rem;">Transfer details</h3>
+    <div id="transferDetailBody"></div>
+    <button class="btn-primary" style="width:100%;margin-top:1rem;" onclick="closeTransferDetail()">Close</button>
+  </div>
+</div>
+
 <!-- Remove student reason modal -->
 <div id="removeStudentModal">
   <div id="removeStudentBox">
@@ -2325,12 +2374,17 @@ function confirmExamSubjects(){
 }
 window.confirmExamSubjects = confirmExamSubjects;
 
+let _titleBeforeMore = null;
 function openMore(){
   const s=document.getElementById("moreSheet"), o=document.getElementById("moreOverlay"), n=document.getElementById("bottomNav");
+  const t=document.getElementById("topTitle");
+  if(t && _titleBeforeMore===null){ _titleBeforeMore = t.textContent; t.textContent = "More"; }
   if(s) s.classList.add("show"); if(o) o.classList.add("show"); if(n) n.classList.add("sheet-open");
 }
 function closeMore(){
   const s=document.getElementById("moreSheet"), o=document.getElementById("moreOverlay"), n=document.getElementById("bottomNav");
+  const t=document.getElementById("topTitle");
+  if(t && _titleBeforeMore!==null){ t.textContent = _titleBeforeMore; _titleBeforeMore = null; }
   if(s) s.classList.remove("show"); if(o) o.classList.remove("show"); if(n) n.classList.remove("sheet-open");
 }
 function toggleMore(){
@@ -2382,23 +2436,23 @@ function switchPage(page){
     dashboard:"bnHome",
     admissionrecords:"bnStudents",
     classes:"bnAssess", examSubjects:"bnAssess", add:"bnAssess", list:"bnAssess",
-    resources:"bnResources",
+    resources:"bnMore",
     records:"bnMore", attendance:"bnMore", stockrecords:"bnMore", sickrecords:"bnMore", punishmentrecords:"bnMore",
     transferrecords:"bnMore", calendar:"bnMore", term1weeks:"bnMore",
     news:"bnMore", forum:"bnMore", settings:"bnMore", profile:"bnMore"
   };
-  ["bnHome","bnStudents","bnAssess","bnResources","bnMore"].forEach(id=>{
+  ["bnHome","bnStudents","bnAssess","bnMore"].forEach(id=>{
     const el=document.getElementById(id); if(el) el.classList.remove("active");
   });
   const activeBn = bottomNavMap[page];
   if(activeBn){ const bnEl=document.getElementById(activeBn); if(bnEl) bnEl.classList.add("active"); }
   // Highlight the matching row inside the More sheet.
   const moreRowMap = {
-    records:"moreNavRecords", attendance:"moreNavRecords", stockrecords:"moreNavRecords", sickrecords:"moreNavRecords",
-    punishmentrecords:"moreNavRecords", transferrecords:"moreNavRecords", calendar:"moreNavCalendar", term1weeks:"moreNavTerm1",
+    resources:"moreNavNotes", records:"moreNavRecords", attendance:"moreNavRecords", stockrecords:"moreNavRecords", sickrecords:"moreNavRecords",
+    punishmentrecords:"moreNavRecords", transferrecords:"moreNavRecords", calendar:"moreNavRecords", term1weeks:"moreNavRecords",
     forum:"moreNavForum", news:"moreNavNews", settings:"moreNavSettings", profile:"moreNavSettings"
   };
-  ["moreNavRecords","moreNavCalendar","moreNavTerm1","moreNavForum","moreNavNews","moreNavSettings"].forEach(id=>{
+  ["moreNavNotes","moreNavRecords","moreNavForum","moreNavNews","moreNavSettings"].forEach(id=>{
     const el=document.getElementById(id); if(el) el.classList.remove("active");
   });
   if(moreRowMap[page]){ const mrEl=document.getElementById(moreRowMap[page]); if(mrEl) mrEl.classList.add("active"); }
@@ -2409,14 +2463,14 @@ function switchPage(page){
   // and the remaining record sub-pages. (admissionrecords/"Students", "news", "attendance", and the per-class "list"
   // page are reached directly from the bottom nav/a card/menu and don't need a back button.)
   const backBtn = document.getElementById("backBtn");
-  const showBack = (page==="classes"||page==="examSubjects"||page==="add"||page==="settings"||page==="profile"||page==="sickrecords"||page==="punishmentrecords"||page==="transferrecords");
+  const showBack = (page==="classes"||page==="examSubjects"||page==="add"||page==="settings"||page==="profile"||page==="sickrecords"||page==="punishmentrecords"||page==="transferrecords"||page==="calendar"||page==="term1weeks");
   if(backBtn) backBtn.style.display = showBack ? "inline-block" : "none";
 
   const titles = {
     dashboard:"Dashboard",
     classes:"Easy Assess", examSubjects:"Select Subjects",
     add:`${classLabel(_currentClass)} — Add Student`,
-    list:`${classLabel(_currentClass)} — Students`,
+    list:`${classLabel(_currentClass)}`,
     records:"Records", admissionrecords:"Students", sickrecords:"Sick Record", punishmentrecords:"Punishment Records", transferrecords:"Transfer Out Record", stockrecords:"Stock Record", attendance:"Attendance Register",
     resources:"Notes", calendar:"School Calendar", term1weeks:"Term 1 Weeks", news:"News", forum:"Discussion Forum",
     profile:"My Profile", settings:"Settings"
@@ -2502,8 +2556,7 @@ function goBack(){
   else if(listActive) switchPage("add");
   else if(addActive)  switchPage("classes");
   else if(examSubjectsActive) switchPage("classes");
-  else if(sickActive || punishmentActive || transferActive) switchPage("records");
-  else if(calendarActive || term1weeksActive) switchPage("dashboard");
+  else if(sickActive || punishmentActive || transferActive || calendarActive || term1weeksActive) switchPage("records");
 }
 window.switchPage=switchPage;window.goBack=goBack;
 
@@ -3236,9 +3289,9 @@ function openHelp(){
     <p><strong>Assessment</strong></p>
     <p>Tap Assessment to choose a class — Standards 1–8, Junior Certificate, or MSCE. For JCE and MSCE, the first time you'll choose which subjects to assess — English plus at least 5 others is required. Add scores manually by picking a student from the list, or use Scan Paper to photograph a handwritten mark sheet and let AI fill it in. Tapping a class card again later jumps straight to its student list, where you can view reports, export to PDF/Excel, and share results with guardians via WhatsApp.</p>
     <p><strong>Records</strong></p>
-    <p>Records brings together Attendance, Stock, Sick, Punishment and Transfer records, plus Schemes of Work and Lesson Plans — all in one hub. The School Calendar and Term 1 Weeks are in the More menu, just below Records.</p>
+    <p>Records brings together Attendance, Stock, Sick, Punishment and Transfer records, plus the School Calendar, Term 1 Weeks, Schemes of Work and Lesson Plans — all in one hub.</p>
     <p><strong>Resources</strong></p>
-    <p>Browse Notes and Syllabuses under the Notes tab — use the search bar or switch tabs to find what you need.</p>
+    <p>Browse Notes and Syllabuses under Notes in the More menu — use the search bar or switch tabs to find what you need.</p>
     <p><strong>Forum &amp; News</strong></p>
     <p>Forum is a discussion space for teachers, and News keeps you updated with the latest school-related headlines.</p>
     <p><strong>Share &amp; Settings</strong></p>
@@ -3765,7 +3818,7 @@ function changeExam(examPeriod){
   const titleEl = document.getElementById("topTitle");
   if(titleEl){
     const cls = currentClass();
-    titleEl.textContent = `${classLabel(cls)} — Students (${examPeriod})`;
+    titleEl.textContent = classLabel(cls);
   }
   
   // Refresh the student list to show scores from selected exam
@@ -5748,7 +5801,20 @@ function renderAdmissionRecords(){
 }
 function renderSickRecords(){ renderRecordsList("sick", "sickRecordsList", "disease"); }
 function renderPunishmentRecords(){ renderRecordsList("punishment", "punishmentRecordsList", "offence"); }
-function renderTransferRecords(){ renderRecordsList("transfer", "transferRecordsList", "offence"); }
+function renderTransferRecords(){
+  const container = document.getElementById("transferRecordsList");
+  if(!container) return;
+  const records = getRecords("transfer");
+  if(records.length===0){
+    container.innerHTML = `<div style="text-align:center;padding:2.5rem 1rem;color:var(--muted);">No records yet.</div>`;
+    return;
+  }
+  container.innerHTML = `<div class="notes-list-wrap">` + records.map(r=>`
+    <div class="notes-item" style="cursor:pointer;" onclick="showTransferDetail('${r.id}')">
+      <div class="notes-item-label" style="font-weight:700;min-width:0;">${escapeHtml(r.name)}</div>
+      <button class="notes-item-pdf" title="Delete" onclick="event.stopPropagation();deleteRecord('transfer','${r.id}')">🗑</button>
+    </div>`).join("") + `</div>`;
+}
 function renderStockRecords(){
   const container = document.getElementById("stockRecordsList");
   if(!container) return;
@@ -6367,9 +6433,51 @@ function confirmRemoveStudent(reason){
   const rec = id ? getAdmissionRecordById(id) : null;
   if(!rec){ closeRemoveStudent(); return; }
   if(reason === "transfer"){
+    // ask the teacher to type the reason first (student id is kept in _removeStudentId)
+    document.getElementById("removeStudentModal").classList.remove("open");
+    document.getElementById("transferReasonName").textContent = rec.name;
+    document.getElementById("transferReasonSelect").value = "";
+    document.getElementById("transferReasonInput").value = "";
+    document.getElementById("transferReasonCount").textContent = "0/24";
+    document.getElementById("transferReasonOtherWrap").style.display = "none";
+    document.getElementById("transferReasonModal").classList.add("open");
+    return;
+  }
+  finishRemoveStudent(rec, null);
+}
+function onTransferReasonChange(){
+  const other = document.getElementById("transferReasonSelect").value === "Other";
+  document.getElementById("transferReasonOtherWrap").style.display = other ? "block" : "none";
+  if(other) setTimeout(()=>document.getElementById("transferReasonInput").focus(), 50);
+  else document.getElementById("transferReasonInput").value = "";
+}
+window.onTransferReasonChange=onTransferReasonChange;
+function closeTransferReason(){
+  _removeStudentId = null;
+  document.getElementById("transferReasonModal").classList.remove("open");
+}
+function submitTransferReason(){
+  const id = _removeStudentId;
+  const rec = id ? getAdmissionRecordById(id) : null;
+  if(!rec){ closeTransferReason(); return; }
+  const choice = document.getElementById("transferReasonSelect").value;
+  if(!choice){ alert("Please select a reason for transfer."); return; }
+  let reason = choice;
+  if(choice === "Other"){
+    reason = document.getElementById("transferReasonInput").value.trim();
+    if(!reason){ alert("Please type the reason for transfer."); return; }
+    if(reason.length > 24){ alert("The reason must be less than 25 characters."); return; }
+  }
+  document.getElementById("transferReasonModal").classList.remove("open");
+  finishRemoveStudent(rec, reason);
+}
+function finishRemoveStudent(rec, transferReason){
+  const id = rec.id;
+  if(transferReason !== null){
     const transfers = getRecords("transfer");
-    transfers.unshift({id:Date.now().toString()+Math.random().toString(36).slice(2,6), name:rec.name, sex:rec.sex,
-      offence:"Transferred to another school", date:new Date().toISOString().slice(0,10)});
+    transfers.unshift({id:Date.now().toString()+Math.random().toString(36).slice(2,6),
+      name:rec.name, sex:rec.sex, age:rec.age||"", class:rec.class||"",
+      reason:transferReason, date:new Date().toISOString().slice(0,10)});
     saveRecords("transfer", transfers);
   }
   const remaining = getRecords("admission").filter(r=>r.id!==id);
@@ -6381,6 +6489,19 @@ function confirmRemoveStudent(reason){
   if(document.getElementById("pageTransferRecords").classList.contains("active")) renderTransferRecords();
   updateRecordsCounts();
 }
+function showTransferDetail(id){
+  const r = getRecords("transfer").find(x=>x.id===id);
+  if(!r) return;
+  document.getElementById("transferDetailBody").innerHTML = `
+    <div class="td-row"><span>Name</span><strong>${escapeHtml(r.name)}</strong></div>
+    <div class="td-row"><span>Sex</span><strong>${r.sex==="Male"?"Male":"Female"}</strong></div>
+    <div class="td-row"><span>Age</span><strong>${r.age?escapeHtml(String(r.age)):"—"}</strong></div>
+    <div class="td-row"><span>Reason for transfer</span><strong>${escapeHtml(r.reason || r.offence || "—")}</strong></div>`;
+  document.getElementById("transferDetailModal").classList.add("open");
+}
+function closeTransferDetail(){ document.getElementById("transferDetailModal").classList.remove("open"); }
+window.closeTransferReason=closeTransferReason;window.submitTransferReason=submitTransferReason;
+window.showTransferDetail=showTransferDetail;window.closeTransferDetail=closeTransferDetail;
 window.askRemoveStudent=askRemoveStudent;window.closeRemoveStudent=closeRemoveStudent;window.confirmRemoveStudent=confirmRemoveStudent;
 
 function deleteRecord(type, id){
@@ -7492,14 +7613,11 @@ if("serviceWorker" in navigator){
     <div class="more-title">EASY ASSESS</div>
   </div>
   <div class="more-items">
+    <button class="more-item" id="moreNavNotes" onclick="switchPage('resources')">
+      <span class="mi-icon">📚</span><span>Notes</span>
+    </button>
     <button class="more-item" id="moreNavRecords" onclick="switchPage('records')">
       <span class="mi-icon">🗒️</span><span>Records</span>
-    </button>
-    <button class="more-item" id="moreNavCalendar" onclick="switchPage('calendar')">
-      <span class="mi-icon">📅</span><span>School Calendar</span>
-    </button>
-    <button class="more-item" id="moreNavTerm1" onclick="switchPage('term1weeks')">
-      <span class="mi-icon">📆</span><span>Term 1 Weeks</span>
     </button>
     <button class="more-item" id="moreNavForum" onclick="switchPage('forum')">
       <span class="mi-icon">💬</span><span>Forum</span>
@@ -7518,7 +7636,7 @@ if("serviceWorker" in navigator){
       <span class="mi-icon">❓</span><span>Help</span>
     </button>
     <button class="more-item" id="moreNavAbout" onclick="closeMore();openAbout()">
-      <span class="mi-icon">🧑‍💻</span><span>About Developer</span>
+      <span class="mi-icon">ℹ️</span><span>About Developer</span>
     </button>
   </div>
 </div>
@@ -7531,9 +7649,6 @@ if("serviceWorker" in navigator){
   </button>
   <button class="bn-item" id="bnAssess" onclick="closeMore();openAssessFromSetup()">
     <span class="bn-icon">📋</span><span>Assess</span>
-  </button>
-  <button class="bn-item" id="bnResources" onclick="switchPage('resources')">
-    <span class="bn-icon">📚</span><span>Notes</span>
   </button>
   <button class="bn-item bn-more" id="bnMore" onclick="toggleMore()" aria-haspopup="dialog">
     <span class="bn-icon">⋯</span><span>More</span>
