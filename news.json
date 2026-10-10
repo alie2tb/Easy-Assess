@@ -1,15 +1,39 @@
 {
   "announcements": [
     {
-      "title": "MANEB Registration for the 2027 national examinations will open on 1st October 2026.",
-      "date": "Sept 28, 2026"
+      "title": "Ackson Nkhonya a teacher at Kalembo Primary School in Karonga District has died. Burial will take place on Friday, 9 October 2026.",
+      "date": "Oct 9, 2026"
     },
     {
-      "title": "The teaching fraternity is mourning the sudden death of Crissy Mwale, a newly recruited teacher who studied teaching at St. Joseph Teacher Training College under the IPTE 17 programme.",
-      "date": "Sept 27, 2026"
+      "title": "MANEB Registration for the 2027 national examinations will open on 1st October 2026.",
+      "date": "Sept 28, 2026"
     }
   ],
   "articles": [
+    {
+      "tag": "School",
+      "headline": "Traditional Leaders Present Gifts to Schoolgirls at Chiwanja cha Ayao Ceremony in Salima",
+      "preview": "Traditional leaders at this year's Chiwanja cha Ayao cultural ceremony in Salima District have presented gifts to schoolgirls to encourage them to stay in school and complete their studies.",
+      "date": "Oct 10, 2026",
+      "image": "chiwanja.jpeg",
+      "content": "Girls' education has taken centre stage at this year's Chiwanja cha Ayao cultural ceremony in Salima District, where traditional leaders have presented gifts to schoolgirls from various schools to encourage them to pursue their education. The initiative aims to motivate Yao girls to remain in school and complete their studies amid concerns over school dropouts among girls. This year's ceremony places particular emphasis on the role of education in empowering girls, expanding their opportunities and securing a brighter future while preserving Yao cultural heritage."
+    },
+    {
+      "tag": "School",
+      "headline": "Zomba South MP James Mpunga Rewards Top-Performing Standard 8 Schools and Teachers",
+      "preview": "Zomba South legislator James Mpunga has rewarded top-performing Standard 8 schools and teachers in Zomba City to promote a culture of excellence and improve examination results.",
+      "date": "Oct 9, 2026",
+      "image": "Zomba_Legislator.jpeg",
+      "content": "Zomba South legislator James Mpunga has rewarded top-performing Standard 8 schools and teachers in Zomba City, in a bid to promote a culture of excellence and motivate teachers and learners to improve examination results. Mpunga presented the awards after schools in the city recorded strong performances in the 2025/2026 academic year, saying recognising outstanding achievement would encourage teachers and learners to work even harder. Speaking during the award ceremony, Mpunga also called for similar recognition schemes to be extended to other sectors, including health, security and agriculture, to motivate workers to excel in their respective fields."
+    },
+    {
+      "tag": "School",
+      "headline": "Mangochi Allocates K150 Million CDF Bursary for 73 Needy Learners",
+      "preview": "Mangochi Municipality has allocated approximately K150 million under the 2026/27 Reformed CDF bursary scheme to support needy learners pursuing secondary and tertiary education.",
+      "date": "Oct 9, 2026",
+      "image": "",
+      "content": "Mangochi Municipality has allocated approximately K150 million under the 2026/27 Reformed Constituency Development Fund (CDF) bursary scheme to support needy learners pursuing secondary and tertiary education. According to the beneficiary list released by Mangochi Municipal Council, 73 learners have been listed to benefit from the programme, which aims to ease the financial burden of school fees on learners from disadvantaged backgrounds. The list includes learners from several wards attending different institutions, including Mpondas Community Day Secondary School, St Monica CDSS, Mangochi Secondary School and Mangochi Technical College. One of the beneficiaries at Mangochi Technical College said the bursary would ease financial pressure on her parents, who have been struggling to pay her tuition fees and provide essential learning materials through their small-scale business. The bursary scheme is expected to improve access to education by helping needy learners continue their studies despite financial challenges."
+    },
     {
       "tag": "School",
       "headline": "Learner in Balaka Receives Wheelchair From Gift of the Givers Malawi",
@@ -65,30 +89,6 @@
       "date": "Sept 24, 2026",
       "image": "",
       "content": "Drama unfolded at Samama Primary School in Koche Zone, Mangochi District, on Wednesday morning after some community members reportedly stormed the school armed with machetes and hammers, following a learner’s alleged claim that a teacher had been involved in his abduction. The incident reportedly began after a Standard 6 learner allegedly told community members that a teacher at the school had helped hand the learner over to people who allegedly abducted him. The learner was reportedly later found in a forest in Mangochi town. Angered by the claim, some community members reportedly rushed to the school, where they allegedly threatened and assaulted some teachers. The headteacher alerted police, who quickly responded to the situation together with Mangochi District education officials. Information gathered during the ensuing inquiry indicates that the learner later told police that the allegations against the teacher were false and that the claim had been made deliberately to get the teacher into trouble. Further checks also established that the learner did not report for classes on the day of the incident. Authorities are continuing with investigations to establish the full circumstances surrounding the allegations and the subsequent confrontation at the school. Education Matters will continue following the story and provide updates as further information is verified."
-    },
-    {
-      "tag": "School",
-      "headline": "Nangongo Primary School Teacher Arrested Over Allegations",
-      "preview": "A primary school teacher in Machinga has been arrested following allegations of a sexual relationship with a Standard 8 learner.",
-      "date": "Sept 22, 2026",
-      "image": "",
-      "content": "A primary school teacher in Machinga has been arrested following allegations that he had a sexual relationship with a Standard 8 learner. The teacher, identified as Patrick Chitsulo, is reportedly based at Nangongo Primary School in Kayuni Zone. According to the allegations, Chitsulo had a sexual relationship with the learner, who is said to have become pregnant. He is currently in police custody at Nselema Police Station as investigations into the matter continue. The allegations have not yet been tested in court, and the suspect is presumed innocent unless proven guilty."
-    },
-    {
-      "tag": "Policy",
-      "headline": "Promote Teachers Who Excel",
-      "preview": "Hardworking teachers deserve meaningful career progression, not just certificates.",
-      "date": "Sept 20, 2026",
-      "image": "",
-      "content": "A hardworking teacher should not have to remain on the same grade year after year while their exceptional performance is rewarded with nothing more than a certificate. If a teacher consistently delivers outstanding results, transforms learners' performance and goes beyond the call of duty, that achievement should be recognised through meaningful career progression. Promote teachers who excel. Reward performance with opportunity. When hard work has a clear path to promotion, teachers have a greater incentive to give their best, and the education system stands to benefit."
-    },
-    {
-      "tag": "School",
-      "headline": "Duwana wakayamba sukulu yake ku Maranatha Academy",
-      "preview": "FDuwana wakayamba sukulu yake ku Maranatha Academy",
-      "date": "Sept 18, 2026",
-      "image": "",
-      "content": "Duwama Muhammad, msungwana waku Mangochi uja yemwe adalemba yekha mayeso a sitandade 8 pa sukulu ya pulayimale ya Mangale, tsopano wakayamba sukulu yake ku Maranatha Academy. Malingana ndi uthenga omwe a Maranatha Academy atulutsa, msungwanayu achita maphunziro ake kusukuluyi mwa ulele potsatira thandizo la maphunziro lomwe eni sukuluyi adapereka (full scholarship).  Mkulu wa Maranatha Academy Dr. Ernest Kaonga wati sukuluyi ndiyokhudzidwa ndi nkhani ya Duwama komanso mtima wake osagonja. \"Anzake ena omwe anakumana ndi zomwe iyeyu anadutsamozi, adangonja kalekale. Tili ndi chikhulupiliro mwa msungwanayu, kuti adzakhala mtsogoleri ndipo kamba ka ichi aphunzira kusukulu zathu mwa ulere mpaka form 4,\" anatero a Kaonga.  Mbali yake, Duwama wayamikira mwini wake wa Maranatha Academy, Dr. Kaonga kamba komukhulupilira.  by Innocent Kumchedwa."
     }
   ]
 }
