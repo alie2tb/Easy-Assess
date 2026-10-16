@@ -1557,6 +1557,20 @@
   </div>
 
   <div class="card" style="margin-top:0.5rem;">
+    <p class="form-title">🔔 Notifications</p>
+    <div class="theme-switch-row">
+      <div>
+        <div class="theme-switch-label">News alerts</div>
+        <div class="theme-switch-sub" id="notifSub">Get notified when new articles or announcements are posted</div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="notifToggle" onchange="toggleNotifications(this.checked)">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:0.5rem;">
     <p class="form-title">⚙️ Subject Totals — Standard 1 to 3</p>
     <p style="font-size:0.8rem;color:var(--muted);margin:0 0 1rem;">Set each subject maximum to 50 or 100. Cannot be changed while student data exists for that class.</p>
     <div id="settingsRowsPage"></div>
@@ -2431,6 +2445,7 @@ function switchPage(page){
   };
   const target = document.getElementById(pageMap[page]);
   if(target) target.classList.add("active");
+  if(page === "settings" && typeof syncNotifToggle === "function") syncNotifToggle();
   // Re-entering Records always starts on its main menu (e.g. after leaving Lesson Plans).
   if(page === "records" && typeof closeRecordsResourcesTab === "function") closeRecordsResourcesTab();
 
@@ -7157,78 +7172,152 @@ window.renderLessonPlanCode = renderLessonPlanCode;
 // until news.json (a separate, editable data file) loads successfully.
 let NEWS_ANNOUNCEMENTS = [];
 let NEWS_ARTICLES = [];
-let _lastNewsLoadTime = 0; // Track when news was last loaded to prevent notification spam
+const NEWS_SEEN_KEY  = "ea33_news_seen";   // keys of items the user has already been told about
+const NOTIF_PREF_KEY = "ea33_notif_enabled"; // "on" / "off"
+let _lastNewsFetchTime = 0;
 
-// Loads news.json (a standalone, easy-to-edit data file shipped alongside
-// index.html) and refreshes both the News page and the Home "Latest Updates"
-// preview once it's available. If it can't be loaded or is empty, a fallback
-// message is displayed. On successful load, shows a notification in the device
-// notification tray.
-async function loadNewsData(){
+// One stable key per news item (news.json has no ids, so date + headline is used).
+function collectNewsKeys(data){
+  const out = [];
+  (data.announcements||[]).forEach(a=> out.push({key:`a|${a.date}|${a.title}`, type:"announcement", text:a.title}));
+  (data.articles||[]).forEach(n=> out.push({key:`n|${n.date}|${n.headline}`, type:"article", text:n.headline}));
+  return out;
+}
+function getSeenNewsKeys(){
+  try{
+    const raw = localStorage.getItem(NEWS_SEEN_KEY);
+    return raw ? new Set(JSON.parse(raw)) : null; // null = first run ever
+  }catch(e){ return null; }
+}
+function saveSeenNewsKeys(keys){
+  try{ localStorage.setItem(NEWS_SEEN_KEY, JSON.stringify(keys)); }catch(e){}
+}
+
+function notificationsOn(){
+  return ("Notification" in window) && Notification.permission === "granted"
+    && localStorage.getItem(NOTIF_PREF_KEY) !== "off";
+}
+
+// Shows a notification through the service worker (needed on Android/installed PWAs),
+// falling back to the plain Notification API where there is no service worker.
+async function showLocalNotification(title, body){
+  const opts = {
+    body, icon:"./icon-192.png", badge:"./icon-192.png", vibrate:[200,100,200],
+    tag:"ea33-news-update", renotify:true, data:{ url:"./?page=news" }
+  };
+  try{
+    const reg = navigator.serviceWorker ? await navigator.serviceWorker.getRegistration() : null;
+    if(reg){ await reg.showNotification(title, opts); return; }
+  }catch(e){}
+  try{ new Notification(title, opts); }catch(e){}
+}
+
+function notifyNewNews(items){
+  if(!items.length || !notificationsOn()) return;
+  const arts = items.filter(i=>i.type==="article");
+  const anns = items.filter(i=>i.type==="announcement");
+  if(items.length === 1){
+    showLocalNotification(arts.length ? "New article" : "New announcement", items[0].text);
+    return;
+  }
+  const parts = [];
+  if(arts.length) parts.push(`${arts.length} new ${arts.length===1?"article":"articles"}`);
+  if(anns.length) parts.push(`${anns.length} new ${anns.length===1?"announcement":"announcements"}`);
+  showLocalNotification("News update", parts.join(" and ") + ": " + items[0].text);
+}
+
+// Loads news.json, refreshes the News page + Home preview, and notifies about
+// items that were not in the previous load. `background` = silent re-check
+// (timer / returning to the app): it only re-renders when something is new.
+async function loadNewsData(background){
+  _lastNewsFetchTime = Date.now();
   try{
     const res = await fetch("news.json", {cache:"no-store"});
-    if(!res.ok) {
-      renderNewsPage();
-      renderDashboard();
+    if(!res.ok){
+      if(!background){ renderNewsPage(); renderDashboard(); }
       return;
     }
     const data = await res.json();
     const hasAnnouncements = Array.isArray(data.announcements) && data.announcements.length;
     const hasArticles = Array.isArray(data.articles) && data.articles.length;
-    
+
     if(hasAnnouncements) NEWS_ANNOUNCEMENTS = data.announcements;
-    if(hasArticles) {
+    if(hasArticles){
       NEWS_ARTICLES = data.articles;
-      // Sort articles by date, newest first
-      NEWS_ARTICLES.sort((a, b) => {
-        const dateA = new Date(a.date);
-        const dateB = new Date(b.date);
-        return dateB - dateA; // Newest first
-      });
+      NEWS_ARTICLES.sort((a,b)=> new Date(b.date) - new Date(a.date)); // newest first
     }
-    
-    renderNewsPage();
-    renderDashboard();
-    
-    // ────────────────────────────────────────────────────────────────────────
-    // Show notification when news.json loads successfully
-    // Only notify if more than 1 minute has passed since last load to prevent spam
-    // ────────────────────────────────────────────────────────────────────────
-    const now = Date.now();
-    if(now - _lastNewsLoadTime > 60000){
-      _lastNewsLoadTime = now;
-      
-      if(navigator.serviceWorker && navigator.serviceWorker.controller){
-        // Build notification body with item counts
-        let notificationBody = "News updated";
-        if(hasAnnouncements && hasArticles){
-          notificationBody = `${data.announcements.length} Announcements and ${data.articles.length} news articles`;
-        } else if(hasAnnouncements){
-          const count = data.announcements.length;
-          notificationBody = `${count} ${count === 1 ? "Announcement" : "Announcements"}`;
-        } else if(hasArticles){
-          const count = data.articles.length;
-          notificationBody = `${count} ${count === 1 ? "news article" : "news articles"}`;
-        }
-        
-        // Send message to service worker to show notification
-        navigator.serviceWorker.controller.postMessage({
-          type: "SHOW_NOTIFICATION",
-          title: "EASY CLASSROOM MANAGEMENT",
-          body: notificationBody,
-          tag: "ea33-news-update"
-        });
-      }
+
+    const all  = collectNewsKeys(data);
+    const seen = getSeenNewsKeys();
+    // First ever run: treat everything as already seen so users aren't spammed.
+    const newItems = seen ? all.filter(k=>!seen.has(k.key)) : [];
+    if(all.length) saveSeenNewsKeys(all.map(k=>k.key));
+
+    if(!background || newItems.length){
+      renderNewsPage();
+      renderDashboard();
     }
-    
+    notifyNewNews(newItems);
   } catch(e){
     console.error("Error loading news.json:", e);
-    // Error loading news.json — show fallback message
-    renderNewsPage();
-    renderDashboard();
+    if(!background){ renderNewsPage(); renderDashboard(); }
   }
 }
 window.loadNewsData = loadNewsData;
+
+// ── Notification settings toggle ──────────────────────────────────────────
+function syncNotifToggle(){
+  const t = document.getElementById("notifToggle");
+  const sub = document.getElementById("notifSub");
+  if(!t) return;
+  if(!("Notification" in window)){
+    t.checked = false; t.disabled = true;
+    if(sub) sub.textContent = "Not supported here. On iPhone, add the app to your Home Screen first.";
+    return;
+  }
+  t.disabled = false;
+  if(Notification.permission === "denied"){
+    t.checked = false;
+    if(sub) sub.textContent = "Blocked. Allow notifications for this app in your device/browser settings.";
+    return;
+  }
+  t.checked = notificationsOn();
+  if(sub) sub.textContent = "Get notified when new articles or announcements are posted";
+}
+async function toggleNotifications(on){
+  if(!("Notification" in window)){ syncNotifToggle(); return; }
+  if(!on){
+    localStorage.setItem(NOTIF_PREF_KEY, "off");
+    syncNotifToggle();
+    return;
+  }
+  let perm = Notification.permission;
+  if(perm === "default"){
+    try{ perm = await Notification.requestPermission(); }catch(e){}
+  }
+  if(perm === "granted"){
+    localStorage.setItem(NOTIF_PREF_KEY, "on");
+    syncNotifToggle();
+    showLocalNotification("Notifications enabled", "You'll be alerted when new articles or announcements are posted.");
+  } else {
+    syncNotifToggle();
+  }
+}
+window.toggleNotifications = toggleNotifications;
+window.syncNotifToggle = syncNotifToggle;
+
+// Re-check for new news while the app is open.
+setInterval(()=>{ if(document.visibilityState === "visible") loadNewsData(true); }, 5*60*1000);
+document.addEventListener("visibilitychange", ()=>{
+  if(document.visibilityState === "visible" && Date.now() - _lastNewsFetchTime > 60000) loadNewsData(true);
+});
+
+// Tapping a notification: the service worker asks the open app to show a page.
+if(navigator.serviceWorker){
+  navigator.serviceWorker.addEventListener("message", e=>{
+    if(e.data && e.data.type === "OPEN_PAGE" && e.data.page) switchPage(e.data.page);
+  });
+}
 
 function renderNewsPage(){
   const annContainer = document.getElementById("newsAnnouncementsList");
@@ -7848,6 +7937,8 @@ updateBadge();
 renderDashboard();
 populateAdmissionSpinners();
 loadNewsData();
+syncNotifToggle();
+if(new URLSearchParams(location.search).get("page") === "news") switchPage("news");
 initAppSetup();
 
 // ── Google Analytics: PWA install tracking ──────────────────────────────

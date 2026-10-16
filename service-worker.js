@@ -1,4 +1,4 @@
-const CACHE_NAME = "score-manager-v301";
+const CACHE_NAME = "score-manager-v84";
 
 const STATIC_ASSETS = [
   "./",
@@ -155,8 +155,11 @@ self.addEventListener("notificationclick", event => {
   event.waitUntil(
     clients.matchAll({ type: "window", includeUncontrolled: true }).then(list => {
       for(const client of list){
-        if(client.url.includes(self.location.origin) && "focus" in client)
+        if(client.url.includes(self.location.origin) && "focus" in client){
+          const m = /[?&]page=([a-z]+)/.exec(target);
+          if(m) client.postMessage({ type: "OPEN_PAGE", page: m[1] });
           return client.focus();
+        }
       }
       if(clients.openWindow) return clients.openWindow(target);
     })
