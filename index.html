@@ -75,32 +75,17 @@
   .students-required-overlay .sro-title{font-size:1.15rem;font-weight:700;color:var(--text);margin-bottom:0.5rem;}
   .students-required-overlay .sro-text{font-size:0.88rem;color:var(--muted);max-width:340px;line-height:1.5;margin-bottom:1.4rem;}
   .students-required-overlay .sro-btn{background:var(--primary);color:#fff;border:none;border-radius:999px;padding:12px 26px;font-size:0.92rem;font-weight:700;cursor:pointer;}
-  /* bottom navigation (5 tabs) + "More" sheet */
+  /* bottom navigation (4 tabs) */
   :root{--nav-h:62px;}
   .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:190;display:flex;background:var(--card);border-top:1px solid var(--border);height:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));padding-bottom:env(safe-area-inset-bottom,0px);}
   .bottom-nav.kb-hide{display:none;}
   .bn-item{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:none;padding:6px 0 4px;font-family:inherit;font-size:0.68rem;font-weight:600;color:var(--muted);cursor:pointer;-webkit-tap-highlight-color:transparent;}
   .bn-icon{width:54px;height:28px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;line-height:1;transition:background 0.2s;}
-  .bn-more .bn-icon{font-size:1.5rem;font-weight:700;}
   .bn-item.active{color:var(--primary-dark);}
   .bn-item.active .bn-icon{background:rgba(29,158,117,0.16);}
-  .bottom-nav.sheet-open .bn-item.active:not(.bn-more){color:var(--muted);}
-  .bottom-nav.sheet-open .bn-item.active:not(.bn-more) .bn-icon{background:none;}
-  .bottom-nav.sheet-open .bn-more{color:var(--primary-dark);}
-  .bottom-nav.sheet-open .bn-more .bn-icon{background:rgba(29,158,117,0.16);}
-  .more-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:180;}
-  .more-overlay.show{display:block;}
-  .more-sheet{position:fixed;left:0;right:0;bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));z-index:185;background:var(--card);border-radius:18px 18px 0 0;box-shadow:0 -4px 20px rgba(0,0,0,0.18);transform:translateY(110%);visibility:hidden;transition:transform 0.25s ease,visibility 0.25s;max-height:calc(100vh - var(--nav-h) - 70px);overflow-y:auto;}
-  .more-sheet.show{transform:translateY(0);visibility:visible;}
   .more-header{display:flex;align-items:center;gap:0.8rem;padding:1rem 1.2rem 0.8rem;border-bottom:1px solid var(--border);}
   .more-badge{width:44px;height:44px;border-radius:10px;background:var(--primary);overflow:hidden;flex-shrink:0;}
   .more-title{font-weight:700;font-size:1rem;letter-spacing:0.02em;color:var(--primary-dark);}
-  .more-items{display:flex;flex-direction:column;padding:0.4rem 0;}
-  .more-item{display:flex;align-items:center;gap:0.9rem;background:none;border:none;text-align:left;width:100%;padding:0.8rem 1.2rem;font-family:inherit;font-size:0.95rem;font-weight:600;color:var(--text);cursor:pointer;}
-  .more-item .mi-icon{font-size:1.3rem;line-height:1;width:1.5rem;text-align:center;flex-shrink:0;}
-  .more-item.active{color:var(--primary-dark);background:var(--bg);}
-  html.dark .more-item.active{background:#2A2A2A;}
-  .more-divider{border-top:1px solid var(--border);margin:0.35rem 0;}
   .sidebar-close-btn{position:absolute;top:8px;right:8px;background:none;border:none;font-size:1.3rem;color:var(--muted);cursor:pointer;padding:6px;line-height:1;}
   .hamburger-btn{background:none;border:none;color:var(--primary-dark);font-size:1.35rem;line-height:1;padding:4px 8px;cursor:pointer;}
   .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1rem;margin-bottom:1rem;}
@@ -192,6 +177,19 @@
 
   /* attendance option menu + summary */
   .att-menu-wrap{position:relative;display:none;}
+  .home-menu-wrap{position:relative;display:block;} /* Home is the start page; switchPage() hides it elsewhere */
+  .home-menu{display:none;position:absolute;right:0;top:calc(100% + 6px);min-width:200px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,0.2);z-index:300;overflow:hidden;}
+  .home-menu button{display:block;width:100%;text-align:left;background:none;border:none;padding:12px 14px;font-size:0.9rem;font-weight:600;color:var(--text);cursor:pointer;font-family:inherit;}
+  .home-menu button:active{background:var(--grey-100);}
+  .home-menu .hm-row{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .home-menu .hm-state{font-size:0.72rem;font-weight:700;padding:3px 9px;border-radius:999px;background:var(--grey-100);color:var(--muted);}
+  .home-menu .hm-state.on{background:var(--primary);color:#fff;}
+  #schoolInfoModal{display:none;position:fixed;inset:0;z-index:8887;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;padding:1rem;}
+  #schoolInfoModal.open{display:flex;}
+  #schoolInfoBox{background:#fff;border-radius:14px;width:100%;max-width:420px;padding:1.5rem;max-height:90vh;overflow-y:auto;}
+  #schoolInfoBox h3{font-size:1rem;font-weight:600;margin:0 0 0.3rem;}
+  html.dark #schoolInfoBox{background:var(--card);color:var(--text);}
+  html.dark .home-menu{background:var(--card);}
   .att-menu{display:none;position:absolute;right:0;top:calc(100% + 6px);min-width:210px;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,0.2);z-index:300;overflow:hidden;}
   .att-menu.open{display:block;}
   .att-menu button{display:block;width:100%;text-align:left;background:none;border:none;padding:12px 14px;font-size:0.9rem;font-weight:600;color:var(--text);cursor:pointer;}
@@ -330,6 +328,12 @@
   #settingsBox{background:#fff;border-radius:14px;width:100%;max-width:420px;padding:1.5rem;max-height:90vh;overflow-y:auto;}
   #settingsBox h3{font-size:1rem;font-weight:600;margin:0 0 0.3rem;}
   #settingsBox .sub-note{font-size:0.8rem;color:var(--muted);margin:0 0 1.2rem;}
+  #passTotalModal{display:none;position:fixed;inset:0;z-index:8887;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;padding:1rem;}
+  #passTotalModal.open{display:flex;}
+  #passTotalBox{background:#fff;border-radius:14px;width:100%;max-width:420px;padding:1.5rem;max-height:90vh;overflow-y:auto;}
+  #passTotalBox h3{font-size:1rem;font-weight:600;margin:0 0 0.3rem;}
+  #passTotalBox .sub-note{font-size:0.8rem;color:var(--muted);margin:0 0 1rem;line-height:1.5;}
+  html.dark #passTotalBox{background:var(--card);color:var(--text);}
   .set-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);}
   .set-row:last-of-type{border-bottom:none;}
   .set-label{font-size:0.9rem;font-weight:500;}
@@ -590,37 +594,6 @@
   .class-card .cls-count{font-size:0.75rem;color:var(--muted);}
   .class-card .cls-badge{position:absolute;top:10px;right:10px;background:var(--primary);color:#fff;font-size:0.65rem;font-weight:700;border-radius:999px;padding:2px 7px;}
 
-  /* Forum */
-  .forum-search-wrap{position:relative;margin-bottom:0.9rem;}
-  .forum-search-wrap .fs-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.95rem;pointer-events:none;}
-  .forum-search{width:100%;padding:11px 14px 11px 38px;border:1px solid var(--border);border-radius:12px;font-size:0.92rem;background:var(--grey-100);color:var(--text);}
-  .forum-tabs{display:flex;gap:1.4rem;border-bottom:1px solid var(--border);margin-bottom:1rem;justify-content:space-between;align-items:center;}
-  .forum-tab{background:none;border:none;padding:0 0 0.7rem;font-size:0.85rem;font-weight:700;letter-spacing:0.03em;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;text-transform:uppercase;}
-  .forum-tab.active{color:var(--primary-dark);border-bottom-color:var(--primary-dark);}
-  .forum-post-card{background:var(--card);border-radius:14px;padding:1.1rem;margin-bottom:1rem;box-shadow:0 1px 4px rgba(0,0,0,0.07);cursor:pointer;transition:transform 0.15s;}
-  .forum-post-card:active{transform:scale(0.985);}
-  .forum-post-head{display:flex;align-items:center;gap:0.7rem;margin-bottom:0.7rem;}
-  .forum-avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.95rem;flex-shrink:0;}
-  .forum-post-author{font-weight:700;font-size:0.95rem;color:var(--text);line-height:1.25;}
-  .forum-post-time{font-size:0.78rem;color:var(--muted);}
-  .forum-post-tag{margin-left:auto;background:#E1F5EE;color:var(--primary-dark);font-size:0.76rem;font-weight:700;padding:5px 10px;border-radius:999px;white-space:nowrap;flex-shrink:0;}
-  html.dark .forum-post-tag{background:rgba(29,158,117,0.18);}
-  .forum-post-title{font-size:1.08rem;font-weight:700;color:var(--text);line-height:1.32;margin:0 0 0.5rem;}
-  .forum-post-preview{font-size:0.88rem;color:var(--muted);line-height:1.55;margin:0 0 0.7rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
-  .forum-post-foot{display:flex;align-items:center;gap:1.2rem;border-top:1px solid var(--border);padding-top:0.7rem;font-size:0.85rem;color:var(--muted);}
-  .forum-post-foot .fpf-view{margin-left:auto;color:var(--primary-dark);font-weight:700;}
-  .forum-empty{text-align:center;color:var(--muted);padding:2.5rem 0;font-size:0.9rem;}
-  .forum-fab{position:fixed;right:1.1rem;bottom:calc(var(--nav-h) + 1rem + env(safe-area-inset-bottom,0px));width:56px;height:56px;border-radius:50%;background:var(--primary);color:#fff;border:none;font-size:1.6rem;box-shadow:0 4px 14px rgba(0,0,0,0.25);cursor:pointer;z-index:150;display:flex;align-items:center;justify-content:center;line-height:1;}
-  #forumPostModal,#forumNewPostModal{display:none;position:fixed;inset:0;z-index:8888;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;padding:1rem;}
-  #forumPostModal.open,#forumNewPostModal.open{display:flex;}
-  #forumPostBox,#forumNewPostBox{background:var(--card);border-radius:14px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;padding:1.4rem;color:var(--text);}
-  .forum-reply-item{border-top:1px solid var(--border);padding:0.8rem 0;display:flex;gap:0.6rem;}
-  .forum-reply-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:0.72rem;flex-shrink:0;}
-  .forum-reply-body{flex:1;min-width:0;}
-  .forum-reply-author{font-weight:700;font-size:0.85rem;color:var(--text);}
-  .forum-reply-text{font-size:0.85rem;color:var(--text);line-height:1.45;margin-top:2px;}
-  .forum-reply-time{font-size:0.72rem;color:var(--muted);margin-top:2px;}
-  #forumReplyInput{width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;margin-top:0.9rem;background:var(--card);color:var(--text);resize:vertical;min-height:60px;}
   /* pdf dialog */
   #pdfModal{display:none;position:fixed;inset:0;z-index:8890;background:rgba(0,0,0,0.45);align-items:center;justify-content:center;padding:1rem;}
   #pdfModal.open{display:flex;}
@@ -660,6 +633,18 @@
   <button class="gear-btn" id="topActionBtn" onclick="openDeleteAllStudentsModal()" title="Delete all students" style="display:none;">
     <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zM9.5 3h5l1 2H19v2H5V5h3.5l1-2zM9 10v8h2v-8H9zm4 0v8h2v-8h-2z"/></svg>
   </button>
+  <div class="home-menu-wrap" id="homeMenuWrap">
+    <button class="gear-btn" id="appMenuBtn" onclick="toggleAppMenu()" title="Options" aria-label="Options" aria-haspopup="menu" style="color:#fff;">
+      <svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
+    </button>
+    <div class="home-menu" id="appOverflowMenu" role="menu">
+      <button type="button" role="menuitem" onclick="closeAppMenu();openSchoolInfo()">🏫 School Info</button>
+      <button type="button" role="menuitem" class="hm-row" onclick="toggleDarkFromMenu()"><span>🌙 Dark Mode</span><span class="hm-state" id="menuDarkState">Off</span></button>
+      <button type="button" role="menuitem" onclick="closeAppMenu();shareApp()">🔗 Share</button>
+      <button type="button" role="menuitem" onclick="closeAppMenu();openHelp()">❓ Help</button>
+      <button type="button" role="menuitem" onclick="closeAppMenu();openAbout()">ℹ️ About Developer</button>
+    </div>
+  </div>
   <div class="att-menu-wrap" id="attMenuWrap">
     <button class="gear-btn" id="attMenuBtn" onclick="toggleAttMenu(event)" title="Options" aria-label="Options" style="color:#fff;">
       <svg viewBox="0 0 24 24" width="19" height="19" fill="currentColor"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg>
@@ -810,6 +795,8 @@
           <button class="menu-item" id="schoolReportsBtn">📋 School Reports</button>
           <button class="menu-item" id="bulkShareBtn">📲 Bulk Share Reports</button>
           <button class="menu-item" id="filterBtn">🔍 Filter by Subject</button>
+          <button class="menu-item" id="subjectTotalsBtn" onclick="closeMenu();openSubjectTotals()">⚙️ Subject Totals</button>
+          <button class="menu-item" id="passingTotalBtn" onclick="closeMenu();openPassTotal()">✔️ Passing Total</button>
         </div>
       </div>
     </div>
@@ -850,7 +837,7 @@
 
 <!-- PAGE 4b: RECORDS -->
 <div class="page" id="pageRecords">
-  <p id="recordsSubtitle" style="font-size:0.82rem;color:var(--muted);margin:0.4rem 0 1rem;">Students, examinations, attendance, stock, and everything else you keep on record</p>
+  <p id="recordsSubtitle" style="font-size:0.82rem;color:var(--muted);margin:0.4rem 0 1rem;">Assess your classes, mark attendance, and keep everything else on record</p>
   <!-- Main Records Grid -->
   <div id="recordsMainGrid">
     <div class="class-grid">
@@ -898,6 +885,11 @@
         <span class="cls-icon">📝</span>
         <div class="cls-name">Lesson Plans</div>
         <div class="cls-count">Plan your lessons</div>
+      </div>
+      <div class="class-card" onclick="openAssessFromSetup()">
+        <span class="cls-icon">📋</span>
+        <div class="cls-name">Assessment</div>
+        <div class="cls-count" id="assessClassCount">Manage classes &amp; marks</div>
       </div>
     </div>
   </div>
@@ -1323,54 +1315,6 @@
   </div>
 </div>
 
-<!-- PAGE: FORUM -->
-<div class="page" id="pageForum">
-  <div class="forum-search-wrap">
-    <span class="fs-icon">🔍</span>
-    <input type="text" id="forumSearchInput" class="forum-search" placeholder="Search discussions…" oninput="renderForumPage()">
-  </div>
-  <div class="forum-tabs">
-    <button class="forum-tab active" id="forumTabLatest" onclick="setForumTab('latest')">Latest</button>
-    <button class="forum-tab" id="forumTabPopular" onclick="setForumTab('popular')">Popular</button>
-    <button class="forum-tab" id="forumTabMine" onclick="setForumTab('mine')">My Posts</button>
-  </div>
-  <div id="forumPostsList"></div>
-  <button class="forum-fab" title="New discussion" onclick="openNewForumPost()">＋</button>
-</div>
-
-<!-- Forum: Post Detail Modal -->
-<div id="forumPostModal">
-  <div id="forumPostBox">
-    <div style="display:flex;justify-content:flex-end;">
-      <button class="sidebar-close-btn" style="color:var(--muted);" onclick="closeForumPost()">&times;</button>
-    </div>
-    <div id="forumPostDetail"></div>
-  </div>
-</div>
-
-<!-- Forum: New Post Modal -->
-<div id="forumNewPostModal">
-  <div id="forumNewPostBox">
-    <h3 style="margin:0 0 1rem;font-size:1rem;font-weight:700;">New Discussion</h3>
-    <label>Category</label>
-    <select id="fnpCategory" style="margin-bottom:0.8rem;">
-      <option>Mathematics</option>
-      <option>Classroom Mgmt</option>
-      <option>Literacy</option>
-      <option>Assessment</option>
-      <option>General</option>
-    </select>
-    <label>Title</label>
-    <input type="text" id="fnpTitle" placeholder="What's your question or topic?" style="margin-bottom:0.8rem;">
-    <label>Details</label>
-    <textarea id="fnpBody" placeholder="Add more detail…" style="width:100%;padding:9px;border:1px solid var(--border);border-radius:8px;font-size:0.9rem;min-height:90px;background:var(--card);color:var(--text);margin-bottom:1rem;resize:vertical;"></textarea>
-    <div style="display:flex;gap:8px;justify-content:flex-end;">
-      <button class="btn-secondary" onclick="closeNewForumPost()">Cancel</button>
-      <button class="btn-primary" onclick="submitNewForumPost()">Post</button>
-    </div>
-  </div>
-</div>
-
 <!-- PAGE 5: SETTINGS -->
 <!-- PAGE 7: PROFILE -->
 <div class="page" id="pageProfile">
@@ -1460,11 +1404,11 @@
 </div>
 
 <!-- PAGE 8: SETTINGS -->
-<div class="page" id="pageSettings">
-
-  <div class="card">
-    <p class="form-title">🏫 School Info</p>
-    <p style="font-size:0.8rem;color:var(--muted);margin:0 0 1rem;">Used to auto-open your class from the Assess card.</p>
+<!-- Home ⋮ menu → School Info -->
+<div id="schoolInfoModal" onclick="if(event.target===this)closeSchoolInfo()">
+  <div id="schoolInfoBox">
+    <h3>🏫 School Info</h3>
+    <p style="font-size:0.8rem;color:var(--muted);margin:0 0 1rem;">Used to auto-open your class from the Assessment card.</p>
     <div style="margin-bottom:0.8rem;">
       <label for="settingsSchoolName" style="display:block;font-size:0.8rem;color:var(--muted);margin-bottom:4px;">School Name</label>
       <input type="text" id="settingsSchoolName" placeholder="e.g. Chilomoni Primary School" oninput="saveSchoolInfoFromSettings()">
@@ -1475,50 +1419,35 @@
         <option value="">— Select a Class —</option>
       </select>
     </div>
-  </div>
-
-  <div class="card">
-    <p class="form-title">🎨 Appearance</p>
-    <div class="theme-switch-row">
-      <div>
-        <div class="theme-switch-label">Dark Mode</div>
-        <div class="theme-switch-sub">Switch between light and dark theme</div>
-      </div>
-      <label class="switch">
-        <input type="checkbox" id="darkModeToggle" onchange="applyTheme(this.checked)">
-        <span class="slider"></span>
-      </label>
+    <div style="display:flex;justify-content:flex-end;margin-top:1.2rem;">
+      <button class="btn-secondary" style="padding:8px 20px;font-size:0.9rem;" onclick="closeSchoolInfo()">Done</button>
     </div>
-  </div>
-
-
-  <div class="card" style="margin-top:0.5rem;">
-    <p class="form-title">⚙️ Subject Totals — Standard 1 to 3</p>
-    <p style="font-size:0.8rem;color:var(--muted);margin:0 0 1rem;">Set each subject maximum to 50 or 100. Cannot be changed while student data exists for that class.</p>
-    <div id="settingsRowsPage"></div>
-    <div id="lockedNoticePage" class="locked-notice" style="display:none;">
-      ⚠️ Some classes have student data. Delete all students in that class first before changing its subject totals.
-    </div>
-  </div>
-
-  <div class="card" style="margin-top:0.5rem;">
-    <p class="form-title">✔️ Passing Total — Standard 1 to 8</p>
-    <p style="font-size:0.82rem;color:var(--muted);margin:0 0 1rem;line-height:1.6;">Set the minimum total marks a learner must reach to PASS. Learners with a total equal to or above this figure show <strong>PASS</strong> in the student list.</p>
-    <div id="passingTotalRows"></div>
   </div>
 </div>
 
-<!-- Settings modal -->
+<!-- Assess ⋮ menu → Subject Totals (current class only) -->
 <div id="settingsModal">
   <div id="settingsBox">
-    <h3>⚙️ Subject Totals — Standard 1 to 3</h3>
-    <p class="sub-note">Set each subject maximum to 50 or 100. Cannot be changed while student data exists for that class.</p>
+    <h3 id="settingsTitle">⚙️ Subject Totals</h3>
+    <p class="sub-note">Set each subject maximum to 50 or 100. Cannot be changed while student data exists for this class.</p>
     <div id="settingsRows"></div>
     <div id="lockedNotice" class="locked-notice" style="display:none;">
-      ⚠️ Some classes have student data. Delete all students in that class first before changing its subject totals.
+      ⚠️ This class has student data. Delete all its students first before changing subject totals.
     </div>
     <div style="display:flex;justify-content:flex-end;margin-top:1.2rem;">
       <button class="btn-secondary" style="padding:8px 20px;font-size:0.9rem;" onclick="closeSettings()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Assess ⋮ menu → Passing Total (current class only) -->
+<div id="passTotalModal">
+  <div id="passTotalBox">
+    <h3 id="passTotalTitle">✔️ Passing Total</h3>
+    <p class="sub-note">Set the minimum total marks a learner must reach to PASS. Learners with a total equal to or above this figure show <strong>PASS</strong> in the student list.</p>
+    <div id="passingTotalRows"></div>
+    <div style="display:flex;justify-content:flex-end;margin-top:1.2rem;">
+      <button class="btn-secondary" style="padding:8px 20px;font-size:0.9rem;" onclick="closePassTotal()">Done</button>
     </div>
   </div>
 </div>
@@ -2053,27 +1982,36 @@ function msceQualifies(student, subs){
   return ruleA || ruleB;
 }
 
-function buildPassingTotalRows(){
+function openPassTotal(){
+  const cls = currentClass();
+  if(isExamLevel(cls)) return;      // JCE / MSCE use grade-based pass rules, not a total
+  buildPassingTotalRows(cls);
+  document.getElementById("passTotalModal").classList.add("open");
+}
+function closePassTotal(){
+  document.getElementById("passTotalModal").classList.remove("open");
+}
+function buildPassingTotalRows(cls){
   const container = document.getElementById("passingTotalRows");
   if(!container) return;
   container.innerHTML = "";
-  [1,2,3,4,5,6,7,8].forEach(cls=>{
-    const subs   = getSubjects(cls);
-    const maxTot = getMaxTotal(subs,cls);
-    const row    = document.createElement("div");
-    row.className = "pass-row";
-    row.innerHTML = `
-      <div>
-        <div class="pass-label">Standard ${cls}</div>
-        <div class="pass-sub">out of ${maxTot}</div>
-      </div>
-      <input class="pass-input" type="number" min="1" max="${maxTot}"
-        value="${passingTotals[cls]}"
-        onchange="setPassingTotal(${cls}, this.value, ${maxTot})"
-        oninput="setPassingTotal(${cls}, this.value, ${maxTot})">`;
-    container.appendChild(row);
-  });
+  const subs   = getSubjects(cls);
+  const maxTot = getMaxTotal(subs,cls);
+  document.getElementById("passTotalTitle").textContent = `✔️ Passing Total — Standard ${cls}`;
+  const row    = document.createElement("div");
+  row.className = "pass-row";
+  row.innerHTML = `
+    <div>
+      <div class="pass-label">Standard ${cls}</div>
+      <div class="pass-sub">out of ${maxTot}</div>
+    </div>
+    <input class="pass-input" type="number" min="1" max="${maxTot}"
+      value="${passingTotals[cls]}"
+      onchange="setPassingTotal(${cls}, this.value, ${maxTot})"
+      oninput="setPassingTotal(${cls}, this.value, ${maxTot})">`;
+  container.appendChild(row);
 }
+window.openPassTotal = openPassTotal; window.closePassTotal = closePassTotal;
 
 function setPassingTotal(cls, val, max){
   let v = parseInt(val);
@@ -2330,24 +2268,9 @@ function confirmExamSubjects(){
 }
 window.confirmExamSubjects = confirmExamSubjects;
 
-let _titleBeforeMore = null;
-function openMore(){
-  const s=document.getElementById("moreSheet"), o=document.getElementById("moreOverlay"), n=document.getElementById("bottomNav");
-  const t=document.getElementById("topTitle");
-  if(t && _titleBeforeMore===null){ _titleBeforeMore = t.textContent; t.textContent = "More"; }
-  if(s) s.classList.add("show"); if(o) o.classList.add("show"); if(n) n.classList.add("sheet-open");
-}
-function closeMore(){
-  const s=document.getElementById("moreSheet"), o=document.getElementById("moreOverlay"), n=document.getElementById("bottomNav");
-  const t=document.getElementById("topTitle");
-  if(t && _titleBeforeMore!==null){ t.textContent = _titleBeforeMore; _titleBeforeMore = null; }
-  if(s) s.classList.remove("show"); if(o) o.classList.remove("show"); if(n) n.classList.remove("sheet-open");
-}
-function toggleMore(){
-  const s=document.getElementById("moreSheet");
-  if(s && s.classList.contains("show")) closeMore(); else openMore();
-}
-window.openMore=openMore; window.closeMore=closeMore; window.toggleMore=toggleMore;
+// (The old "More" sheet was removed — Share/Settings/Help/About now live in the Home option menu.)
+function closeMore(){}
+window.closeMore=closeMore;
 // Hide the bottom bar while the on-screen keyboard is up so it doesn't squeeze forms.
 (function(){
   const typing = el => el && (el.tagName==="TEXTAREA" || (el.tagName==="INPUT" && !/^(checkbox|radio|button|submit|range|file|color)$/i.test(el.type)));
@@ -2355,15 +2278,15 @@ window.openMore=openMore; window.closeMore=closeMore; window.toggleMore=toggleMo
   document.addEventListener("focusout", ()=>{ setTimeout(()=>{ const n=document.getElementById("bottomNav"); if(n && !typing(document.activeElement)) n.classList.remove("kb-hide"); },150); });
 })();
 function switchPage(page){
-  const allPages = ["pageDashboard","pageClasses","pageExamSubjects","pageAdd","pageList","pageRecords","pageAdmissionRecords","pageSickRecords","pagePunishmentRecords","pageTransferRecords","pageStockRecords","pageAttendance","pageResources","pageCalendar","pageTerm1Weeks","pageForum","pageProfile","pageSettings"];
+  const allPages = ["pageDashboard","pageClasses","pageExamSubjects","pageAdd","pageList","pageRecords","pageAdmissionRecords","pageSickRecords","pagePunishmentRecords","pageTransferRecords","pageStockRecords","pageAttendance","pageResources","pageCalendar","pageTerm1Weeks","pageProfile"];
   allPages.forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove("active"); });
 
   const pageMap = {
     dashboard:"pageDashboard",
     classes:"pageClasses", examSubjects:"pageExamSubjects", add:"pageAdd", list:"pageList",
     records:"pageRecords", admissionrecords:"pageAdmissionRecords", sickrecords:"pageSickRecords", punishmentrecords:"pagePunishmentRecords", transferrecords:"pageTransferRecords", stockrecords:"pageStockRecords", attendance:"pageAttendance",
-    resources:"pageResources", calendar:"pageCalendar", term1weeks:"pageTerm1Weeks", forum:"pageForum",
-    profile:"pageProfile", settings:"pageSettings"
+    resources:"pageResources", calendar:"pageCalendar", term1weeks:"pageTerm1Weeks",
+    profile:"pageProfile"
   };
   const target = document.getElementById(pageMap[page]);
   if(target) target.classList.add("active");
@@ -2386,42 +2309,29 @@ function switchPage(page){
   }
 
 
-  // Bottom nav (5 tabs): Home / Students / Assess / Notes / More.
-  // Class picker, subject picker, and add/enter-marks pages are all part of the
-  // Assessment flow. Records (and its sub-pages), Forum, Settings and Profile
-  // live behind the "More" tab.
+  // Bottom nav (4 tabs): Home / Students / Records / Notes.
+  // The whole Assess flow (class picker, subject picker, marks entry, class list) and every
+  // Records sub-page sit under the Records tab. Settings/Profile are reached from Home.
   const bottomNavMap = {
-    dashboard:"bnHome",
+    dashboard:"bnHome", profile:"bnHome",
     admissionrecords:"bnStudents",
-    classes:"bnAssess", examSubjects:"bnAssess", add:"bnAssess", list:"bnAssess",
-    resources:"bnMore",
-    records:"bnMore", attendance:"bnMore", stockrecords:"bnMore", sickrecords:"bnMore", punishmentrecords:"bnMore",
-    transferrecords:"bnMore", calendar:"bnMore", term1weeks:"bnMore",
-    forum:"bnMore", settings:"bnMore", profile:"bnMore"
+    records:"bnRecords", classes:"bnRecords", examSubjects:"bnRecords", add:"bnRecords", list:"bnRecords",
+    attendance:"bnRecords", stockrecords:"bnRecords", sickrecords:"bnRecords", punishmentrecords:"bnRecords",
+    transferrecords:"bnRecords", calendar:"bnRecords", term1weeks:"bnRecords",
+    resources:"bnNotes"
   };
-  ["bnHome","bnStudents","bnAssess","bnMore"].forEach(id=>{
+  ["bnHome","bnStudents","bnRecords","bnNotes"].forEach(id=>{
     const el=document.getElementById(id); if(el) el.classList.remove("active");
   });
   const activeBn = bottomNavMap[page];
   if(activeBn){ const bnEl=document.getElementById(activeBn); if(bnEl) bnEl.classList.add("active"); }
-  // Highlight the matching row inside the More sheet.
-  const moreRowMap = {
-    resources:"moreNavNotes", records:"moreNavRecords", attendance:"moreNavRecords", stockrecords:"moreNavRecords", sickrecords:"moreNavRecords",
-    punishmentrecords:"moreNavRecords", transferrecords:"moreNavRecords", calendar:"moreNavRecords", term1weeks:"moreNavRecords",
-    forum:"moreNavForum", settings:"moreNavSettings", profile:"moreNavSettings"
-  };
-  ["moreNavNotes","moreNavRecords","moreNavForum","moreNavSettings"].forEach(id=>{
-    const el=document.getElementById(id); if(el) el.classList.remove("active");
-  });
-  if(moreRowMap[page]){ const mrEl=document.getElementById(moreRowMap[page]); if(mrEl) mrEl.classList.add("active"); }
-  closeMore();
-
+  closeAppMenu();
 
   // Back button: show on examSubjects, add, settings, profile (sub-page of settings), classes (now a Records card),
   // and the remaining record sub-pages. (admissionrecords/"Students", "attendance", and the per-class "list"
   // page are reached directly from the bottom nav/a card/menu and don't need a back button.)
   const backBtn = document.getElementById("backBtn");
-  const showBack = (page==="classes"||page==="examSubjects"||page==="add"||page==="settings"||page==="profile"||page==="sickrecords"||page==="punishmentrecords"||page==="transferrecords"||page==="calendar"||page==="term1weeks");
+  const showBack = (page==="classes"||page==="examSubjects"||page==="add"||page==="list"||page==="profile"||page==="sickrecords"||page==="punishmentrecords"||page==="transferrecords"||page==="calendar"||page==="term1weeks");
   if(backBtn) backBtn.style.display = showBack ? "inline-block" : "none";
 
   const titles = {
@@ -2430,8 +2340,8 @@ function switchPage(page){
     add:`${classLabel(_currentClass)} — Add Student`,
     list:`${classLabel(_currentClass)}`,
     records:"Records", admissionrecords:"Students", sickrecords:"Sick Record", punishmentrecords:"Punishment Records", transferrecords:"Transfer Out Record", stockrecords:"Stock Record", attendance:"Attendance",
-    resources:"Notes", calendar:"School Calendar", term1weeks:"Term 1 Weeks", forum:"Discussion Forum",
-    profile:"My Profile", settings:"Settings"
+    resources:"Notes", calendar:"School Calendar", term1weeks:"Term 1 Weeks",
+    profile:"My Profile"
   };
   const titleEl = document.getElementById("topTitle");
   if(titleEl) titleEl.textContent = titles[page]||"Easy Classroom Management";
@@ -2442,6 +2352,8 @@ function switchPage(page){
   if(topActionBtn){
     topActionBtn.style.display = (page==="admissionrecords") ? "" : "none";
   }
+  const homeMenuWrap = document.getElementById("homeMenuWrap");
+  if(homeMenuWrap) homeMenuWrap.style.display = (page==="dashboard") ? "block" : "none";
   const attMenuWrap = document.getElementById("attMenuWrap");
   if(attMenuWrap) attMenuWrap.style.display = (page==="attendance") ? "block" : "none";
   const attMenuEl = document.getElementById("attMenu");
@@ -2449,15 +2361,9 @@ function switchPage(page){
 
   if(page==="dashboard") renderDashboard();
   if(page==="classes")  buildClassGrid();
-  if(page==="settings"){
-    buildSettingsPageRows();
-    const toggle = document.getElementById("darkModeToggle");
-    if(toggle) toggle.checked = document.documentElement.classList.contains("dark");
-  }
   if(page==="profile")     buildProfilePage();
   if(page==="list")        render();
   if(page==="resources")   initResourcesPage();
-  if(page==="forum")       renderForumPage();
   if(page==="records")     updateRecordsCounts();
   if(page==="add"){
     setStudentFieldsMode(false);
@@ -2487,12 +2393,11 @@ function switchPage(page){
   if(page==="attendance")         initAttendancePage();
 }
 
-let _settingsReturnPage = "dashboard";
 function getCurrentPageKey(){
   const map = {pageDashboard:"dashboard", pageClasses:"classes", pageExamSubjects:"examSubjects", pageAdd:"add", pageList:"list",
     pageRecords:"records", pageAdmissionRecords:"admissionrecords", pageSickRecords:"sickrecords", pagePunishmentRecords:"punishmentrecords", pageTransferRecords:"transferrecords", pageStockRecords:"stockrecords", pageAttendance:"attendance",
-    pageResources:"resources", pageCalendar:"calendar", pageTerm1Weeks:"term1weeks", pageForum:"forum",
-    pageProfile:"profile", pageSettings:"settings"};
+    pageResources:"resources", pageCalendar:"calendar", pageTerm1Weeks:"term1weeks",
+    pageProfile:"profile"};
   for(const domId in map){
     const el = document.getElementById(domId);
     if(el && el.classList.contains("active")) return map[domId];
@@ -2503,20 +2408,19 @@ window.getCurrentPageKey = getCurrentPageKey;
 
 function goBack(){
   const profileActive      = document.getElementById("pageProfile").classList.contains("active");
-  const settingsActive     = document.getElementById("pageSettings").classList.contains("active");
   const listActive         = document.getElementById("pageList").classList.contains("active");
   const addActive          = document.getElementById("pageAdd").classList.contains("active");
   const examSubjectsActive = document.getElementById("pageExamSubjects").classList.contains("active");
+  const classesActive      = document.getElementById("pageClasses").classList.contains("active");
   const sickActive         = document.getElementById("pageSickRecords").classList.contains("active");
   const punishmentActive   = document.getElementById("pagePunishmentRecords").classList.contains("active");
   const transferActive     = document.getElementById("pageTransferRecords").classList.contains("active");
   const calendarActive     = document.getElementById("pageCalendar").classList.contains("active");
   const term1weeksActive   = document.getElementById("pageTerm1Weeks").classList.contains("active");
-  if(profileActive)  switchPage("settings");   // Profile is sub-page of Settings
-  else if(settingsActive) switchPage(_settingsReturnPage);
-  else if(listActive) switchPage("add");
-  else if(addActive)  switchPage("classes");
-  else if(examSubjectsActive) switchPage("classes");
+  if(profileActive)  switchPage("dashboard");
+  else if(listActive) switchPage("records");          // Assess → back to Records
+  else if(addActive)  switchPage("list");
+  else if(examSubjectsActive || classesActive) switchPage("records");
   else if(sickActive || punishmentActive || transferActive || calendarActive || term1weeksActive) switchPage("records");
 }
 window.switchPage=switchPage;window.goBack=goBack;
@@ -3207,6 +3111,7 @@ window.toggleMenu=toggleMenu;
 
 // ── Global app options menu (top-bar ⋮) ──────────────────────────────────
 function toggleAppMenu(){
+  if(typeof syncMenuDarkState==="function") syncMenuDarkState();
   const m = document.getElementById("appOverflowMenu");
   m.style.display = m.style.display==="block" ? "none" : "block";
 }
@@ -3235,17 +3140,15 @@ function openHelp(){
   closeAppMenu();
   showInfoModal("❓ Help", `
     <p><strong>Getting started</strong></p>
-    <p>Tap Students in the bottom menu and add your learners there first — name, sex, class and guardian WhatsApp number. Once added, each student is ready to be picked from the Assessment section.</p>
+    <p>Tap Students in the bottom menu and add your learners there first — name, sex, class and guardian WhatsApp number. Once added, each student is ready to be picked when you assess.</p>
     <p><strong>Assessment</strong></p>
-    <p>Tap Assessment to choose a class — Standards 1–8, Junior Certificate, or MSCE. For JCE and MSCE, the first time you'll choose which subjects to assess — English plus at least 5 others is required. Add scores manually by picking a student from the list, or use Scan Paper to photograph a handwritten mark sheet and let AI fill it in. Tapping a class card again later jumps straight to its student list, where you can view reports, export to PDF/Excel, and share results with guardians via WhatsApp.</p>
+    <p>Open Records and tap the Assessment card to choose a class — Standards 1–8, Junior Certificate, or MSCE. For JCE and MSCE, the first time you'll choose which subjects to assess — English plus at least 5 others is required. Add scores manually by picking a student from the list, or use Scan Paper to photograph a handwritten mark sheet and let AI fill it in. Your class opens straight to its student list, where you can view reports, export to PDF/Excel, and share results with guardians via WhatsApp. The ⋮ menu on that list also holds Subject Totals (Standards 1–3) and the Passing Total for the class.</p>
     <p><strong>Records</strong></p>
-    <p>Records brings together Attendance, Stock, Sick, Punishment and Transfer records, plus the School Calendar, Term 1 Weeks, Schemes of Work and Lesson Plans — all in one hub.</p>
-    <p><strong>Resources</strong></p>
-    <p>Browse Notes and Syllabuses under Notes in the More menu — use the search bar or switch tabs to find what you need.</p>
-    <p><strong>Forum</strong></p>
-    <p>Forum is a discussion space for teachers.</p>
-    <p><strong>Share &amp; Settings</strong></p>
-    <p>Share lets you send the app link to colleagues, and Settings covers dark mode and your profile — including editing your details or clearing app data.</p>
+    <p>Records brings together Assessment, Attendance, Stock, Sick, Punishment and Transfer records, plus the School Calendar, Term 1 Weeks, Schemes of Work and Lesson Plans — all in one hub.</p>
+    <p><strong>Notes</strong></p>
+    <p>Browse Notes and Syllabuses under Notes in the bottom menu — use the search bar or switch tabs to find what you need.</p>
+    <p><strong>Home menu</strong></p>
+    <p>Open the ⋮ menu on the Home screen to find Share, School Info, Dark Mode, Help and About Developer. Share lets you send the app link to colleagues, School Info sets your school name and class, and Dark Mode switches the theme.</p>
     <p><strong>Need more help?</strong></p>
     <button class="menu-item" style="border:1px solid var(--border);border-radius:8px;" onclick="window.open('https://wa.me/265888592312','_blank')">📱 Contact Developer via WhatsApp</button>
   `);
@@ -3318,7 +3221,7 @@ function saveAppSetup(schoolName, cls, clsLabel, clsIndex){
   updateDashboardSubtitle();
 }
 
-// Called from the Settings > School Info fields to update the saved setup.
+// Called from the Home menu > School Info fields to update the saved setup.
 function saveSchoolInfoFromSettings(){
   const nameEl = document.getElementById("settingsSchoolName");
   const clsEl  = document.getElementById("settingsClass");
@@ -3423,7 +3326,7 @@ function handleFirstUseSubmit(e){
   const clsLabel = clsEl.selectedIndex > 0 ? clsEl.options[clsEl.selectedIndex].text : "";
   const clsIndex = clsEl.selectedIndex > 0 ? clsEl.selectedIndex - 1 : undefined;
   saveAppSetup(schoolName, cls, clsLabel, clsIndex);
-  // Keep the Settings > School Info fields in sync for later editing.
+  // Keep the Home menu > School Info fields in sync for later editing.
   const sName = document.getElementById("settingsSchoolName");
   const sCls  = document.getElementById("settingsClass");
   if(sName) sName.value = schoolName;
@@ -4006,6 +3909,13 @@ function resetForm(){
 function updateExcelBtn(){
   const xlsBtn = document.getElementById("exportXlsBtn");
   if(xlsBtn) xlsBtn.style.display = currentClass()>=3 ? "block" : "none";
+  // Class-specific settings that used to live in Settings:
+  //   Subject Totals → Standards 1–3 only; Passing Total → Standards 1–8 (not JCE/MSCE).
+  const cls = currentClass();
+  const stTot = document.getElementById("subjectTotalsBtn");
+  const pasTot = document.getElementById("passingTotalBtn");
+  if(stTot)  stTot.style.display  = [1,2,3].includes(Number(cls)) ? "block" : "none";
+  if(pasTot) pasTot.style.display = (!isExamLevel(cls) && passingTotals[cls]!=null) ? "block" : "none";
 }
 
 // ── Report ────────────────────────────────────────────────────────────────
@@ -4714,44 +4624,37 @@ window.showReport=showReport;window.closeReport=closeReport;window.printReport=p
 window.editFromReport=editFromReport;window.deleteFromReport=deleteFromReport;
 window.saveScanned=saveScanned;window.clearScan=clearScan;window.setMode=setMode;
 
-// ── Settings modal ────────────────────────────────────────────────────────
-function openSettings(){
-  buildSettingsRows();
+// ── Subject Totals modal (opened from the Assess ⋮ menu for the current class) ──
+function openSubjectTotals(){
+  const cls = currentClass();
+  if(![1,2,3].includes(Number(cls))) return;   // only Standards 1–3 have adjustable subject totals
+  buildSettingsRows(cls);
   document.getElementById("settingsModal").classList.add("open");
 }
 function closeSettings(){
   document.getElementById("settingsModal").classList.remove("open");
 }
-function buildSettingsRows(){
+function buildSettingsRows(cls){
   const container = document.getElementById("settingsRows");
   container.innerHTML="";
-  let anyLocked = false;
+  const hasData = getList(cls).length > 0;
+  const subs = BASE_SUBJECTS[cls];
+  document.getElementById("settingsTitle").textContent = `⚙️ Subject Totals — Standard ${cls}` + (hasData ? "  🔒" : "");
 
-  [1,2,3].forEach(cls=>{
-    const hasData = getList(cls).length > 0;
-    if(hasData) anyLocked = true;
-    const subs = BASE_SUBJECTS[cls];
-
-    const heading = document.createElement("p");
-    heading.style.cssText="font-size:0.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin:1rem 0 0.3rem;";
-    heading.textContent = `Standard ${cls}` + (hasData ? "  🔒 (has data)" : "");
-    container.appendChild(heading);
-
-    subs.forEach(sub=>{
-      const current = subjectTotals[cls][sub.key]||100;
-      const row = document.createElement("div");
-      row.className="set-row";
-      row.innerHTML=`
-        <span class="set-label">${sub.label}</span>
-        <div class="toggle-group">
-          <button class="toggle-btn ${current===50?"active":""}" ${hasData?"disabled":""} onclick="setTotal(${cls},'${sub.key}',50,this)">50</button>
-          <button class="toggle-btn ${current===100?"active":""}" ${hasData?"disabled":""} onclick="setTotal(${cls},'${sub.key}',100,this)">100</button>
-        </div>`;
-      container.appendChild(row);
-    });
+  subs.forEach(sub=>{
+    const current = subjectTotals[cls][sub.key]||100;
+    const row = document.createElement("div");
+    row.className="set-row";
+    row.innerHTML=`
+      <span class="set-label">${sub.label}</span>
+      <div class="toggle-group">
+        <button class="toggle-btn ${current===50?"active":""}" ${hasData?"disabled":""} onclick="setTotal(${cls},'${sub.key}',50,this)">50</button>
+        <button class="toggle-btn ${current===100?"active":""}" ${hasData?"disabled":""} onclick="setTotal(${cls},'${sub.key}',100,this)">100</button>
+      </div>`;
+    container.appendChild(row);
   });
 
-  document.getElementById("lockedNotice").style.display = anyLocked ? "block" : "none";
+  document.getElementById("lockedNotice").style.display = hasData ? "block" : "none";
 }
 
 function setTotal(cls, key, val, btn){
@@ -4768,7 +4671,10 @@ function setTotal(cls, key, val, btn){
 document.getElementById("settingsModal").addEventListener("click",function(e){
   if(e.target===this) closeSettings();
 });
-window.openSettings=openSettings;window.closeSettings=closeSettings;window.setTotal=setTotal;
+document.getElementById("passTotalModal").addEventListener("click",function(e){
+  if(e.target===this) closePassTotal();
+});
+window.openSubjectTotals=openSubjectTotals;window.closeSettings=closeSettings;window.setTotal=setTotal;
 
 // ── School Reports PDF ────────────────────────────────────────────────────
 const GRADE_REMARK = {1:"Need Support",2:"Good",3:"Very Good",4:"Excellent"};
@@ -5309,36 +5215,6 @@ function showFilterResults(sub,list){
 }
 function closeFilter(){document.getElementById("filterModal").style.display="none";}
 window.closeFilter=closeFilter;
-
-// ── Settings page (subject totals inline, no modal) ───────────────────────
-function buildSettingsPageRows(){
-  const container = document.getElementById("settingsRowsPage");
-  container.innerHTML="";
-  let anyLocked=false;
-  [1,2,3].forEach(cls=>{
-    const hasData=getList(cls).length>0;
-    if(hasData) anyLocked=true;
-    const subs=BASE_SUBJECTS[cls];
-    const heading=document.createElement("p");
-    heading.style.cssText="font-size:0.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin:1rem 0 0.3rem;";
-    heading.textContent=`Standard ${cls}`+(hasData?"  🔒 (has data)":"");
-    container.appendChild(heading);
-    subs.forEach(sub=>{
-      const current=subjectTotals[cls][sub.key]||100;
-      const row=document.createElement("div");
-      row.className="set-row";
-      row.innerHTML=`
-        <span class="set-label">${sub.label}</span>
-        <div class="toggle-group">
-          <button class="toggle-btn ${current===50?"active":""}" ${hasData?"disabled":""} onclick="setTotal(${cls},'${sub.key}',50,this)">50</button>
-          <button class="toggle-btn ${current===100?"active":""}" ${hasData?"disabled":""} onclick="setTotal(${cls},'${sub.key}',100,this)">100</button>
-        </div>`;
-      container.appendChild(row);
-    });
-  });
-  document.getElementById("lockedNoticePage").style.display=anyLocked?"block":"none";
-  buildPassingTotalRows();
-}
 
 // ── Notes ─────────────────────────────────────────────────────────────────
 const NOTE_SUBJECTS = {
@@ -7067,209 +6943,6 @@ window.renderLessonPlanCode = renderLessonPlanCode;
 
 
 
-/* ===================== FORUM ===================== */
-const FORUM_KEY = "ea33_forum_posts";
-const FORUM_TAG_COLORS = ["#1D9E75","#C0532A","#2C6BB0","#8E5CC7","#B0842C","#3A9AA6"];
-
-function forumTagColor(name){
-  let h=0; for(let i=0;i<name.length;i++) h = name.charCodeAt(i) + ((h<<5)-h);
-  return FORUM_TAG_COLORS[Math.abs(h)%FORUM_TAG_COLORS.length];
-}
-function forumInitials(name){
-  return (name||"?").split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join("");
-}
-function forumTimeAgo(ts){
-  const diff = Math.max(0, Date.now()-ts);
-  const mins = Math.floor(diff/60000);
-  if(mins<1) return "just now";
-  if(mins<60) return mins+" min"+(mins===1?"":"s")+" ago";
-  const hrs = Math.floor(mins/60);
-  if(hrs<24) return hrs+" hr"+(hrs===1?"":"s")+" ago";
-  const days = Math.floor(hrs/24);
-  return days+" day"+(days===1?"":"s")+" ago";
-}
-
-// Seed discussions — used as an initial/offline fallback for a fresh forum.
-const FORUM_SEED = [
-  { id:"seed1", author:"Chisomo Banda", tag:"Mathematics", title:"How do I teach fractions to Standard 4 pupils effectively?",
-    body:"I have been struggling to make fractions engaging. Any activities or visual aids that have worked for you in a large classroom would be really helpful — especially ones that don't need much printed material.",
-    ts:Date.now()-2*3600000, likes:14, mine:false,
-    replies:[
-      {author:"Yankho Mwale", text:"Try using folded paper strips — pupils can fold and shade to see halves, quarters and eighths physically.", ts:Date.now()-1.5*3600000},
-      {author:"Grace Phiri", text:"Sharing real objects like oranges or sticks of chalk works well too, and it's free.", ts:Date.now()-1*3600000}
-    ]},
-  { id:"seed2", author:"Yankho Mwale", tag:"Classroom Mgmt", title:"Best practices for managing a large class of 60+ students",
-    body:"Our school has very large classes. I would like to hear strategies that other teachers use to keep learners engaged and orderly without shouting all lesson long.",
-    ts:Date.now()-5*3600000, likes:22, mine:false,
-    replies:[
-      {author:"Chisomo Banda", text:"Group learners into fixed small teams with a leader — it cuts down on chaos a lot.", ts:Date.now()-4*3600000}
-    ]},
-  { id:"seed3", author:"Grace Phiri", tag:"Literacy", title:"Simple phonics games for Standard 1 pupils",
-    body:"Looking for low-cost phonics games that get pupils sounding out letters confidently before they move on to blending words.",
-    ts:Date.now()-26*3600000, likes:9, mine:false, replies:[] }
-];
-
-function loadForumPosts(){
-  const raw = localStorage.getItem(FORUM_KEY);
-  if(raw){ try{ return JSON.parse(raw); }catch(e){} }
-  return FORUM_SEED.slice();
-}
-function saveForumPosts(posts){ localStorage.setItem(FORUM_KEY, JSON.stringify(posts)); }
-let _forumPosts = loadForumPosts();
-let _forumTab = "latest";
-let _forumOpenId = null;
-
-function setForumTab(tab){
-  _forumTab = tab;
-  ["Latest","Popular","Mine"].forEach(t=>{
-    const el = document.getElementById("forumTab"+t);
-    if(el) el.classList.toggle("active", t.toLowerCase()===tab);
-  });
-  renderForumPage();
-}
-window.setForumTab = setForumTab;
-
-function renderForumPage(){
-  const list = document.getElementById("forumPostsList");
-  if(!list) return;
-  const q = (document.getElementById("forumSearchInput")?.value||"").trim().toLowerCase();
-
-  let posts = _forumPosts.slice();
-  if(_forumTab==="popular") posts.sort((a,b)=>b.likes-a.likes);
-  else if(_forumTab==="mine") posts = posts.filter(p=>p.mine);
-  else posts.sort((a,b)=>b.ts-a.ts);
-
-  if(q){
-    posts = posts.filter(p=>
-      p.title.toLowerCase().includes(q) ||
-      p.body.toLowerCase().includes(q) ||
-      p.tag.toLowerCase().includes(q) ||
-      p.author.toLowerCase().includes(q)
-    );
-  }
-
-  if(!posts.length){
-    list.innerHTML = `<div class="forum-empty">${_forumTab==="mine" ? "You haven't posted any discussions yet." : "No discussions found."}</div>`;
-    return;
-  }
-
-  list.innerHTML = posts.map(p=>`
-    <div class="forum-post-card" onclick="openForumPost('${p.id}')">
-      <div class="forum-post-head">
-        <div class="forum-avatar" style="background:${forumTagColor(p.author)};">${escapeHtml(forumInitials(p.author))}</div>
-        <div>
-          <div class="forum-post-author">${escapeHtml(p.author)}</div>
-          <div class="forum-post-time">${forumTimeAgo(p.ts)}</div>
-        </div>
-        <span class="forum-post-tag">${escapeHtml(p.tag)}</span>
-      </div>
-      <div class="forum-post-title">${escapeHtml(p.title)}</div>
-      <div class="forum-post-preview">${escapeHtml(p.body)}</div>
-      <div class="forum-post-foot">
-        <span>👍 ${p.likes}</span>
-        <span>💬 ${p.replies.length} repl${p.replies.length===1?"y":"ies"}</span>
-        <span class="fpf-view">View →</span>
-      </div>
-    </div>`).join("");
-}
-window.renderForumPage = renderForumPage;
-
-function openForumPost(id){
-  _forumOpenId = id;
-  const p = _forumPosts.find(x=>x.id===id);
-  if(!p) return;
-  const detail = document.getElementById("forumPostDetail");
-  detail.innerHTML = `
-    <div class="forum-post-head" style="margin-bottom:0.9rem;">
-      <div class="forum-avatar" style="background:${forumTagColor(p.author)};">${escapeHtml(forumInitials(p.author))}</div>
-      <div>
-        <div class="forum-post-author">${escapeHtml(p.author)}</div>
-        <div class="forum-post-time">${forumTimeAgo(p.ts)}</div>
-      </div>
-      <span class="forum-post-tag">${escapeHtml(p.tag)}</span>
-    </div>
-    <div class="forum-post-title" style="font-size:1.15rem;">${escapeHtml(p.title)}</div>
-    <div style="font-size:0.9rem;color:var(--text);line-height:1.55;margin-bottom:0.9rem;">${escapeHtml(p.body)}</div>
-    <div class="forum-post-foot" style="border-bottom:1px solid var(--border);padding-bottom:0.8rem;">
-      <span style="cursor:pointer;" onclick="likeForumPost('${p.id}')">👍 ${p.likes} Like</span>
-      <span>💬 ${p.replies.length} repl${p.replies.length===1?"y":"ies"}</span>
-    </div>
-    <div id="forumRepliesList">
-      ${p.replies.map(r=>`
-        <div class="forum-reply-item">
-          <div class="forum-reply-avatar" style="background:${forumTagColor(r.author)};">${escapeHtml(forumInitials(r.author))}</div>
-          <div class="forum-reply-body">
-            <div class="forum-reply-author">${escapeHtml(r.author)}</div>
-            <div class="forum-reply-text">${escapeHtml(r.text)}</div>
-            <div class="forum-reply-time">${forumTimeAgo(r.ts)}</div>
-          </div>
-        </div>`).join("") || `<div class="forum-empty" style="padding:1rem 0;">No replies yet — be the first to respond.</div>`}
-    </div>
-    <textarea id="forumReplyInput" placeholder="Write a reply…"></textarea>
-    <div class="actions" style="margin-top:0.6rem;">
-      <button class="btn-primary" onclick="submitForumReply()">Reply</button>
-    </div>
-  `;
-  document.getElementById("forumPostModal").classList.add("open");
-}
-window.openForumPost = openForumPost;
-
-function closeForumPost(){
-  document.getElementById("forumPostModal").classList.remove("open");
-  _forumOpenId = null;
-}
-window.closeForumPost = closeForumPost;
-
-function likeForumPost(id){
-  const p = _forumPosts.find(x=>x.id===id);
-  if(!p) return;
-  p.likes++;
-  saveForumPosts(_forumPosts);
-  openForumPost(id);
-  renderForumPage();
-}
-window.likeForumPost = likeForumPost;
-
-function submitForumReply(){
-  const input = document.getElementById("forumReplyInput");
-  const text = (input.value||"").trim();
-  if(!text || !_forumOpenId) return;
-  const p = _forumPosts.find(x=>x.id===_forumOpenId);
-  if(!p) return;
-  const author = getProfile().name || "Me";
-  p.replies.push({author, text, ts:Date.now()});
-  saveForumPosts(_forumPosts);
-  openForumPost(_forumOpenId);
-  renderForumPage();
-}
-window.submitForumReply = submitForumReply;
-
-function openNewForumPost(){
-  document.getElementById("fnpCategory").value = "Mathematics";
-  document.getElementById("fnpTitle").value = "";
-  document.getElementById("fnpBody").value = "";
-  document.getElementById("forumNewPostModal").classList.add("open");
-}
-window.openNewForumPost = openNewForumPost;
-
-function closeNewForumPost(){
-  document.getElementById("forumNewPostModal").classList.remove("open");
-}
-window.closeNewForumPost = closeNewForumPost;
-
-function submitNewForumPost(){
-  const title = document.getElementById("fnpTitle").value.trim();
-  const body = document.getElementById("fnpBody").value.trim();
-  const tag = document.getElementById("fnpCategory").value;
-  if(!title){ alert("Please add a title for your discussion."); return; }
-  const author = getProfile().name || "Me";
-  _forumPosts.unshift({ id:Date.now().toString(), author, tag, title, body, ts:Date.now(), likes:0, mine:true, replies:[] });
-  saveForumPosts(_forumPosts);
-  closeNewForumPost();
-  setForumTab("latest");
-}
-window.submitNewForumPost = submitNewForumPost;
-
 function renderComingSoon(tab){
   const container = document.getElementById("comingSoonContainer");
   const label = (RESOURCE_TABS.find(t=>t.key===tab)||{}).label || "";
@@ -7581,9 +7254,7 @@ function applyTheme(dark){
     document.documentElement.classList.remove("dark");
     localStorage.setItem(THEME_KEY, "light");
   }
-  // Keep toggle in sync whenever settings page is opened
-  const toggle = document.getElementById("darkModeToggle");
-  if(toggle) toggle.checked = dark;
+  if(typeof syncMenuDarkState==="function") syncMenuDarkState();
   // Refresh dashboard chart colors (legend/axis text) to match the new theme
   if(document.getElementById("dashboardContent") && typeof renderDashboard==="function") renderDashboard();
 }
@@ -7597,6 +7268,20 @@ function applyTheme(dark){
 })();
 
 window.applyTheme = applyTheme;
+
+function syncMenuDarkState(){
+  const el=document.getElementById("menuDarkState"); if(!el) return;
+  const on=document.documentElement.classList.contains("dark");
+  el.textContent = on ? "On" : "Off"; el.classList.toggle("on", on);
+}
+function toggleDarkFromMenu(){
+  applyTheme(!document.documentElement.classList.contains("dark"));
+  syncMenuDarkState();
+}
+function openSchoolInfo(){ document.getElementById("schoolInfoModal").classList.add("open"); }
+function closeSchoolInfo(){ document.getElementById("schoolInfoModal").classList.remove("open"); }
+window.toggleDarkFromMenu=toggleDarkFromMenu; window.openSchoolInfo=openSchoolInfo; window.closeSchoolInfo=closeSchoolInfo;
+syncMenuDarkState();
 
 // ── Init ──────────────────────────────────────────────────────────────────
 buildSubjectFields();
@@ -7661,36 +7346,9 @@ if("serviceWorker" in navigator){
 }
 </script>
 
-<!-- Bottom Navigation (5 tabs) + "More" sheet -->
-<!-- Home / Students / Assess / Notes are direct tabs. Everything else from the old
-     sidebar (Records, Forum, Share, Settings, Help) lives in the More sheet. -->
-<div class="more-overlay" id="moreOverlay" onclick="closeMore()"></div>
-<div class="more-sheet" id="moreSheet" role="dialog" aria-label="More">
-  <div class="more-items">
-    <button class="more-item" id="moreNavNotes" onclick="switchPage('resources')">
-      <span class="mi-icon">📚</span><span>Notes</span>
-    </button>
-    <button class="more-item" id="moreNavRecords" onclick="switchPage('records')">
-      <span class="mi-icon">🗒️</span><span>Records</span>
-    </button>
-    <button class="more-item" id="moreNavForum" onclick="switchPage('forum')">
-      <span class="mi-icon">💬</span><span>Forum</span>
-    </button>
-    <div class="more-divider"></div>
-    <button class="more-item" id="moreNavShare" onclick="closeMore();shareApp()">
-      <span class="mi-icon">🔗</span><span>Share</span>
-    </button>
-    <button class="more-item" id="moreNavSettings" onclick="closeMore();_settingsReturnPage=getCurrentPageKey();switchPage('settings')">
-      <span class="mi-icon">⚙️</span><span>Settings</span>
-    </button>
-    <button class="more-item" id="moreNavHelp" onclick="closeMore();openHelp()">
-      <span class="mi-icon">❓</span><span>Help</span>
-    </button>
-    <button class="more-item" id="moreNavAbout" onclick="closeMore();openAbout()">
-      <span class="mi-icon">ℹ️</span><span>About Developer</span>
-    </button>
-  </div>
-</div>
+<!-- Bottom Navigation (4 tabs): Home / Students / Records / Notes.
+     Assess lives inside Records. Share, Settings, Help and About Developer
+     live in the option menu (⋮) on the Home screen. -->
 <nav class="bottom-nav" id="bottomNav" aria-label="Main navigation">
   <button class="bn-item active" id="bnHome" onclick="switchPage('dashboard')">
     <span class="bn-icon">🏠</span><span>Home</span>
@@ -7698,11 +7356,11 @@ if("serviceWorker" in navigator){
   <button class="bn-item" id="bnStudents" onclick="switchPage('admissionrecords')">
     <span class="bn-icon">🎓</span><span>Students</span>
   </button>
-  <button class="bn-item" id="bnAssess" onclick="closeMore();openAssessFromSetup()">
-    <span class="bn-icon">📋</span><span>Assess</span>
+  <button class="bn-item" id="bnRecords" onclick="switchPage('records')">
+    <span class="bn-icon">🗒️</span><span>Records</span>
   </button>
-  <button class="bn-item bn-more" id="bnMore" onclick="toggleMore()" aria-haspopup="dialog">
-    <span class="bn-icon">⋯</span><span>More</span>
+  <button class="bn-item" id="bnNotes" onclick="switchPage('resources')">
+    <span class="bn-icon">📚</span><span>Notes</span>
   </button>
 </nav>
 
