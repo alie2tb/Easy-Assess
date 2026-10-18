@@ -393,10 +393,6 @@
   .dash-welcome-title{font-weight:800;font-size:1rem;margin-bottom:0.5rem;}
   .dash-welcome p{margin:0 0 0.5rem;font-size:0.85rem;line-height:1.4;}
   html.dark .dash-welcome{background:var(--card);color:var(--text);border-color:#1D9E75;}
-  .dash-news-preview{background:var(--bg);border:1px solid var(--border);border-radius:12px;padding:0.9rem 1rem;cursor:pointer;}
-  .dash-news-tag{display:inline-block;background:var(--primary);color:#fff;font-size:0.68rem;font-weight:700;padding:3px 9px;border-radius:6px;margin-bottom:0.5rem;}
-  .dash-news-headline{font-family:Georgia,'Times New Roman',serif;font-weight:700;font-size:0.95rem;color:var(--text);line-height:1.35;margin-bottom:0.35rem;}
-  .dash-news-preview-text{font-size:0.8rem;color:var(--muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
   .dash-attendance-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   .dash-att-pill{text-align:center;padding:10px;border-radius:10px;font-weight:700;font-size:0.85rem;}
   .dash-att-pill.present{background:#E1F5EE;color:#085041;}
@@ -593,38 +589,7 @@
   .class-card .cls-name{font-weight:700;font-size:1rem;color:var(--text);margin-bottom:0.2rem;}
   .class-card .cls-count{font-size:0.75rem;color:var(--muted);}
   .class-card .cls-badge{position:absolute;top:10px;right:10px;background:var(--primary);color:#fff;font-size:0.65rem;font-weight:700;border-radius:999px;padding:2px 7px;}
-  /* news fragment */
-  .news-section-title{font-size:1.35rem;font-weight:800;color:var(--text);margin:0.2rem 0 1rem;letter-spacing:-0.01em;}
-  .news-announce-card{background:var(--card);border-radius:14px;padding:1.1rem 1.1rem;margin-bottom:0.9rem;display:flex;align-items:center;gap:0.9rem;box-shadow:0 1px 4px rgba(0,0,0,0.07);cursor:pointer;transition:transform 0.15s;}
-  .news-announce-card:active{transform:scale(0.98);}
-  .news-announce-bar{width:4px;align-self:stretch;border-radius:3px;background:var(--warn);flex-shrink:0;min-height:44px;}
-  .news-announce-body{flex:1;min-width:0;}
-  .news-announce-title{font-size:1.02rem;font-weight:700;color:var(--text);line-height:1.32;margin-bottom:0.4rem;}
-  .news-announce-date{font-size:0.82rem;color:var(--muted);}
-  .news-announce-chevron{color:var(--muted);font-size:1.4rem;flex-shrink:0;}
-  .news-divider{height:1px;background:var(--border);margin:1.5rem 0 1.3rem;}
-  .news-section-header-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.1rem;}
-  .news-section-header-row .news-section-title{margin:0;}
-  .news-see-all{color:var(--primary);font-weight:700;font-size:0.95rem;cursor:pointer;flex-shrink:0;}
-  .news-article-card{background:var(--card);border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.09);margin-bottom:1.3rem;cursor:pointer;}
-  .news-article-image{position:relative;height:180px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));}
-  .news-article-tag{position:absolute;left:14px;bottom:-14px;background:rgba(15,25,20,0.85);color:#fff;font-size:0.76rem;font-weight:600;padding:6px 14px;border-radius:8px;}
-  .news-article-body{padding:1.5rem 1.1rem 1.1rem;}
-  .news-article-headline{font-family:Georgia,'Times New Roman',serif;font-size:1.22rem;font-weight:700;color:var(--text);line-height:1.34;margin:0 0 0.5rem;}
-  .news-article-preview{font-size:0.86rem;color:var(--muted);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 
-  #articleModal{display:none;position:fixed;inset:0;z-index:8888;background:rgba(0,0,0,0.6);align-items:flex-start;justify-content:center;padding:0;overflow-y:auto;}
-  #articleModal.open{display:flex;}
-  #articleBox{background:var(--card);width:100%;max-width:640px;min-height:100vh;padding-bottom:2rem;}
-  #articleCloseBar{position:sticky;top:0;z-index:2;display:flex;justify-content:flex-end;padding:0.7rem 0.9rem;background:var(--card);border-bottom:1px solid var(--border);}
-  #articleCloseBtn{background:rgba(0,0,0,0.06);border:none;border-radius:50%;width:34px;height:34px;font-size:1.1rem;cursor:pointer;color:var(--text);}
-  #articleImage{width:100%;height:200px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));}
-  #articleContentWrap{padding:1.2rem 1.3rem 0;}
-  #articleTag{display:inline-block;background:#1D9E75;color:#fff;font-size:0.76rem;font-weight:600;padding:5px 12px;border-radius:8px;margin-bottom:0.7rem;}
-  #articleHeadline{font-family:Georgia,'Times New Roman',serif;font-size:1.4rem;font-weight:700;color:var(--text);line-height:1.32;margin:0 0 0.4rem;}
-  #articleDate{font-size:0.8rem;color:var(--muted);margin-bottom:1.1rem;}
-  #articleBodyText{font-size:0.96rem;color:var(--text);line-height:1.7;}
-  #articleBodyText p{margin:0 0 1rem;}
   /* Forum */
   .forum-search-wrap{position:relative;margin-bottom:0.9rem;}
   .forum-search-wrap .fs-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.95rem;pointer-events:none;}
@@ -1358,36 +1323,6 @@
   </div>
 </div>
 
-<!-- PAGE 6: NEWS -->
-<div class="page" id="pageNews">
-  <h2 class="news-section-title">Announcements</h2>
-  <div id="newsAnnouncementsList"></div>
-
-  <div class="news-divider"></div>
-
-  <div class="news-section-header-row">
-    <h2 class="news-section-title">Latest News</h2>
-    <span class="news-see-all">See All</span>
-  </div>
-  <div id="newsArticlesList"></div>
-</div>
-
-<!-- Full news article modal -->
-<div id="articleModal">
-  <div id="articleBox">
-    <div id="articleCloseBar">
-      <button id="articleCloseBtn" onclick="closeArticleModal()" title="Close">✕</button>
-    </div>
-    <div id="articleImage"></div>
-    <div id="articleContentWrap">
-      <span id="articleTag"></span>
-      <h2 id="articleHeadline"></h2>
-      <div id="articleDate"></div>
-      <div id="articleBodyText"></div>
-    </div>
-  </div>
-</div>
-
 <!-- PAGE: FORUM -->
 <div class="page" id="pageForum">
   <div class="forum-search-wrap">
@@ -1556,19 +1491,6 @@
     </div>
   </div>
 
-  <div class="card" style="margin-top:0.5rem;">
-    <p class="form-title">🔔 Notifications</p>
-    <div class="theme-switch-row">
-      <div>
-        <div class="theme-switch-label">News alerts</div>
-        <div class="theme-switch-sub" id="notifSub">Get notified when new articles or announcements are posted</div>
-      </div>
-      <label class="switch">
-        <input type="checkbox" id="notifToggle" onchange="toggleNotifications(this.checked)">
-        <span class="slider"></span>
-      </label>
-    </div>
-  </div>
 
   <div class="card" style="margin-top:0.5rem;">
     <p class="form-title">⚙️ Subject Totals — Standard 1 to 3</p>
@@ -2433,19 +2355,18 @@ window.openMore=openMore; window.closeMore=closeMore; window.toggleMore=toggleMo
   document.addEventListener("focusout", ()=>{ setTimeout(()=>{ const n=document.getElementById("bottomNav"); if(n && !typing(document.activeElement)) n.classList.remove("kb-hide"); },150); });
 })();
 function switchPage(page){
-  const allPages = ["pageDashboard","pageClasses","pageExamSubjects","pageAdd","pageList","pageRecords","pageAdmissionRecords","pageSickRecords","pagePunishmentRecords","pageTransferRecords","pageStockRecords","pageAttendance","pageResources","pageCalendar","pageTerm1Weeks","pageNews","pageForum","pageProfile","pageSettings"];
+  const allPages = ["pageDashboard","pageClasses","pageExamSubjects","pageAdd","pageList","pageRecords","pageAdmissionRecords","pageSickRecords","pagePunishmentRecords","pageTransferRecords","pageStockRecords","pageAttendance","pageResources","pageCalendar","pageTerm1Weeks","pageForum","pageProfile","pageSettings"];
   allPages.forEach(id=>{ const el=document.getElementById(id); if(el) el.classList.remove("active"); });
 
   const pageMap = {
     dashboard:"pageDashboard",
     classes:"pageClasses", examSubjects:"pageExamSubjects", add:"pageAdd", list:"pageList",
     records:"pageRecords", admissionrecords:"pageAdmissionRecords", sickrecords:"pageSickRecords", punishmentrecords:"pagePunishmentRecords", transferrecords:"pageTransferRecords", stockrecords:"pageStockRecords", attendance:"pageAttendance",
-    resources:"pageResources", calendar:"pageCalendar", term1weeks:"pageTerm1Weeks", news:"pageNews", forum:"pageForum",
+    resources:"pageResources", calendar:"pageCalendar", term1weeks:"pageTerm1Weeks", forum:"pageForum",
     profile:"pageProfile", settings:"pageSettings"
   };
   const target = document.getElementById(pageMap[page]);
   if(target) target.classList.add("active");
-  if(page === "settings" && typeof syncNotifToggle === "function") syncNotifToggle();
   // Re-entering Records always starts on its main menu (e.g. after leaving Lesson Plans).
   if(page === "records" && typeof closeRecordsResourcesTab === "function") closeRecordsResourcesTab();
 
@@ -2467,7 +2388,7 @@ function switchPage(page){
 
   // Bottom nav (5 tabs): Home / Students / Assess / Notes / More.
   // Class picker, subject picker, and add/enter-marks pages are all part of the
-  // Assessment flow. Records (and its sub-pages), Forum, News, Settings and Profile
+  // Assessment flow. Records (and its sub-pages), Forum, Settings and Profile
   // live behind the "More" tab.
   const bottomNavMap = {
     dashboard:"bnHome",
@@ -2476,7 +2397,7 @@ function switchPage(page){
     resources:"bnMore",
     records:"bnMore", attendance:"bnMore", stockrecords:"bnMore", sickrecords:"bnMore", punishmentrecords:"bnMore",
     transferrecords:"bnMore", calendar:"bnMore", term1weeks:"bnMore",
-    news:"bnMore", forum:"bnMore", settings:"bnMore", profile:"bnMore"
+    forum:"bnMore", settings:"bnMore", profile:"bnMore"
   };
   ["bnHome","bnStudents","bnAssess","bnMore"].forEach(id=>{
     const el=document.getElementById(id); if(el) el.classList.remove("active");
@@ -2487,9 +2408,9 @@ function switchPage(page){
   const moreRowMap = {
     resources:"moreNavNotes", records:"moreNavRecords", attendance:"moreNavRecords", stockrecords:"moreNavRecords", sickrecords:"moreNavRecords",
     punishmentrecords:"moreNavRecords", transferrecords:"moreNavRecords", calendar:"moreNavRecords", term1weeks:"moreNavRecords",
-    forum:"moreNavForum", news:"moreNavNews", settings:"moreNavSettings", profile:"moreNavSettings"
+    forum:"moreNavForum", settings:"moreNavSettings", profile:"moreNavSettings"
   };
-  ["moreNavNotes","moreNavRecords","moreNavForum","moreNavNews","moreNavSettings"].forEach(id=>{
+  ["moreNavNotes","moreNavRecords","moreNavForum","moreNavSettings"].forEach(id=>{
     const el=document.getElementById(id); if(el) el.classList.remove("active");
   });
   if(moreRowMap[page]){ const mrEl=document.getElementById(moreRowMap[page]); if(mrEl) mrEl.classList.add("active"); }
@@ -2497,7 +2418,7 @@ function switchPage(page){
 
 
   // Back button: show on examSubjects, add, settings, profile (sub-page of settings), classes (now a Records card),
-  // and the remaining record sub-pages. (admissionrecords/"Students", "news", "attendance", and the per-class "list"
+  // and the remaining record sub-pages. (admissionrecords/"Students", "attendance", and the per-class "list"
   // page are reached directly from the bottom nav/a card/menu and don't need a back button.)
   const backBtn = document.getElementById("backBtn");
   const showBack = (page==="classes"||page==="examSubjects"||page==="add"||page==="settings"||page==="profile"||page==="sickrecords"||page==="punishmentrecords"||page==="transferrecords"||page==="calendar"||page==="term1weeks");
@@ -2509,7 +2430,7 @@ function switchPage(page){
     add:`${classLabel(_currentClass)} — Add Student`,
     list:`${classLabel(_currentClass)}`,
     records:"Records", admissionrecords:"Students", sickrecords:"Sick Record", punishmentrecords:"Punishment Records", transferrecords:"Transfer Out Record", stockrecords:"Stock Record", attendance:"Attendance",
-    resources:"Notes", calendar:"School Calendar", term1weeks:"Term 1 Weeks", news:"News", forum:"Discussion Forum",
+    resources:"Notes", calendar:"School Calendar", term1weeks:"Term 1 Weeks", forum:"Discussion Forum",
     profile:"My Profile", settings:"Settings"
   };
   const titleEl = document.getElementById("topTitle");
@@ -2536,7 +2457,6 @@ function switchPage(page){
   if(page==="profile")     buildProfilePage();
   if(page==="list")        render();
   if(page==="resources")   initResourcesPage();
-  if(page==="news")        renderNewsPage();
   if(page==="forum")       renderForumPage();
   if(page==="records")     updateRecordsCounts();
   if(page==="add"){
@@ -2571,7 +2491,7 @@ let _settingsReturnPage = "dashboard";
 function getCurrentPageKey(){
   const map = {pageDashboard:"dashboard", pageClasses:"classes", pageExamSubjects:"examSubjects", pageAdd:"add", pageList:"list",
     pageRecords:"records", pageAdmissionRecords:"admissionrecords", pageSickRecords:"sickrecords", pagePunishmentRecords:"punishmentrecords", pageTransferRecords:"transferrecords", pageStockRecords:"stockrecords", pageAttendance:"attendance",
-    pageResources:"resources", pageCalendar:"calendar", pageTerm1Weeks:"term1weeks", pageNews:"news", pageForum:"forum",
+    pageResources:"resources", pageCalendar:"calendar", pageTerm1Weeks:"term1weeks", pageForum:"forum",
     pageProfile:"profile", pageSettings:"settings"};
   for(const domId in map){
     const el = document.getElementById(domId);
@@ -2850,9 +2770,6 @@ function renderDashboard(){
   const religionGirlsData = religionLabels.map(l=>religionCounts[l].girls);
   const hasReligionData = religionLabels.length > 0;
 
-  const latestAnnouncement = (typeof NEWS_ANNOUNCEMENTS!=="undefined" && NEWS_ANNOUNCEMENTS.length) ? NEWS_ANNOUNCEMENTS[0] : null;
-  const latestArticle      = (typeof NEWS_ARTICLES!=="undefined" && NEWS_ARTICLES.length) ? NEWS_ARTICLES[0] : null;
-
   const today    = new Date().toISOString().slice(0,10);
   const attData  = getAttendanceData();
   let presentToday=0, absentToday=0, sickToday=0, leaveToday=0, attendanceTaken=false;
@@ -3013,26 +2930,7 @@ function renderDashboard(){
     </div>
 
     </div>
-
-    <div class="dash-section">
-      <div class="dash-section-title">Latest Updates</div>
-      ${latestAnnouncement ? `
-        <div class="news-announce-card" style="margin-bottom:0.9rem;" onclick="switchPage('news')">
-          <div class="news-announce-bar"></div>
-          <div class="news-announce-body">
-            <div class="news-announce-title">${escapeHtml(latestAnnouncement.title)}</div>
-            <div class="news-announce-date">${escapeHtml(latestAnnouncement.date)}</div>
-          </div>
-          <span class="news-announce-chevron">›</span>
-        </div>` : ``}
-      ${latestArticle ? `
-        <div class="dash-news-preview" onclick="switchPage('news')">
-          <span class="dash-news-tag">${escapeHtml(latestArticle.tag)}</span>
-          <div class="dash-news-headline">${escapeHtml(latestArticle.headline)}</div>
-          <div class="dash-news-preview-text">${escapeHtml(latestArticle.preview)}</div>
-        </div>` : ``}
-      ${(!latestAnnouncement && !latestArticle) ? `<div class="dash-empty">No news yet.</div>` : ``}
-    </div>`;
+`;
 
   drawDashboardCharts({
     totalBoys, totalGirls, totalStudents, totalPass, levelCounts, levelTotal,
@@ -3231,7 +3129,6 @@ function shareDashboardWhatsApp(){
   const rows2 = [];
   sections.forEach(sec=>{
     const title = sec.querySelector(".dash-section-title")?.textContent.trim() || "";
-    if(!title || title === "Latest Updates") return; // skip the non-numeric news preview
     const pills = sec.querySelectorAll(".dash-att-pill");
     if(pills.length){
       rows2.push([title, Array.from(pills).map(p=>p.textContent.trim()).join("   |   ")]);
@@ -3345,8 +3242,8 @@ function openHelp(){
     <p>Records brings together Attendance, Stock, Sick, Punishment and Transfer records, plus the School Calendar, Term 1 Weeks, Schemes of Work and Lesson Plans — all in one hub.</p>
     <p><strong>Resources</strong></p>
     <p>Browse Notes and Syllabuses under Notes in the More menu — use the search bar or switch tabs to find what you need.</p>
-    <p><strong>Forum &amp; News</strong></p>
-    <p>Forum is a discussion space for teachers, and News keeps you updated with the latest school-related headlines.</p>
+    <p><strong>Forum</strong></p>
+    <p>Forum is a discussion space for teachers.</p>
     <p><strong>Share &amp; Settings</strong></p>
     <p>Share lets you send the app link to colleagues, and Settings covers dark mode and your profile — including editing your details or clearing app data.</p>
     <p><strong>Need more help?</strong></p>
@@ -7168,233 +7065,6 @@ function renderLessonPlanCode(){
 }
 window.renderLessonPlanCode = renderLessonPlanCode;
 
-// Sample announcements & news content — used as an initial/offline fallback
-// until news.json (a separate, editable data file) loads successfully.
-let NEWS_ANNOUNCEMENTS = [];
-let NEWS_ARTICLES = [];
-const NEWS_SEEN_KEY  = "ea33_news_seen";   // keys of items the user has already been told about
-const NOTIF_PREF_KEY = "ea33_notif_enabled"; // "on" / "off"
-let _lastNewsFetchTime = 0;
-
-// One stable key per news item (news.json has no ids, so date + headline is used).
-function collectNewsKeys(data){
-  const out = [];
-  (data.announcements||[]).forEach(a=> out.push({key:`a|${a.date}|${a.title}`, type:"announcement", text:a.title}));
-  (data.articles||[]).forEach(n=> out.push({key:`n|${n.date}|${n.headline}`, type:"article", text:n.headline}));
-  return out;
-}
-function getSeenNewsKeys(){
-  try{
-    const raw = localStorage.getItem(NEWS_SEEN_KEY);
-    return raw ? new Set(JSON.parse(raw)) : null; // null = first run ever
-  }catch(e){ return null; }
-}
-function saveSeenNewsKeys(keys){
-  try{ localStorage.setItem(NEWS_SEEN_KEY, JSON.stringify(keys)); }catch(e){}
-}
-
-function notificationsOn(){
-  return ("Notification" in window) && Notification.permission === "granted"
-    && localStorage.getItem(NOTIF_PREF_KEY) !== "off";
-}
-
-// Shows a notification through the service worker (needed on Android/installed PWAs),
-// falling back to the plain Notification API where there is no service worker.
-async function showLocalNotification(title, body){
-  const opts = {
-    body, icon:"./icon-192.png", badge:"./icon-192.png", vibrate:[200,100,200],
-    tag:"ea33-news-update", renotify:true, data:{ url:"./?page=news" }
-  };
-  try{
-    const reg = navigator.serviceWorker ? await navigator.serviceWorker.getRegistration() : null;
-    if(reg){ await reg.showNotification(title, opts); return; }
-  }catch(e){}
-  try{ new Notification(title, opts); }catch(e){}
-}
-
-function notifyNewNews(items){
-  if(!items.length || !notificationsOn()) return;
-  const arts = items.filter(i=>i.type==="article");
-  const anns = items.filter(i=>i.type==="announcement");
-  if(items.length === 1){
-    showLocalNotification(arts.length ? "New article" : "New announcement", items[0].text);
-    return;
-  }
-  const parts = [];
-  if(arts.length) parts.push(`${arts.length} new ${arts.length===1?"article":"articles"}`);
-  if(anns.length) parts.push(`${anns.length} new ${anns.length===1?"announcement":"announcements"}`);
-  showLocalNotification("News update", parts.join(" and ") + ": " + items[0].text);
-}
-
-// Loads news.json, refreshes the News page + Home preview, and notifies about
-// items that were not in the previous load. `background` = silent re-check
-// (timer / returning to the app): it only re-renders when something is new.
-async function loadNewsData(background){
-  _lastNewsFetchTime = Date.now();
-  try{
-    const res = await fetch("news.json", {cache:"no-store"});
-    if(!res.ok){
-      if(!background){ renderNewsPage(); renderDashboard(); }
-      return;
-    }
-    const data = await res.json();
-    const hasAnnouncements = Array.isArray(data.announcements) && data.announcements.length;
-    const hasArticles = Array.isArray(data.articles) && data.articles.length;
-
-    if(hasAnnouncements) NEWS_ANNOUNCEMENTS = data.announcements;
-    if(hasArticles){
-      NEWS_ARTICLES = data.articles;
-      NEWS_ARTICLES.sort((a,b)=> new Date(b.date) - new Date(a.date)); // newest first
-    }
-
-    const all  = collectNewsKeys(data);
-    const seen = getSeenNewsKeys();
-    // First ever run: treat everything as already seen so users aren't spammed.
-    const newItems = seen ? all.filter(k=>!seen.has(k.key)) : [];
-    if(all.length) saveSeenNewsKeys(all.map(k=>k.key));
-
-    if(!background || newItems.length){
-      renderNewsPage();
-      renderDashboard();
-    }
-    notifyNewNews(newItems);
-  } catch(e){
-    console.error("Error loading news.json:", e);
-    if(!background){ renderNewsPage(); renderDashboard(); }
-  }
-}
-window.loadNewsData = loadNewsData;
-
-// ── Notification settings toggle ──────────────────────────────────────────
-function syncNotifToggle(){
-  const t = document.getElementById("notifToggle");
-  const sub = document.getElementById("notifSub");
-  if(!t) return;
-  if(!("Notification" in window)){
-    t.checked = false; t.disabled = true;
-    if(sub) sub.textContent = "Not supported here. On iPhone, add the app to your Home Screen first.";
-    return;
-  }
-  t.disabled = false;
-  if(Notification.permission === "denied"){
-    t.checked = false;
-    if(sub) sub.textContent = "Blocked. Allow notifications for this app in your device/browser settings.";
-    return;
-  }
-  t.checked = notificationsOn();
-  if(sub) sub.textContent = "Get notified when new articles or announcements are posted";
-}
-async function toggleNotifications(on){
-  if(!("Notification" in window)){ syncNotifToggle(); return; }
-  if(!on){
-    localStorage.setItem(NOTIF_PREF_KEY, "off");
-    syncNotifToggle();
-    return;
-  }
-  let perm = Notification.permission;
-  if(perm === "default"){
-    try{ perm = await Notification.requestPermission(); }catch(e){}
-  }
-  if(perm === "granted"){
-    localStorage.setItem(NOTIF_PREF_KEY, "on");
-    syncNotifToggle();
-    showLocalNotification("Notifications enabled", "You'll be alerted when new articles or announcements are posted.");
-  } else {
-    syncNotifToggle();
-  }
-}
-window.toggleNotifications = toggleNotifications;
-window.syncNotifToggle = syncNotifToggle;
-
-// Re-check for new news while the app is open.
-setInterval(()=>{ if(document.visibilityState === "visible") loadNewsData(true); }, 5*60*1000);
-document.addEventListener("visibilitychange", ()=>{
-  if(document.visibilityState === "visible" && Date.now() - _lastNewsFetchTime > 60000) loadNewsData(true);
-});
-
-// Tapping a notification: the service worker asks the open app to show a page.
-if(navigator.serviceWorker){
-  navigator.serviceWorker.addEventListener("message", e=>{
-    if(e.data && e.data.type === "OPEN_PAGE" && e.data.page) switchPage(e.data.page);
-  });
-}
-
-function renderNewsPage(){
-  const annContainer = document.getElementById("newsAnnouncementsList");
-  const artContainer = document.getElementById("newsArticlesList");
-  
-  // Show fallback message if no news data is available
-  if((!NEWS_ANNOUNCEMENTS || NEWS_ANNOUNCEMENTS.length === 0) && (!NEWS_ARTICLES || NEWS_ARTICLES.length === 0)){
-    if(annContainer) annContainer.innerHTML = `<div style="padding:2rem;text-align:center;color:var(--muted);">⏳ LOADING LATEST NEWS</div>`;
-    if(artContainer) artContainer.innerHTML = `<div style="padding:2rem;text-align:center;color:var(--muted);">⏳ LOADING LATEST NEWS</div>`;
-    return;
-  }
-  
-  if(annContainer){
-    annContainer.innerHTML = NEWS_ANNOUNCEMENTS.map(a=>`
-      <div class="news-announce-card">
-        <div class="news-announce-bar"></div>
-        <div class="news-announce-body">
-          <div class="news-announce-title">${escapeHtml(a.title)}</div>
-          <div class="news-announce-date">${escapeHtml(a.date)}</div>
-        </div>
-        <span class="news-announce-chevron">›</span>
-      </div>`).join("");
-  }
-  if(artContainer){
-    artContainer.innerHTML = NEWS_ARTICLES.map((n,i)=>`
-      <div class="news-article-card" data-idx="${i}">
-        <div class="news-article-image"${n.image?` style="background-image:url('${n.image.replace(/'/g,"%27")}');background-size:cover;background-position:center;"`:""}>
-          <span class="news-article-tag">${escapeHtml(n.tag)}</span>
-        </div>
-        <div class="news-article-body">
-          <div class="news-article-headline">${escapeHtml(n.headline)}</div>
-          <div class="news-article-preview">${escapeHtml(n.preview)}</div>
-        </div>
-      </div>`).join("");
-    artContainer.querySelectorAll(".news-article-card").forEach(card=>{
-      card.addEventListener("click", ()=> openArticle(Number(card.getAttribute("data-idx"))));
-    });
-  }
-}
-window.renderNewsPage = renderNewsPage;
-
-// Opens the full story for a news article. Uses the article's "content" (or
-// "body") field for the full text if news.json provides one; otherwise falls
-// back to showing the preview so the modal is never blank.
-function openArticle(idx){
-  const n = NEWS_ARTICLES[idx];
-  if(!n) return;
-
-  const imageEl = document.getElementById("articleImage");
-  if(n.image){
-    imageEl.style.backgroundImage = `url('${n.image.replace(/'/g,"%27")}')`;
-    imageEl.style.backgroundSize = "cover";
-    imageEl.style.backgroundPosition = "center";
-  } else {
-    imageEl.style.backgroundImage = "";
-  }
-
-  document.getElementById("articleTag").textContent = n.tag || "";
-  document.getElementById("articleHeadline").textContent = n.headline || "";
-  document.getElementById("articleDate").textContent = n.date || "";
-
-  const fullText = (n.content || n.body || n.preview || "").trim();
-  const paragraphs = fullText.split(/\n\s*\n/).filter(p=>p.trim());
-  document.getElementById("articleBodyText").innerHTML = paragraphs.length
-    ? paragraphs.map(p=>`<p>${escapeHtml(p.trim())}</p>`).join("")
-    : "<p>Full story not available yet.</p>";
-
-  document.getElementById("articleModal").classList.add("open");
-  document.getElementById("articleBox").scrollTop = 0;
-}
-window.openArticle = openArticle;
-
-function closeArticleModal(){
-  document.getElementById("articleModal").classList.remove("open");
-}
-window.closeArticleModal = closeArticleModal;
-document.getElementById("articleModal").addEventListener("click",function(e){if(e.target===this)closeArticleModal();});
 
 
 /* ===================== FORUM ===================== */
@@ -7936,9 +7606,6 @@ updateExcelBtn();
 updateBadge();
 renderDashboard();
 populateAdmissionSpinners();
-loadNewsData();
-syncNotifToggle();
-if(new URLSearchParams(location.search).get("page") === "news") switchPage("news");
 initAppSetup();
 
 // ── Google Analytics: PWA install tracking ──────────────────────────────
@@ -7996,7 +7663,7 @@ if("serviceWorker" in navigator){
 
 <!-- Bottom Navigation (5 tabs) + "More" sheet -->
 <!-- Home / Students / Assess / Notes are direct tabs. Everything else from the old
-     sidebar (Records, Forum, News, Share, Settings, Help) lives in the More sheet. -->
+     sidebar (Records, Forum, Share, Settings, Help) lives in the More sheet. -->
 <div class="more-overlay" id="moreOverlay" onclick="closeMore()"></div>
 <div class="more-sheet" id="moreSheet" role="dialog" aria-label="More">
   <div class="more-items">
@@ -8008,9 +7675,6 @@ if("serviceWorker" in navigator){
     </button>
     <button class="more-item" id="moreNavForum" onclick="switchPage('forum')">
       <span class="mi-icon">💬</span><span>Forum</span>
-    </button>
-    <button class="more-item" id="moreNavNews" onclick="switchPage('news')">
-      <span class="mi-icon">📰</span><span>News</span>
     </button>
     <div class="more-divider"></div>
     <button class="more-item" id="moreNavShare" onclick="closeMore();shareApp()">

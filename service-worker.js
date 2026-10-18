@@ -1,4 +1,4 @@
-const CACHE_NAME = "score-manager-v84";
+const CACHE_NAME = "score-manager-v85";
 
 const STATIC_ASSETS = [
   "./",
@@ -89,12 +89,9 @@ self.addEventListener("fetch", event => {
 
   // Only the fixed app-shell/PDF/CDN files are safe to treat as cache-first:
   // their content never changes at the same URL between versions (a new
-  // version ships under a new CACHE_NAME anyway). Anything else — most
-  // importantly news.json and any photo it references — can have its
-  // content replaced at the very same URL (a new article reusing an old
-  // image filename, an edited announcement, etc.), so cache-first would
-  // silently keep serving stale/mismatched content forever. Those all get
-  // network-first instead, falling back to cache only when offline.
+  // version ships under a new CACHE_NAME anyway). Anything else can have its
+  // content replaced at the very same URL, so it gets network-first instead,
+  // falling back to cache only when offline.
   const isPrecached = STATIC_ASSETS.some(a => new URL(a, self.location).href === url.href)
     || PDF_ASSETS.some(a => new URL(a, self.location).href === url.href)
     || CDN_ASSETS.includes(url.href);
@@ -127,61 +124,9 @@ self.addEventListener("fetch", event => {
   );
 });
 
-// ── Push notification handler ─────────────────────────────────────────────
-// Fires when a push event is received (from background)
-self.addEventListener("push", event => {
-  let data = { title: "Easy Assess 33", body: "You have a new announcement." };
-  if(event.data){
-    try { data = event.data.json(); } catch(e){ data.body = event.data.text(); }
-  }
-  event.waitUntil(
-    self.registration.showNotification(data.title, {
-      body:    data.body,
-      icon:    "./icon-192.png",
-      badge:   "./icon-192.png",
-      vibrate: [200, 100, 200],
-      tag:     data.tag || "ea33-announcement",
-      renotify: true,
-      data:    { url: data.url || "./" }
-    })
-  );
-});
-
-// ── Notification click — open the app ─────────────────────────────────────
-self.addEventListener("notificationclick", event => {
-  event.notification.close();
-  const target = event.notification.data && event.notification.data.url
-    ? event.notification.data.url : "./";
-  event.waitUntil(
-    clients.matchAll({ type: "window", includeUncontrolled: true }).then(list => {
-      for(const client of list){
-        if(client.url.includes(self.location.origin) && "focus" in client){
-          const m = /[?&]page=([a-z]+)/.exec(target);
-          if(m) client.postMessage({ type: "OPEN_PAGE", page: m[1] });
-          return client.focus();
-        }
-      }
-      if(clients.openWindow) return clients.openWindow(target);
-    })
-  );
-});
-
-// ── Message handler (SKIP_WAITING + SHOW_NOTIFICATION) ────────────────────
+// ── Message handler (SKIP_WAITING) ────────────────────────────────────────
 self.addEventListener("message", event => {
-  if(!event.data) return;
-  if(event.data.type === "SKIP_WAITING"){
+  if(event.data && event.data.type === "SKIP_WAITING"){
     self.skipWaiting();
-  }
-  if(event.data.type === "SHOW_NOTIFICATION"){
-    const d = event.data;
-    self.registration.showNotification(d.title || "Easy Assess 33", {
-      body:    d.body  || "New announcement available.",
-      icon:    "./icon-192.png",
-      badge:   "./icon-192.png",
-      vibrate: [200, 100, 200],
-      tag:     d.tag   || "ea33-announcement",
-      renotify: true,
-      data:    { url: "./" }
-    });
   }
 });
