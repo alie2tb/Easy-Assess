@@ -403,6 +403,12 @@
   .dash-att-pill.absent{background:#FAECE7;color:#4A1B0C;}
   .dash-att-pill.sick{background:#FFF3E0;color:#5C3D0A;}
   .dash-att-pill.leave{background:#ECE9FB;color:#2C2470;}
+  .dash-fig-table{width:100%;border-collapse:collapse;font-size:0.85rem;}
+  .dash-fig-table th,.dash-fig-table td{padding:8px 6px;text-align:center;border-bottom:1px solid var(--border);color:var(--text);}
+  .dash-fig-table th:first-child,.dash-fig-table td:first-child{text-align:left;}
+  .dash-fig-table th{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--muted);}
+  .dash-fig-table td{font-weight:600;}
+  .dash-fig-table tr.total td{font-weight:800;border-bottom:none;}
   .dash-chart-wrap{position:relative;height:220px;margin-bottom:0.4rem;}
   .dash-chart-wrap.small{height:180px;}
   .dash-chart-legend-note{font-size:0.72rem;color:var(--muted);text-align:center;margin-top:0.4rem;}
@@ -1835,23 +1841,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
-<script>
-// Fallback if Chart.js fails to load from primary CDN
-if(typeof Chart === 'undefined'){
-  const fallbackScript = document.createElement('script');
-  fallbackScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js';
-  fallbackScript.onerror = function(){
-    console.error('⚠️ Chart.js failed to load from both CDNs. Charts will not display.');
-    // Set a flag so we can show an offline message
-    window._chartsDisabled = true;
-  };
-  fallbackScript.onload = function(){
-    console.log('✓ Chart.js loaded from fallback CDN');
-  };
-  document.head.appendChild(fallbackScript);
-}
-</script>
 <script>
 
 // ── Subject totals settings (Std 1–3) ────────────────────────────────────
@@ -2797,8 +2786,7 @@ function renderDashboard(){
           <div class="dash-att-pill absent">Absent: ${absentToday}</div>
           <div class="dash-att-pill sick">Sick: ${sickToday}</div>
           <div class="dash-att-pill leave">Leave: ${leaveToday}</div>
-        </div>
-        <div class="dash-chart-wrap small"><canvas id="todayAttendanceChart"></canvas></div>` : `<div class="dash-empty">No attendance recorded yet today.</div>`}
+        </div>` : `<div class="dash-empty">No attendance recorded yet today.</div>`}
     </div>
 
     <div class="dash-section">
@@ -2813,170 +2801,48 @@ function renderDashboard(){
 
     <div class="dash-section">
       <div class="dash-section-title">Learners per Level</div>
-      ${levelTotal>0 ? `<div class="dash-chart-wrap" style="height:280px"><canvas id="levelBarChart"></canvas></div><div class="dash-chart-legend-note">${levelTotal} assessed learner(s) · Std 1–8</div>` : `<div class="dash-empty">No assessment data yet.</div>`}
+      ${levelTotal>0 ? `<div class="dash-attendance-row" id="levelFigures">
+          <div class="dash-att-pill present">Level 4: ${levelCounts[4]} (${Math.round(levelCounts[4]/levelTotal*100)}%)</div>
+          <div class="dash-att-pill present">Level 3: ${levelCounts[3]} (${Math.round(levelCounts[3]/levelTotal*100)}%)</div>
+          <div class="dash-att-pill sick">Level 2: ${levelCounts[2]} (${Math.round(levelCounts[2]/levelTotal*100)}%)</div>
+          <div class="dash-att-pill absent">Level 1: ${levelCounts[1]} (${Math.round(levelCounts[1]/levelTotal*100)}%)</div>
+        </div><div class="dash-chart-legend-note">${levelTotal} assessed learner(s) · Std 1–8</div>` : `<div class="dash-empty">No assessment data yet.</div>`}
     </div>
 
     <div class="dash-section">
       <div class="dash-section-title">Student Movement &amp; Status</div>
-      <div class="dash-chart-wrap"><canvas id="movementBarChart"></canvas></div>
+      ${dashFigureTable(["Dropouts","Transfer Out","Transfer In","Single Orphans","Double Orphans","Repeaters"],
+        [dropoutBoys, transferBoysCount, transferInBoys, singleOrphanBoys, doubleOrphanBoys, repeaterBoys],
+        [dropoutGirls, transferGirlsCount, transferInGirls, singleOrphanGirls, doubleOrphanGirls, repeaterGirls])}
     </div>
 
     <div class="dash-section">
       <div class="dash-section-title">Disability Breakdown</div>
       ${(visualBoys+visualGirls+hearingBoys+hearingGirls+physicalBoys+physicalGirls+intellectualBoys+intellectualGirls+albinismBoys+albinismGirls+multipleBoys+multipleGirls+otherDisabilityBoys+otherDisabilityGirls) > 0 ? `
-        <div class="dash-chart-wrap"><canvas id="disabilityBarChart"></canvas></div>` : `<div class="dash-empty">No disability data recorded yet.</div>`}
+        ${dashFigureTable(["Visual","Hearing","Physical","Intellectual","Albinism","Multiple","Other"],
+          [visualBoys, hearingBoys, physicalBoys, intellectualBoys, albinismBoys, multipleBoys, otherDisabilityBoys],
+          [visualGirls, hearingGirls, physicalGirls, intellectualGirls, albinismGirls, multipleGirls, otherDisabilityGirls])}` : `<div class="dash-empty">No disability data recorded yet.</div>`}
     </div>
 
     <div class="dash-section">
       <div class="dash-section-title">Religion Breakdown</div>
       ${hasReligionData ? `
-        <div class="dash-chart-wrap"><canvas id="religionBarChart"></canvas></div>` : `<div class="dash-empty">No religion/denomination data recorded yet.</div>`}
+        ${dashFigureTable(religionLabels, religionBoysData, religionGirlsData)}` : `<div class="dash-empty">No religion/denomination data recorded yet.</div>`}
     </div>
 
     </div>
 `;
-
-  drawDashboardCharts({
-    totalBoys, totalGirls, totalStudents, totalPass, levelCounts, levelTotal,
-    attendanceTaken, presentToday, absentToday, sickToday, leaveToday,
-    monthlyAttendanceRecorded, boysAvgAttendance, girlsAvgAttendance, overallAvgAttendance,
-    dropoutBoys, dropoutGirls, transferBoysCount, transferGirlsCount,
-    transferInBoys, transferInGirls, singleOrphanBoys, singleOrphanGirls,
-    doubleOrphanBoys, doubleOrphanGirls, repeaterBoys, repeaterGirls,
-    visualBoys, visualGirls, hearingBoys, hearingGirls, physicalBoys, physicalGirls,
-    intellectualBoys, intellectualGirls, albinismBoys, albinismGirls,
-    multipleBoys, multipleGirls, otherDisabilityBoys, otherDisabilityGirls,
-    religionLabels, religionBoysData, religionGirlsData
-  });
 }
 window.renderDashboard = renderDashboard;
 
-// ── Dashboard chart rendering (Chart.js) ────────────────────────────────
-window._dashCharts = window._dashCharts || {};
-function destroyDashChart(key){
-  if(window._dashCharts[key]){
-    window._dashCharts[key].destroy();
-    delete window._dashCharts[key];
-  }
+// ── Dashboard figures (text tables, Boys / Girls / Total) ───────────────
+function dashFigureTable(labels, boys, girls){
+  const esc = t => String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;");
+  const sum = a => a.reduce((x,y)=>x+(+y||0),0);
+  const rows = labels.map((l,i)=>`<tr><td>${esc(l)}</td><td>${boys[i]||0}</td><td>${girls[i]||0}</td><td>${(boys[i]||0)+(girls[i]||0)}</td></tr>`).join("");
+  return `<table class="dash-fig-table"><thead><tr><th></th><th>Boys</th><th>Girls</th><th>Total</th></tr></thead><tbody>${rows}
+    <tr class="total"><td>Total</td><td>${sum(boys)}</td><td>${sum(girls)}</td><td>${sum(boys)+sum(girls)}</td></tr></tbody></table>`;
 }
-function dashChartTextColor(){
-  return getComputedStyle(document.documentElement).getPropertyValue("--text").trim() || "#2C2C2A";
-}
-function drawDashboardCharts(d){
-  if(typeof Chart === "undefined"){
-    console.warn("⚠️ Chart.js library is not available. Charts cannot be rendered. Check your internet connection.");
-    return; // library not loaded (e.g. offline)
-  }
-  const textColor = dashChartTextColor();
-  Chart.defaults.color = textColor;
-  Chart.defaults.font.family = "-apple-system,Segoe UI,Roboto,Arial,sans-serif";
-
-  const boyColor = "#1D9E75", girlColor = "#D85A30", passColor = "#1D9E75", failColor = "#D85A30";
-
-  // Learners per Level (pie with numbers on slices)
-  destroyDashChart("levels");
-  const levelCanvas = document.getElementById("levelBarChart");
-  if(levelCanvas && d.levelTotal > 0){
-    const sliceNumbers = {
-      id:"sliceNumbers",
-      afterDatasetsDraw(chart){
-        const ctx = chart.ctx, meta = chart.getDatasetMeta(0), vals = chart.data.datasets[0].data;
-        ctx.save();
-        ctx.font = "bold 18px sans-serif"; ctx.fillStyle = "#fff";
-        ctx.textAlign = "center"; ctx.textBaseline = "middle";
-        meta.data.forEach((arc, idx)=>{
-          if(!vals[idx]) return;
-          const pos = arc.tooltipPosition();
-          ctx.fillText(String(vals[idx]), pos.x, pos.y);
-        });
-        ctx.restore();
-      }
-    };
-    window._dashCharts.levels = new Chart(levelCanvas, {
-      type: "pie",
-      data: {
-        labels:["Level 4","Level 3","Level 2","Level 1"],
-        datasets:[{
-          label:"Learners",
-          data:[d.levelCounts[4], d.levelCounts[3], d.levelCounts[2], d.levelCounts[1]],
-          backgroundColor:["#1D9E75","#7CB342","#F0A030","#D85A30"],
-          borderWidth:2, borderColor:"#1f1f1f"
-        }]
-      },
-      options: { responsive:true, maintainAspectRatio:false,
-        plugins:{ legend:{ display:true, position:"bottom" } } },
-      plugins:[sliceNumbers]
-    });
-  }
-
-  // Today's Attendance (bar)
-  destroyDashChart("todayAtt");
-  const todayCanvas = document.getElementById("todayAttendanceChart");
-  if(todayCanvas && d.attendanceTaken){
-    window._dashCharts.todayAtt = new Chart(todayCanvas, {
-      type: "bar",
-      data: { labels:["Present","Absent","Sick","Leave"], datasets:[{ data:[d.presentToday, d.absentToday, d.sickToday, d.leaveToday],
-        backgroundColor:["#1D9E75","#D85A30","#BA7517","#6C5CE7"] }] },
-      options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ display:false } },
-        scales:{ y:{ beginAtZero:true, ticks:{ precision:0 } } } }
-    });
-  }
-
-  // Student Movement & Status (grouped bar)
-  destroyDashChart("movement");
-  const movementCanvas = document.getElementById("movementBarChart");
-  if(movementCanvas){
-    window._dashCharts.movement = new Chart(movementCanvas, {
-      type: "bar",
-      data: {
-        labels:["Dropouts","Transfer Out","Transfer In","Single Orphans","Double Orphans","Repeaters"],
-        datasets:[
-          { label:"Boys", data:[d.dropoutBoys, d.transferBoysCount, d.transferInBoys, d.singleOrphanBoys, d.doubleOrphanBoys, d.repeaterBoys], backgroundColor:boyColor },
-          { label:"Girls", data:[d.dropoutGirls, d.transferGirlsCount, d.transferInGirls, d.singleOrphanGirls, d.doubleOrphanGirls, d.repeaterGirls], backgroundColor:girlColor }
-        ]
-      },
-      options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:"bottom", labels:{ boxWidth:12, font:{size:11} } } },
-        scales:{ x:{ ticks:{ font:{size:9} } }, y:{ beginAtZero:true, ticks:{ precision:0 } } } }
-    });
-  }
-
-  // Disability Breakdown (grouped bar)
-  destroyDashChart("disability");
-  const disabilityCanvas = document.getElementById("disabilityBarChart");
-  if(disabilityCanvas){
-    window._dashCharts.disability = new Chart(disabilityCanvas, {
-      type: "bar",
-      data: {
-        labels:["Visual","Hearing","Physical","Intellectual","Albinism","Multiple","Other"],
-        datasets:[
-          { label:"Boys", data:[d.visualBoys, d.hearingBoys, d.physicalBoys, d.intellectualBoys, d.albinismBoys, d.multipleBoys, d.otherDisabilityBoys], backgroundColor:boyColor },
-          { label:"Girls", data:[d.visualGirls, d.hearingGirls, d.physicalGirls, d.intellectualGirls, d.albinismGirls, d.multipleGirls, d.otherDisabilityGirls], backgroundColor:girlColor }
-        ]
-      },
-      options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:"bottom", labels:{ boxWidth:12, font:{size:11} } } },
-        scales:{ x:{ ticks:{ font:{size:9} } }, y:{ beginAtZero:true, ticks:{ precision:0 } } } }
-    });
-  }
-
-  // Religion Breakdown (grouped bar)
-  destroyDashChart("religion");
-  const religionCanvas = document.getElementById("religionBarChart");
-  if(religionCanvas && d.religionLabels && d.religionLabels.length){
-    window._dashCharts.religion = new Chart(religionCanvas, {
-      type: "bar",
-      data: {
-        labels: d.religionLabels,
-        datasets:[
-          { label:"Boys", data:d.religionBoysData, backgroundColor:boyColor },
-          { label:"Girls", data:d.religionGirlsData, backgroundColor:girlColor }
-        ]
-      },
-      options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{ position:"bottom", labels:{ boxWidth:12, font:{size:11} } } },
-        scales:{ x:{ ticks:{ font:{size:9} } }, y:{ beginAtZero:true, ticks:{ precision:0 } } } }
-    });
-  }
-}
-window.drawDashboardCharts = drawDashboardCharts;
 
 // ── Share Dashboard summary (PDF) via WhatsApp ──────────────────────────────
 function shareDashboardWhatsApp(){
